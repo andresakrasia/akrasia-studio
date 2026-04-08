@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AKRASIA | COMMAND CENTER</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#00f0ff",
+                "background": "#050505",
+                "panel": "#0a0a0a",
+                "panel-border": "#1a1a1a",
+                "accent-dim": "#003a3d"
+              },
+              fontFamily: {
+                "headline": ["Space Grotesk"],
+                "mono": ["JetBrains Mono"]
+              }
+            },
+          },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background text-slate-300 font-mono overflow-hidden h-screen;
+            }
+        }
+        .hud-scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 240, 255, 0.02) 50%);
+            background-size: 100% 4px;
+        }
+        .angular-cut {
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+        }
+        .cyber-border {
+            border: 1px solid #1a1a1a;
+            position: relative;
+        }
+        .cyber-border::after {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 10px; height: 10px;
+            border-top: 2px solid #00f0ff;
+            border-left: 2px solid #00f0ff;
+        }
+        .glitch-text {
+            text-shadow: 2px 0 #00f0ff22, -2px 0 #ff00ff11;
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .data-grid {
+            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="hud-scanline data-grid">
+<header class="h-12 border-b border-panel-border flex items-center justify-between px-4 bg-background z-50 relative">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<img alt="AKRASIA Logo" class="h-5 brightness-200 contrast-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbIRyHL6v51WJ2gR8Y8A3i5hqOWpoQqi8FNMXUCURsjdmuZZghvO9kbo52EQX-jVJOtmxiaqyCT17jLLDVuSlc12tey9UiqAOSr2JMF-0i_EWZ_K5zw32QYgMKYz6zg5XXq2ZdnRA5D2RutKUKfmZ31axtzWtin9CNrUxL9JOItvG1S_VQF4mMBS6klPgPZiL2woVb7p-ezfeXN6We5C4gjnz5rAe0slfPR0T98rhs9b6qcAOmZvcJEHHx7blmT3kR_vTw6xMMXDs"/>
+<span class="text-primary font-bold tracking-widest text-sm">AKRASIA // CMD_CENTER</span>
+</div>
+<div class="hidden md:flex gap-4 text-[10px] text-slate-500 uppercase tracking-tighter">
+<span class="text-primary/50">SYS: STABLE</span>
+<span>UPLINK: 42.8 GBPS</span>
+<span>AUTH: PRO_USER_99</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-[10px] font-bold">
+<span class="text-primary animate-pulse">● RECORDING</span>
+<span class="text-slate-400">00:42:15:09</span>
+<button class="bg-primary text-black px-4 py-1 angular-cut hover:bg-white transition-colors">INITIATE EXPORT</button>
+</div>
+</header>
+<main class="h-[calc(100vh-48px)] grid grid-cols-12 gap-1 p-1">
+<aside class="col-span-12 lg:col-span-2 flex flex-col gap-1 overflow-hidden">
+<div class="bg-panel cyber-border p-4 flex-none">
+<div class="text-[10px] text-primary mb-2 opacity-50">ACTIVE_PROJECT</div>
+<div class="text-sm font-bold truncate">NEON_ODYSSEY_V4</div>
+<div class="mt-4 flex gap-1">
+<div class="h-1 flex-1 bg-primary/20"><div class="h-full bg-primary w-2/3"></div></div>
+<div class="text-[8px]">64%</div>
+</div>
+</div>
+<div class="bg-panel cyber-border p-4 flex-1 flex flex-col gap-4 overflow-y-auto scroll-hide">
+<div class="text-[10px] text-primary opacity-50 uppercase tracking-widest">Resource_Nodes</div>
+<div class="space-y-4">
+<div class="group">
+<div class="flex justify-between text-[10px] mb-1">
+<span>GPU_CLUSTER_A</span>
+<span class="text-primary">88%</span>
+</div>
+<div class="h-[2px] bg-slate-800"><div class="h-full bg-primary w-[88%]"></div></div>
+</div>
+<div class="group">
+<div class="flex justify-between text-[10px] mb-1">
+<span>NEURAL_ENGINE</span>
+<span class="text-primary">42%</span>
+</div>
+<div class="h-[2px] bg-slate-800"><div class="h-full bg-primary w-[42%]"></div></div>
+</div>
+<div class="group">
+<div class="flex justify-between text-[10px] mb-1">
+<span>ASSET_REPO</span>
+<span class="text-primary">95%</span>
+</div>
+<div class="h-[2px] bg-slate-800"><div class="h-full bg-primary w-[95%]"></div></div>
+</div>
+</div>
+<div class="mt-8">
+<div class="text-[10px] text-primary opacity-50 mb-3 uppercase">AI_Generation_Live</div>
+<div class="space-y-2">
+<div class="text-[9px] border-l-2 border-primary/30 pl-2 py-1 bg-white/5">
+<span class="text-slate-500">12:04</span> Rendering Frame 492...
+                        </div>
+<div class="text-[9px] border-l-2 border-slate-700 pl-2 py-1">
+<span class="text-slate-500">12:03</span> Prompt context verified
+                        </div>
+<div class="text-[9px] border-l-2 border-slate-700 pl-2 py-1">
+<span class="text-slate-500">12:01</span> Material pass complete
+                        </div>
+</div>
+</div>
+</div>
+</aside>
+<section class="col-span-12 lg:col-span-7 flex flex-col gap-1 overflow-hidden">
+<div class="bg-panel cyber-border relative flex-1 overflow-hidden">
+<img class="w-full h-full object-cover opacity-60" data-alt="robotic cinema camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxm2n2obEEsPQlbdblJb54Hixu75Axy8COwvv0FLaQwysSDn2yD5h8-hKdw9-CSN6J759D6HWX6nA7wB3iKTEkQmTjWO2mbcmPpDh0DLsy-Ml--R3On-v56_b1uBdhvSQ5UgeyktwlbByBH3UU5ujf2fw-lA6Oyhvac4lv5Brqim5oq2DYpaBOZFNMFiU3BdjI9HvkkYDX8KCfmUSy3ZzDK4-PwLIYQq_8JQZModcHy4vVgcL5aXhVDeBJOhN1gIqzZf3Sv_3VQM0"/>
+<div class="absolute inset-0 pointer-events-none p-6 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="text-primary space-y-1">
+<div class="text-2xl font-black headline-font tracking-tighter glitch-text uppercase">100% AI Gen</div>
+<div class="text-[10px] tracking-[0.4em] opacity-70">DIRECTOR_MODE: ENABLED</div>
+</div>
+<div class="text-right text-[10px] text-primary/60">
+<div>RESOLUTION: 7680 x 4320</div>
+<div>CRUSH_RATIO: 1.33:1</div>
+</div>
+</div>
+<div class="flex justify-center">
+<div class="w-64 h-64 border border-primary/20 rounded-full flex items-center justify-center relative">
+<div class="absolute inset-0 border-4 border-primary/5 border-dashed rounded-full animate-[spin_10s_linear_infinite]"></div>
+<div class="text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-2">radar</span>
+<div class="text-[10px] font-bold">CORE_AI_ACTIVE</div>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div class="flex gap-4">
+<div class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm">
+<div class="text-[8px] opacity-50">CAM_LAT</div>
+<div class="text-xs">42.0019</div>
+</div>
+<div class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm">
+<div class="text-[8px] opacity-50">CAM_LONG</div>
+<div class="text-xs">-71.0492</div>
+</div>
+</div>
+<div class="text-[10px] uppercase font-bold text-primary tracking-widest">
+                            Cinema Engine // v8.4.1
+                        </div>
+</div>
+</div>
+</div>
+<div class="bg-panel cyber-border p-4 flex-none border-t-2 border-t-primary/20">
+<div class="flex gap-4 items-center">
+<div class="flex-none text-primary">
+<span class="material-symbols-outlined">terminal</span>
+</div>
+<div class="flex-1">
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm text-primary placeholder:text-primary/30 font-mono" placeholder="ENTER PRODUCTION DIRECTIVES (PROMPT)..." type="text"/>
+</div>
+<button class="bg-primary/10 border border-primary/40 text-primary px-6 py-2 text-[10px] font-black hover:bg-primary hover:text-black transition-all angular-cut">
+                        GENERATE
+                    </button>
+</div>
+</div>
+</section>
+<aside class="col-span-12 lg:col-span-3 flex flex-col gap-1 overflow-hidden">
+<div class="bg-panel cyber-border p-4 flex-1 flex flex-col overflow-hidden">
+<div class="text-[10px] text-primary opacity-50 mb-4 uppercase tracking-[0.2em] flex justify-between">
+<span>Master_Timeline</span>
+<span class="material-symbols-outlined text-xs">settings</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-2 scroll-hide">
+<div class="relative pl-4 border-l border-slate-800 py-2">
+<div class="absolute -left-1 top-3 w-2 h-2 bg-primary rounded-full"></div>
+<div class="text-[10px] font-bold text-primary">SCENE_01: THE_VOID</div>
+<div class="text-[9px] text-slate-500">DURATION: 04:12s | RENDER: DONE</div>
+</div>
+<div class="relative pl-4 border-l border-primary/40 py-2 bg-primary/5">
+<div class="absolute -left-1 top-3 w-2 h-2 bg-primary animate-pulse"></div>
+<div class="text-[10px] font-bold text-white">SCENE_02: CITY_PULSE</div>
+<div class="text-[9px] text-primary/70">DURATION: 12:00s | RENDERING...</div>
+</div>
+<div class="relative pl-4 border-l border-slate-800 py-2">
+<div class="absolute -left-1 top-3 w-2 h-2 bg-slate-700 rounded-full"></div>
+<div class="text-[10px] font-bold text-slate-600">SCENE_03: ASCENSION</div>
+<div class="text-[9px] text-slate-700">QUEUED</div>
+</div>
+<div class="pt-6">
+<div class="text-[9px] text-slate-500 uppercase mb-3">Recent_Outputs</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="aspect-video bg-slate-900 cyber-border group cursor-pointer overflow-hidden">
+<img class="object-cover w-full h-full opacity-50 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU"/>
+</div>
+<div class="aspect-video bg-slate-900 cyber-border group cursor-pointer overflow-hidden">
+<img class="object-cover w-full h-full opacity-50 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0"/>
+</div>
+<div class="aspect-video bg-slate-900 cyber-border group cursor-pointer overflow-hidden">
+<img class="object-cover w-full h-full opacity-50 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_jahNr4muf_2RPYh7NpX7zXRVhJ7Cxv9N1dzNq4tfnM_0bpndC3rRJW9rZ63-M-mJ5GCnxXce073AjWj_0qJmsviy4cb8COpCgQHanDph1euGaeZb9PGAhIxb9r6Kg9Zuv3XU-rLLWzjx1ZFhmZYSkpQYh6hI-fezL7LlEDrx9-2jX-xVxselfUSkBUHE0zhDTCguBI_PL_H-c9hbtq65bi__hfVPZ09IjraMratEA2FrVqUGcMMCf1I0I_9z9iP7_6umhZjgHqM"/>
+</div>
+<div class="aspect-video bg-slate-900 cyber-border flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700">add</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-panel cyber-border p-4 flex-none h-48 overflow-hidden">
+<div class="text-[10px] text-primary opacity-50 mb-2">SYSTEM_LOGS</div>
+<div class="text-[8px] space-y-1 font-mono leading-tight">
+<p class="text-slate-500">[14:22:01] <span class="text-green-500">SUCCESS:</span> Neural weight parity confirmed.</p>
+<p class="text-slate-500">[14:22:05] <span class="text-yellow-500">WARN:</span> V-RAM spike at node 0x77.</p>
+<p class="text-slate-500">[14:22:12] [INFO] Allocating additional threads.</p>
+<p class="text-slate-500">[14:22:15] [INFO] Buffering high-fidelity textures.</p>
+<p class="text-slate-500">[14:22:18] <span class="text-primary">CORE:</span> Synchronizing with creative intent.</p>
+</div>
+</div>
+</aside>
+</main>
+<footer class="h-8 flex items-center justify-between px-4 text-[9px] text-slate-600 bg-background border-t border-panel-border relative z-50">
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#">TERMINOLOGY</a>
+<a class="hover:text-primary" href="#">PROTOCOL</a>
+<a class="hover:text-primary" href="#">MANIFESTO</a>
+</div>
+<div>
+            AKRASIA.IO // BUILT_ON_NEURAL_INFRASTRUCTURE // ©2024
+        </div>
+<div class="flex gap-4">
+<span>PING: 2ms</span>
+<span class="text-primary">LOCKED_SESSION</span>
+</div>
+</footer>
+
+</body></html>
