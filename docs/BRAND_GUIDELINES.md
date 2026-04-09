@@ -1,6 +1,6 @@
-# AKRASIA STUDIO — Brand Guidelines v1.0
+# AKRASIA STUDIO — Brand Guidelines v1.1
 
-> **Version:** 1.0  
+> **Version:** 1.1  
 > **Fecha:** 2026-04-08  
 > **Documento de referencia para todo cambio en la web**
 
@@ -9,10 +9,58 @@
 ## 1. Identidad
 
 **Nombre:** AKRASIA STUDIO  
-**Tagline:** AI-Powered Cinema Engine  
+**Tagline:** "We don't prompt. We direct."  
 **Dominio:** akrasia.studio  
+**Ubicacion:** Barcelona  
+**Fundacion:** 2025  
 
-AKRASIA es una productora audiovisual donde la inteligencia artificial no es una herramienta, es el motor creativo. La marca comunica: precision, futuro, control cinematografico, y la convergencia entre arte y tecnologia.
+AKRASIA es una productora audiovisual de nueva generacion. Profesionales del sector con anos de oficio que han integrado la inteligencia artificial como nucleo de creacion — no como atajo, sino como ventaja creativa sin precedentes.
+
+### 1.1 Taglines
+
+| Uso | Tagline |
+|-----|---------|
+| Principal | **"We don't prompt. We direct."** |
+| Alternativa 1 | "Craft meets machine." |
+| Alternativa 2 | "Human vision. Machine power." |
+| Alternativa 3 | "The new studio. The new craft." |
+
+### 1.2 Pilares de Marca
+
+| Pilar | Significado | Traduccion |
+|-------|-------------|-----------|
+| **Oficio** | Anos de experiencia real en audiovisual | "No somos una agencia de prompts" |
+| **Tecnologia** | IA como ventaja competitiva, no como truco | Mostrar el proceso, los resultados |
+| **Resultado** | El cliente compra impacto, no proceso | Cases, metricas, piezas que hablan solas |
+
+### 1.3 Tono de Comunicacion
+
+**Akrasia ES:** Directo. Seguro. Creativo. Con autoridad tecnica sin ser friki.
+
+**Akrasia NO ES:** Hype vacio de IA. Agencia generica. Corporativo frio.
+
+**Referentes de tono:** Estudio de diseno europeo + mentalidad de startup tecnologica.
+
+### 1.4 Posicionamiento
+
+> *"Somos una productora audiovisual donde profesionales del sector usan IA para crear contenido que antes no era posible — para marcas que quieren destacar de verdad."*
+
+### 1.5 Manifesto
+
+> Durante decadas, hacer audiovisual de calidad requeria tiempo, presupuesto y equipos grandes.
+>
+> Eso cambio.
+>
+> En Akrasia Studio somos profesionales del audiovisual que decidimos no ignorar la revolucion que estaba pasando delante de nuestros ojos — sino liderarla.
+>
+> Usamos IA. Pero no como todo el mundo.
+> La usamos con criterio, con oficio y con una obsesion por el resultado creativo que solo dan los anos de experiencia en el sector.
+>
+> El resultado: contenido que antes era imposible. Por presupuesto, por tiempo, por escala.
+> Ahora no lo es.
+>
+> Esto no es el futuro de la produccion audiovisual.
+> Es el presente. Y nosotros ya estamos aqui.
 
 ---
 
@@ -336,8 +384,9 @@ tailwind.config = {
 
 ## 9. Control de Cambios
 
-Todo cambio en colores, fuentes o componentes debe actualizarse en este documento. La version actual es **1.0**.
+Todo cambio en colores, fuentes o componentes debe actualizarse en este documento. La version actual es **1.1**.
 
 | Fecha | Version | Cambio |
 |-------|---------|--------|
 | 2026-04-08 | 1.0 | Version inicial basada en analisis del codigo original |
+| 2026-04-08 | 1.1 | Anadida narrativa de marca, taglines, pilares, tono, manifesto. Ubicacion cambiada a Barcelona. |

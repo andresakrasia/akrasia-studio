@@ -67,8 +67,9 @@ Contenido adaptado a productora audiovisual:
 | Seccion | Contenido |
 |---------|-----------|
 | **Proyecto Activo** | Nombre del ultimo proyecto destacado + barra de progreso |
-| **Servicios** | Lista de servicios: Direction, Post, VFX, Sound, AI Gen |
-| **Sobre Nosotros** | Mini texto de identidad |
+| **Servicios** | Direction, AI Generation, VFX & Post, Sound Design, Branded Content |
+| **Sobre Nosotros** | "No somos una agencia de prompts. Somos directores, creadores y productores que han convertido la IA en su ventaja definitiva." |
+| **Tagline** | "We don't prompt. We direct." — visible en el viewport central |
 | **Estado en Vivo** | Logs simulados de actividad del estudio |
 
 ### 2.3 Center Panel (col-span-7) — Viewport Principal

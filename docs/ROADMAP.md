@@ -49,7 +49,7 @@
 | Efectos HUD | MEDIA | Scanlines, dot grid, glitch text |
 | Responsive basico | BAJA | Stack en movil (primera version) |
 
-**Criterio de aceptacion:** La web se ve identica al diseno original pero con contenido adaptado a Acrasia Studio.
+**Criterio de aceptacion:** La web se ve identica al diseno original pero con contenido adaptado a akrasia  Studio.
 
 ---
 

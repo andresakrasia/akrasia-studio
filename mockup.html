@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AKRASIA STUDIO | AI Cinema Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#00f0ff",
+        "background": "#050505",
+        "panel": "rgba(10, 10, 10, 0.6)",
+        "panel-border": "rgba(0, 240, 255, 0.2)",
+        "accent-dim": "#003a3d"
+      },
+      fontFamily: {
+        "headline": ["Space Grotesk"],
+        "mono": ["JetBrains Mono"]
+      }
+    },
+  },
+  corePlugins: {
+    preflight: false
+  }
+}
+</script>
+</head>
+<body class="relative h-screen flex flex-col">
+
+<!-- Full-screen Background -->
+<div class="fixed inset-0 z-0">
+  <img alt="viewport" class="w-full h-full object-cover brightness-[0.3]" src="docs/Img/out.jpg"/>
+  <div class="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background/80"></div>
+  <div class="hud-scanline absolute inset-0"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HEADER                                      -->
+<!-- ═══════════════════════════════════════════ -->
+<header class="h-12 flex items-center justify-between px-3 lg:px-4 z-50 relative glass-panel">
+  <div class="flex items-center gap-3 lg:gap-6">
+    <div class="flex items-center gap-2">
+      <div class="w-5 h-5 bg-primary/20 border border-primary/40 flex items-center justify-center">
+        <div class="w-2 h-2 bg-primary"></div>
+      </div>
+      <span class="text-primary font-bold tracking-widest text-xs lg:text-sm font-headline">AKRASIA <span class="text-slate-500 font-light">//</span> STUDIO</span>
+    </div>
+    <div class="hidden md:flex gap-4 text-[10px] text-slate-500 uppercase tracking-tighter">
+      <span class="text-primary/50">ENGINE: ACTIVE</span>
+      <span>STUDIO: ONLINE</span>
+      <span>SESSION: VISITOR</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 lg:gap-4 text-[10px] font-bold">
+    <span class="text-primary animate-pulse items-center gap-1 hidden sm:flex">
+      <span class="material-symbols-outlined text-sm">circle</span> EN DIRECTO
+    </span>
+    <span class="text-slate-400 font-mono hidden sm:inline">18:17:58</span>
+    <button class="bg-primary text-black px-3 lg:px-4 py-1 angular-cut hover:bg-white transition-colors uppercase tracking-wider text-[9px] lg:text-[10px]">Iniciar Proyecto</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MAIN GRID                                   -->
+<!-- ═══════════════════════════════════════════ -->
+<main class="flex-1 grid grid-cols-12 gap-3 p-2 lg:p-4 z-10 overflow-hidden lg:overflow-hidden overflow-y-auto scroll-hide">
+
+<!-- ┌─────────────────────────────────────────┐ -->
+<!-- │ LEFT PANEL — Info + Servicios           │ -->
+<!-- └─────────────────────────────────────────┘ -->
+<aside class="col-span-12 lg:col-span-2 flex flex-col gap-3 lg:overflow-hidden">
+
+  <!-- Sobre Nosotros -->
+  <div class="glass-panel p-3 lg:p-4 flex-none">
+    <div class="text-[10px] text-primary mb-2 opacity-50 uppercase tracking-widest">Sobre_Nosotros</div>
+    <p class="text-[10px] text-slate-400 leading-relaxed">
+      No somos una agencia de prompts.<br/>
+      Somos directores, creadores y productores<br/>
+      que han convertido la IA en su ventaja definitiva.
+    </p>
+    <p class="text-[9px] text-primary/50 mt-2 italic">Hacemos lo que antes no era posible.</p>
+    <div class="mt-3 flex gap-2">
+      <div class="text-[8px] px-2 py-1 border border-primary/20 text-primary/70">AI Cinema</div>
+      <div class="text-[8px] px-2 py-1 border border-slate-800 text-slate-500">Barcelona</div>
+      <div class="text-[8px] px-2 py-1 border border-slate-800 text-slate-500">Est. 2025</div>
+    </div>
+  </div>
+
+  <!-- Servicios -->
+  <div class="glass-panel p-3 lg:p-4 flex-1 flex flex-col gap-3 lg:overflow-y-auto scroll-hide">
+    <div class="text-[10px] text-primary opacity-50 uppercase tracking-widest">Servicios</div>
+    <div class="space-y-1">
+      <div class="service-item flex items-center gap-2 py-2 px-2 border-l-2 border-primary/40">
+        <span class="material-symbols-outlined text-primary text-sm">movie</span>
+        <div>
+          <div class="text-[10px] font-bold text-slate-300">Direction</div>
+          <div class="text-[8px] text-slate-600">Direccion creativa con criterio humano e IA</div>
+        </div>
+      </div>
+      <div class="service-item flex items-center gap-2 py-2 px-2 border-l-2 border-slate-700">
+        <span class="material-symbols-outlined text-slate-500 text-sm">auto_fix_high</span>
+        <div>
+          <div class="text-[10px] font-bold text-slate-300">AI Generation</div>
+          <div class="text-[8px] text-slate-600">Contenido generado y supervisado al 100%</div>
+        </div>
+      </div>
+      <div class="service-item flex items-center gap-2 py-2 px-2 border-l-2 border-slate-700">
+        <span class="material-symbols-outlined text-slate-500 text-sm">layers</span>
+        <div>
+          <div class="text-[10px] font-bold text-slate-300">VFX & Post</div>
+          <div class="text-[8px] text-slate-600">Efectos visuales y postproduccion avanzada</div>
+        </div>
+      </div>
+      <div class="service-item flex items-center gap-2 py-2 px-2 border-l-2 border-slate-700">
+        <span class="material-symbols-outlined text-slate-500 text-sm">graphic_eq</span>
+        <div>
+          <div class="text-[10px] font-bold text-slate-300">Sound Design</div>
+          <div class="text-[8px] text-slate-600">Diseno sonoro inmersivo</div>
+        </div>
+      </div>
+      <div class="service-item flex items-center gap-2 py-2 px-2 border-l-2 border-slate-700">
+        <span class="material-symbols-outlined text-slate-500 text-sm">campaign</span>
+        <div>
+          <div class="text-[10px] font-bold text-slate-300">Branded Content</div>
+          <div class="text-[8px] text-slate-600">Piezas unicas para marcas que quieren destacar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado del estudio -->
+    <div class="mt-4 pt-4 border-t border-panel-border">
+      <div class="text-[10px] text-primary opacity-50 mb-3 uppercase">Studio_Status</div>
+      <div class="space-y-3">
+        <div>
+          <div class="flex justify-between text-[10px] mb-1">
+            <span class="text-slate-300">Proyectos en curso</span>
+            <span class="text-primary font-bold">3</span>
+          </div>
+          <div class="h-[2px] bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-primary progress-glow rounded-full w-[60%]"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] mb-1">
+            <span class="text-slate-300">Piezas entregadas</span>
+            <span class="text-primary font-bold">24</span>
+          </div>
+          <div class="h-[2px] bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-primary/70 progress-glow rounded-full w-[24%]"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] mb-1">
+            <span class="text-slate-300">Clientes activos</span>
+            <span class="text-primary font-bold">7</span>
+          </div>
+          <div class="h-[2px] bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-primary/50 progress-glow rounded-full w-[14%]"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed IA en vivo -->
+    <div class="mt-4 pt-4 border-t border-panel-border">
+      <div class="text-[10px] text-primary opacity-50 mb-3 uppercase">AI_Generation_Live</div>
+      <div class="space-y-2">
+        <div class="text-[9px] border-l-2 border-primary/30 pl-2 py-1 bg-primary/5">
+          <span class="text-primary/50">18:17</span> <span class="text-slate-300">Render 4K finalizado — NEON ODYSSEY</span>
+        </div>
+        <div class="text-[9px] border-l-2 border-primary/20 pl-2 py-1">
+          <span class="text-primary/50">18:15</span> <span class="text-slate-300">Color grade exportado — ASCENSION</span>
+        </div>
+        <div class="text-[9px] border-l-2 border-slate-700 pl-2 py-1">
+          <span class="text-slate-400">18:12</span> <span class="text-slate-300">Sesion de cliente iniciada</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ┌─────────────────────────────────────────┐ -->
+<!-- │ CENTER PANEL — Viewport + Chat Input    │ -->
+<!-- └─────────────────────────────────────────┘ -->
+<section class="hidden lg:flex col-span-12 lg:col-span-7 flex-col gap-3 overflow-hidden">
+
+  <!-- Viewport Principal -->
+  <div class="relative flex-1 overflow-hidden border border-white/5">
+
+    <!-- HUD Overlay (header del viewport) -->
+    <div class="absolute inset-0 pointer-events-none p-6 flex flex-col justify-between z-[5]">
+      <div class="flex justify-between items-start">
+        <div class="text-primary space-y-1">
+          <div class="text-2xl font-black font-headline tracking-tighter glitch-text uppercase">Akrasia Studio</div>
+          <div class="text-[10px] tracking-[0.4em] opacity-70" id="engineStatus">AI_CINEMA_ENGINE: ONLINE</div>
+        </div>
+        <div class="text-right text-[10px] text-primary/60">
+          <div>RESOLUCION: 7680 x 4320</div>
+          <div>ASPECTO: 2.39:1</div>
+          <div>COLOR: ACES</div>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <div class="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
+        <div class="text-[11px] text-white/80 font-headline font-light tracking-[0.3em] italic"><span id="typewriter"></span><span class="text-primary/60" id="tw-cursor">_</span></div>
+        <div class="text-[8px] text-slate-500 mt-2 tracking-wider">Productora audiovisual de nueva generacion. Profesionales del sector. Tecnologia sin limites.</div>
+      </div>
+
+      <!-- Datos Inferiores -->
+      <div class="flex justify-between items-end">
+        <div class="flex gap-3">
+          <div class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm">
+            <div class="text-[8px] opacity-50">UBICACION</div>
+            <div class="text-xs">BARCELONA</div>
+          </div>
+          <div class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm">
+            <div class="text-[8px] opacity-50">MODO</div>
+            <div class="text-xs">STUDIO</div>
+          </div>
+        </div>
+        <div class="text-[10px] uppercase font-bold text-primary tracking-widest">
+          Akrasia Studio // v1.0
+        </div>
+      </div>
+    </div>
+
+    <!-- Radar Animado -->
+    <div class="radar-container">
+      <div class="radar-ring radar-ring-outer"></div>
+      <div class="radar-ring radar-ring-mid"></div>
+      <div class="radar-ring radar-ring-inner"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-cross"></div>
+      <div class="radar-core"></div>
+      <div class="radar-label">AI ENGINE</div>
+    </div>
+
+    <!-- Chat Bubbles Layer (flotando sobre el viewport) -->
+    <div class="chat-layer" id="chatLayer">
+
+      <!-- Bubble Agente (bienvenida) -->
+      <div class="chat-bubble-agent">
+        <div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+          AGENTE_AKRASIA
+        </div>
+        <div class="text-[11px] text-slate-200 leading-relaxed">
+          Hola. Soy el agente de Akrasia Studio. Estoy aqui para ayudarte con informacion sobre nuestros servicios, presupuestos o cualquier consulta. Que necesitas?
+        </div>
+      </div>
+
+      <!-- Bubble Usuario -->
+      <div class="chat-bubble-user text-right">
+        <div class="text-[8px] text-primary/50 mb-1">TU</div>
+        <div class="text-[11px] text-primary/90 leading-relaxed">
+          Hola, me gustaria saber mas sobre vuestros servicios de branded content
+        </div>
+      </div>
+
+      <!-- Bubble Agente (respuesta) -->
+      <div class="chat-bubble-agent">
+        <div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+          AGENTE_AKRASIA
+        </div>
+        <div class="text-[11px] text-slate-200 leading-relaxed">
+          Nuestro Branded Content crea piezas unicas para marcas que quieren destacar. Combinamos direccion creativa con IA para lograr resultados que antes eran imposibles por presupuesto o tiempo.
+        </div>
+        <div class="mt-2 flex gap-2">
+          <div class="text-[8px] px-2 py-1 border border-primary/20 text-primary/60 cursor-pointer hover:bg-primary/10 transition-colors">Ver ejemplos</div>
+          <div class="text-[8px] px-2 py-1 border border-primary/20 text-primary/60 cursor-pointer hover:bg-primary/10 transition-colors">Pedir presupuesto</div>
+        </div>
+      </div>
+
+      <!-- Bubble Usuario -->
+      <div class="chat-bubble-user text-right">
+        <div class="text-[8px] text-primary/50 mb-1">TU</div>
+        <div class="text-[11px] text-primary/90 leading-relaxed">
+          Cuanto costaria un spot de 30 segundos?
+        </div>
+      </div>
+
+      <!-- Bubble Agente (respuesta) -->
+      <div class="chat-bubble-agent">
+        <div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+          AGENTE_AKRASIA
+        </div>
+        <div class="text-[11px] text-slate-200 leading-relaxed">
+          Depende del alcance creativo, pero un spot de 30s con nuestra tecnologia suele estar entre un 40-70% por debajo de una produccion tradicional. Si me cuentas mas sobre tu proyecto te puedo dar una estimacion mas precisa.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Chat Input -->
+  <div class="bg-black/30 backdrop-blur-sm p-4 flex-none border border-white/5">
+    <div class="flex gap-4 items-center">
+      <div class="flex-none text-primary">
+        <span class="material-symbols-outlined">forum</span>
+      </div>
+      <div class="flex-1 relative">
+        <textarea id="chatInput" class="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-sm text-primary placeholder:text-primary/30 font-mono resize-none leading-5" rows="1" placeholder="Escribe tu mensaje al agente AKRASIA..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+        <span class="blink-cursor absolute right-0 top-1/2 -translate-y-1/2 text-primary/30 text-sm hidden" id="cursor"></span>
+      </div>
+      <button onclick="sendMessage()" class="bg-primary/10 border border-primary/40 text-primary px-6 py-2 text-[10px] font-black hover:bg-primary hover:text-black transition-all angular-cut uppercase tracking-wider">
+        Enviar
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ┌─────────────────────────────────────────┐ -->
+<!-- │ RIGHT PANEL — Portfolio + Timeline      │ -->
+<!-- └─────────────────────────────────────────┘ -->
+<aside class="col-span-12 lg:col-span-3 flex flex-col gap-3 lg:overflow-hidden">
+
+  <!-- Portfolio Reciente (solo texto, scroll independiente) -->
+  <div class="glass-panel p-3 lg:p-4 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto">
+    <div class="text-[10px] text-primary opacity-50 mb-4 uppercase tracking-[0.2em] flex justify-between items-center">
+      <span>Portfolio_Reciente</span>
+      <span class="material-symbols-outlined text-xs text-slate-600 cursor-pointer hover:text-primary transition-colors">tune</span>
+    </div>
+    <div class="flex-1 overflow-y-auto space-y-2 scroll-hide">
+
+      <div class="timeline-item relative pl-4 border-l border-primary/40 py-3 bg-primary/5 rounded-r">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-primary animate-pulse rounded-full"></div>
+        <div class="text-[10px] font-bold text-white">NEON ODYSSEY</div>
+        <div class="text-[9px] text-primary/70">Spot publicitario | 30s | En produccion</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-primary rounded-full"></div>
+        <div class="text-[10px] font-bold text-primary">CITY PULSE</div>
+        <div class="text-[9px] text-slate-500">Videoclip musical | 3:42s | Completado</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">VOID FRAGMENTS</div>
+        <div class="text-[9px] text-slate-500">Corto experimental | 12:00s | Completado</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">ASCENSION</div>
+        <div class="text-[9px] text-slate-500">Branded content | 60s | Completado</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">SIGNAL NOIR</div>
+        <div class="text-[9px] text-slate-500">Fashion film | 45s | Completado</div>
+      </div>
+
+      <!-- Duplicado para test scroll -->
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">CHROME DREAMS</div>
+        <div class="text-[9px] text-slate-500">Documental | 25:00s | Completado</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">ECHO CHAMBER</div>
+        <div class="text-[9px] text-slate-500">Instalacion inmersiva | Loop | Completado</div>
+      </div>
+
+      <div class="timeline-item relative pl-4 border-l border-slate-800 py-3">
+        <div class="absolute -left-1 top-4 w-2 h-2 bg-slate-600 rounded-full"></div>
+        <div class="text-[10px] font-bold text-slate-400">SILICON DAWN</div>
+        <div class="text-[9px] text-slate-500">Branded content | 45s | Completado</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Trabajos (solo imagenes, scroll independiente) -->
+  <div class="glass-panel p-3 lg:p-4 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto order-first lg:order-none">
+    <div class="text-[10px] text-primary opacity-50 mb-4 uppercase tracking-[0.2em]">Trabajos</div>
+    <div class="flex-1 overflow-y-auto scroll-hide">
+      <div class="grid grid-cols-2 gap-2">
+        <div class="thumb-card aspect-video glass-bubble overflow-hidden relative group">
+          <img class="object-cover w-full h-full opacity-40 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU" alt="Neon Odyssey"/>
+          <div class="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/80 to-transparent">
+            <div class="text-[7px] text-primary font-bold">NEON ODYSSEY</div>
+          </div>
+        </div>
+        <div class="thumb-card aspect-video glass-bubble overflow-hidden relative group">
+          <img class="object-cover w-full h-full opacity-40 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0" alt="City Pulse"/>
+          <div class="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/80 to-transparent">
+            <div class="text-[7px] text-primary font-bold">CITY PULSE</div>
+          </div>
+        </div>
+        <div class="thumb-card aspect-video glass-bubble overflow-hidden relative group">
+          <img class="object-cover w-full h-full opacity-40 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_jahNr4muf_2RPYh7NpX7zXRVhJ7Cxv9N1dzNq4tfnM_0bpndC3rRJW9rZ63-M-mJ5GCnxXce073AjWj_0qJmsviy4cb8COpCgQHanDph1euGaeZb9PGAhIxb9r6Kg9Zuv3XU-rLLWzjx1ZFhmZYSkpQYh6hI-fezL7LlEDrx9-2jX-xVxselfUSkBUHE0zhDTCguBI_PL_H-c9hbtq65bi__hfVPZ09IjraMratEA2FrVqUGcMMCf1I0I_9z9iP7_6umhZjgHqM" alt="Void Fragments"/>
+          <div class="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/80 to-transparent">
+            <div class="text-[7px] text-primary font-bold">VOID FRAGMENTS</div>
+          </div>
+        </div>
+        <div class="thumb-card aspect-video glass-bubble overflow-hidden relative group">
+          <img class="object-cover w-full h-full opacity-40 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU" alt="Ascension"/>
+          <div class="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/80 to-transparent">
+            <div class="text-[7px] text-primary font-bold">ASCENSION</div>
+          </div>
+        </div>
+        <div class="thumb-card aspect-video glass-bubble overflow-hidden relative group">
+          <img class="object-cover w-full h-full opacity-40 transition-all duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0" alt="Signal Noir"/>
+          <div class="absolute bottom-0 left-0 right-0 p-1 bg-gradient-to-t from-black/80 to-transparent">
+            <div class="text-[7px] text-primary font-bold">SIGNAL NOIR</div>
+          </div>
+        </div>
+        <div class="thumb-card aspect-video glass-bubble flex items-center justify-center">
+          <span class="material-symbols-outlined text-slate-700 hover:text-primary transition-colors">add</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Logs -->
+  <div class="glass-panel p-3 lg:p-4 flex-none h-32 lg:h-36 overflow-hidden">
+    <div class="text-[10px] text-primary opacity-50 mb-2">Estudio_Logs</div>
+    <div class="text-[8px] space-y-1 font-mono leading-tight">
+      <p class="text-slate-500">[18:17:32] <span class="text-green-500">LISTO:</span> Motor de IA sincronizado.</p>
+      <p class="text-slate-500">[18:17:28] <span class="text-primary">CORE:</span> Agente Acrasia conectado.</p>
+      <p class="text-slate-500">[18:17:15] <span class="text-yellow-500">AVISO:</span> Nuevo proyecto en cola.</p>
+      <p class="text-slate-500">[18:17:02] [INFO] Render 4K finalizado.</p>
+    </div>
+  </div>
+</aside>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FLOATING CHAT BUTTON (mobile only)         -->
+<!-- ═══════════════════════════════════════════ -->
+<button id="chatFab" class="lg:hidden fixed bottom-6 right-6 z-[100] w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform" onclick="toggleMobileChat()">
+  <span class="material-symbols-outlined text-black text-2xl" id="fabIcon">forum</span>
+</button>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MOBILE CHAT OVERLAY                         -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="mobileChatOverlay" class="lg:hidden fixed inset-0 z-[90] hidden flex-col" style="display:none;">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMobileChat()"></div>
+  <div class="absolute inset-x-0 bottom-0 top-14 flex flex-col z-10">
+    <div class="glass-panel m-2 flex-1 flex flex-col overflow-hidden">
+      <div class="p-3 flex items-center justify-between border-b border-white/5">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-sm">smart_toy</span>
+          <span class="text-primary text-[10px] font-bold uppercase tracking-widest">Agente_Akrasia</span>
+        </div>
+        <button onclick="toggleMobileChat()" class="w-7 h-7 border border-primary/30 hover:border-primary hover:bg-primary/10 flex items-center justify-center transition-all angular-cut">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="stroke-primary/60 hover:stroke-primary transition-colors"><line x1="1" y1="1" x2="11" y2="11" stroke-width="1.5"/><line x1="11" y1="1" x2="1" y2="11" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+      <div id="mobileChatLayer" class="flex-1 overflow-y-auto p-3 space-y-3 scroll-hide">
+        <div class="chat-bubble-agent">
+          <div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+            AGENTE_AKRASIA
+          </div>
+          <div class="text-[11px] text-slate-200 leading-relaxed">
+            Hola. Soy el agente de Akrasia Studio. En que puedo ayudarte?
+          </div>
+        </div>
+      </div>
+      <div class="p-3 border-t border-white/5">
+        <div class="flex gap-3 items-center">
+          <textarea id="mobileChatInput" class="flex-1 bg-transparent border border-white/10 focus:ring-0 focus:outline-none text-sm text-primary placeholder:text-primary/30 font-mono px-3 py-2 rounded resize-none leading-5" rows="1" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMobileMessage()}"></textarea>
+          <button onclick="sendMobileMessage()" class="bg-primary text-black px-4 py-2 text-[10px] font-black hover:bg-white transition-all angular-cut uppercase">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FOOTER                                      -->
+<!-- ═══════════════════════════════════════════ -->
+<footer class="h-8 items-center justify-between px-4 text-[9px] text-slate-600 glass-panel z-50 hidden lg:flex">
+  <div class="flex gap-4">
+    <a class="nav-link" href="#">Manifiesto</a>
+    <a class="nav-link" href="#">Proyectos</a>
+    <a class="nav-link" href="#">Contacto</a>
+  </div>
+  <div>
+    AKRASIA.STUDIO <span class="text-slate-700">//</span> AI_CINEMA_ENGINE <span class="text-slate-700">//</span> &copy;2025
+  </div>
+  <div class="flex gap-4">
+    <span>PING: 2ms</span>
+    <span class="text-primary">SESION ACTIVA</span>
+  </div>
+</footer>
+
+<!-- Mobile Footer -->
+<footer class="lg:hidden p-3 text-[9px] text-slate-600 glass-panel z-50 mt-2 mb-16">
+  <div class="flex justify-center gap-6 mb-2">
+    <a class="nav-link" href="#">Manifiesto</a>
+    <a class="nav-link" href="#">Proyectos</a>
+    <a class="nav-link" href="#">Contacto</a>
+  </div>
+  <div class="text-center text-[8px] text-slate-700">
+    AKRASIA.STUDIO // AI_CINEMA_ENGINE // &copy;2025
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CUSTOM STYLES (after Tailwind to override) -->
+<!-- ═══════════════════════════════════════════ -->
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #050505;
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+  overflow: hidden;
+  height: 100vh;
+}
+@media (max-width: 1023px) {
+  body { overflow-y: auto; height: auto; }
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+.hud-scanline {
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 240, 255, 0.01) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+.angular-cut {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+.glass-panel {
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent 0%, transparent 70%, rgba(0, 240, 255, 0.12) 80%, transparent 90%, transparent 100%);
+  animation: borderSweep var(--sweep-speed, 8s) linear infinite var(--sweep-dir, normal);
+  animation-delay: var(--sweep-delay, 0s);
+  z-index: 0;
+}
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: rgba(10, 10, 10, 0.65);
+  border-radius: inherit;
+  z-index: 0;
+}
+.glass-panel > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes borderSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.glass-bubble {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-bubble:hover {
+  transform: translateY(-2px) translateZ(10px);
+  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+.progress-glow {
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+.glitch-text {
+  text-shadow: 1px 0 #00f0ff44, -1px 0 #ff00ff22;
+}
+.scroll-hide::-webkit-scrollbar { display: none; }
+.scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.blink-cursor::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+  color: #00f0ff;
+}
+.nav-link {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #00f0ff;
+  transition: width 0.3s ease;
+}
+.nav-link:hover::after { width: 100%; }
+.nav-link:hover { color: #00f0ff; }
+.nav-link.active { color: #00f0ff; }
+.nav-link.active::after { width: 100%; }
+.service-item { transition: all 0.5s ease; cursor: pointer; }
+.service-item:hover { background: rgba(0, 240, 255, 0.03); padding-left: 8px; }
+.service-item.service-highlight {
+  background: rgba(0, 240, 255, 0.06);
+  padding-left: 8px;
+}
+.service-item.service-highlight .material-symbols-outlined {
+  color: #00f0ff;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.5));
+  animation: iconPulse 0.6s ease;
+}
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+#tw-cursor {
+  animation: blink 0.7s step-end infinite;
+}
+.timeline-item { transition: all 0.2s ease; cursor: pointer; }
+.timeline-item:hover { background: rgba(0, 240, 255, 0.05); }
+.thumb-card { transition: all 0.3s ease; cursor: pointer; }
+.thumb-card img { transition: all 0.3s ease; }
+.thumb-card:hover img { opacity: 1 !important; transform: scale(1.08); }
+.chat-layer {
+  position: absolute; inset: 0; overflow-y: auto;
+  padding: 20px 24px; display: flex; flex-direction: column;
+  justify-content: flex-end; gap: 12px; z-index: 10; pointer-events: none;
+}
+.chat-layer::-webkit-scrollbar { display: none; }
+.chat-layer { -ms-overflow-style: none; scrollbar-width: none; }
+.chat-bubble-user {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.15) !important;
+  border-right: 2px solid rgba(0, 240, 255, 0.4) !important;
+  border-radius: 12px 2px 2px 12px; padding: 10px 14px;
+  max-width: 75%; align-self: flex-end; margin-left: auto;
+  animation: bubbleIn 0.3s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  pointer-events: auto;
+}
+.chat-bubble-agent {
+  background: rgba(10, 10, 10, 0.5);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.1) !important;
+  border-left: 2px solid rgba(0, 240, 255, 0.25) !important;
+  border-radius: 2px 12px 12px 2px; padding: 10px 14px;
+  max-width: 80%; align-self: flex-start; animation: bubbleIn 0.4s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  pointer-events: auto;
+}
+@keyframes bubbleIn {
+  0% { opacity: 0; transform: translateY(12px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.radar-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  z-index: 3;
+  pointer-events: none;
+}
+.radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.radar-ring-outer {
+  width: 220px;
+  height: 220px;
+  border-width: 1px;
+  border-color: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+}
+.radar-ring-mid {
+  width: 150px;
+  height: 150px;
+  border-color: rgba(0, 240, 255, 0.1);
+}
+.radar-ring-inner {
+  width: 80px;
+  height: 80px;
+  border-color: rgba(0, 240, 255, 0.08);
+}
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 110px;
+  height: 110px;
+  transform-origin: 0 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(0, 240, 255, 0.15) 40deg,
+    transparent 80deg
+  );
+  animation: radarSweep 4s linear infinite;
+  border-radius: 0 110px 110px 0;
+}
+.radar-cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+}
+.radar-cross::before,
+.radar-cross::after {
+  content: '';
+  position: absolute;
+  background: rgba(0, 240, 255, 0.06);
+}
+.radar-cross::before {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+.radar-cross::after {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+.radar-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #00f0ff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.6), 0 0 30px rgba(0, 240, 255, 0.2);
+  animation: radarPulse 2s ease-in-out infinite;
+}
+.radar-label {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: rgba(0, 240, 255, 0.4);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@keyframes radarSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes radarPulse {
+  0%, 100% { opacity: 0.6; box-shadow: 0 0 12px rgba(0, 240, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.15); }
+  50% { opacity: 1; box-shadow: 0 0 18px rgba(0, 240, 255, 0.7), 0 0 40px rgba(0, 240, 255, 0.3); }
+}
+</style>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCRIPTS BASICOS (DEMO)                     -->
+<!-- ═══════════════════════════════════════════ -->
+<script>
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const chatLayer = document.getElementById('chatLayer');
+
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble-user';
+  userBubble.innerHTML = `
+    <div class="text-right"><div class="text-[8px] text-primary/50 mb-1">TU</div>
+    <div class="text-[11px] text-primary/90 leading-relaxed">${msg}</div></div>
+  `;
+  chatLayer.appendChild(userBubble);
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  setTimeout(() => {
+    const responses = [
+      "Entendido. En Akrasia Studio trabajamos con marcas que buscan un impacto visual real. Puedo prepararte una propuesta personalizada si me das mas detalles.",
+      "Buena pregunta. Nuestra ventaja es que combinamos oficio profesional con tecnologia IA, lo que nos permite entregar resultados de alto nivel en tiempos y presupuestos ajustados.",
+      "Podemos adaptarnos a cualquier formato: spots, videoclips, fashion films, cortos experimentales... Todo con la estética cinematográfica que nos define.",
+      "Si quieres, puedo mostrarte ejemplos de nuestro portfolio reciente. Tenemos piezas en NEON ODYSSEY, CITY PULSE y VOID FRAGMENTS que te pueden dar una idea clara.",
+      "Para un presupuesto exacto necesito saber: formato, duracion estimada, estilo visual y fecha limite. Con esos datos te lo preparo en minutos.",
+      "Nuestro proceso es sencillo: brief creativo, pre-produccion con IA, produccion, post y entrega. Todo supervisado por profesionales del sector.",
+    ];
+
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+    const agentBubble = document.createElement('div');
+    agentBubble.className = 'chat-bubble-agent';
+    agentBubble.innerHTML = `
+      <div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+        AGENTE_AKRASIA
+      </div>
+      <div class="text-[11px] text-slate-200 leading-relaxed">${randomResponse}</div>
+    `;
+    chatLayer.appendChild(agentBubble);
+
+    chatLayer.scrollTop = chatLayer.scrollHeight;
+  }, 800);
+
+  chatLayer.scrollTop = chatLayer.scrollHeight;
+}
+
+const input = document.getElementById('chatInput');
+input.addEventListener('focus', () => {
+  document.getElementById('cursor').classList.remove('hidden');
+});
+input.addEventListener('blur', () => {
+  document.getElementById('cursor').classList.add('hidden');
+});
+
+// Animacion secuencial de servicios
+(function() {
+  const services = document.querySelectorAll('.service-item');
+  let current = 0;
+  setInterval(() => {
+    services.forEach(s => s.classList.remove('service-highlight'));
+    services[current].classList.add('service-highlight');
+    current = (current + 1) % services.length;
+  }, 2500);
+})();
+
+// Rotacion de texto del engine status — typewriter
+(function() {
+  const el = document.getElementById('engineStatus');
+  const messages = [
+    "AI_CINEMA_ENGINE: ONLINE",
+    "DIRECCION_CREATIVA: ACTIVA",
+    "CREACION_DE_CONTENIDO: READY",
+    "PRODUCTOS_AUDIOVISUALES: ON",
+    "CONTENIDO_PARA_MARCAS: LIVE",
+    "POSTPRODUCCION_AVANZADA: SYNC",
+    "DISENO_SONORO: ENGAGED",
+  ];
+  let idx = 0;
+  let charIdx = 0;
+  let deleting = false;
+
+  function tick() {
+    const current = messages[idx];
+    if (!deleting) {
+      charIdx++;
+      el.textContent = current.substring(0, charIdx);
+      if (charIdx === current.length) {
+        deleting = true;
+        setTimeout(tick, 2500);
+        return;
+      }
+      setTimeout(tick, 50);
+    } else {
+      charIdx--;
+      el.textContent = current.substring(0, charIdx);
+      if (charIdx === 0) {
+        deleting = false;
+        idx = (idx + 1) % messages.length;
+        setTimeout(tick, 300);
+        return;
+      }
+      setTimeout(tick, 25);
+    }
+  }
+
+  el.textContent = '';
+  setTimeout(tick, 500);
+})();
+
+// Typewriter effect para tagline
+(function() {
+  const phrases = [
+    '"We don\'t prompt. We direct."',
+    '"Craft meets machine."',
+    '"Human vision. Machine power."',
+    '"The new studio. The new craft."',
+  ];
+  const el = document.getElementById('typewriter');
+  const cursor = document.getElementById('tw-cursor');
+  let phraseIdx = 0;
+  let charIdx = 0;
+  let deleting = false;
+  let paused = false;
+
+  function tick() {
+    const current = phrases[phraseIdx];
+
+    if (paused) {
+      paused = false;
+      deleting = true;
+      setTimeout(tick, 1500);
+      return;
+    }
+
+    if (!deleting) {
+      charIdx++;
+      el.textContent = current.substring(0, charIdx);
+      if (charIdx === current.length) {
+        paused = true;
+        setTimeout(tick, 3000);
+        return;
+      }
+      setTimeout(tick, 65);
+    } else {
+      charIdx--;
+      el.textContent = current.substring(0, charIdx);
+      if (charIdx === 0) {
+        deleting = false;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        setTimeout(tick, 400);
+        return;
+      }
+      setTimeout(tick, 30);
+    }
+  }
+
+  setTimeout(tick, 1000);
+})();
+
+// Randomizar velocidad y direccion de border sweep por panel
+(function() {
+  document.querySelectorAll('.glass-panel').forEach(panel => {
+    const speed = (6 + Math.random() * 10).toFixed(1);
+    const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
+    const delay = (-Math.random() * 10).toFixed(1);
+    panel.style.setProperty('--sweep-speed', speed + 's');
+    panel.style.setProperty('--sweep-dir', dir);
+    panel.style.setProperty('--sweep-delay', delay + 's');
+  });
+})();
+
+// Textarea autogrow (max 3 lines)
+document.querySelectorAll('#chatInput, #mobileChatInput').forEach(ta => {
+  ta.addEventListener('input', function() {
+    this.style.height = 'auto';
+    const lh = parseFloat(getComputedStyle(this).lineHeight) || 20;
+    this.style.height = Math.min(this.scrollHeight, lh * 3) + 'px';
+  });
+});
+
+// Mobile chat
+function toggleMobileChat() {
+  const overlay = document.getElementById('mobileChatOverlay');
+  const fab = document.getElementById('chatFab');
+  if (overlay.style.display === 'none' || !overlay.style.display) {
+    overlay.style.display = 'flex';
+    fab.style.display = 'none';
+  } else {
+    overlay.style.display = 'none';
+    fab.style.display = 'flex';
+  }
+}
+
+function sendMobileMessage() {
+  const input = document.getElementById('mobileChatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const layer = document.getElementById('mobileChatLayer');
+
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble-user';
+  userBubble.innerHTML = `<div class="text-right"><div class="text-[8px] text-primary/50 mb-1">TU</div><div class="text-[11px] text-primary/90 leading-relaxed">${msg}</div></div>`;
+  layer.appendChild(userBubble);
+  input.value = '';
+  input.style.height = 'auto';
+
+  setTimeout(() => {
+    const responses = [
+      "Entendido. En Akrasia Studio trabajamos con marcas que buscan un impacto visual real.",
+      "Nuestra ventaja es que combinamos oficio profesional con tecnologia IA.",
+      "Podemos adaptarnos a cualquier formato: spots, videoclips, fashion films...",
+      "Para un presupuesto exacto cuentame sobre tu proyecto: formato, duracion, estilo visual.",
+      "Nuestro proceso: brief creativo, pre-produccion con IA, produccion, post y entrega.",
+    ];
+    const agentBubble = document.createElement('div');
+    agentBubble.className = 'chat-bubble-agent';
+    agentBubble.innerHTML = `<div class="text-[8px] text-primary/60 mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">smart_toy</span>AGENTE_AKRASIA</div><div class="text-[11px] text-slate-200 leading-relaxed">${responses[Math.floor(Math.random() * responses.length)]}</div>`;
+    layer.appendChild(agentBubble);
+    layer.scrollTop = layer.scrollHeight;
+  }, 800);
+
+  layer.scrollTop = layer.scrollHeight;
+}
+</script>
+
+</body>
+</html>
