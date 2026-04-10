@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import LeftPanel from '../components/LeftPanel.astro';
+import CenterPanel from '../components/CenterPanel.astro';
+import RightPanel from '../components/RightPanel.astro';
+import Footer from '../components/Footer.astro';
+import MobileChat from '../components/MobileChat.tsx';
+import VideoModalListener from '../components/VideoModalListener.tsx';
+---
+
+<Layout>
+  <!-- Full-screen Background -->
+  <div class="fixed inset-0 z-0">
+    <img
+      alt="viewport"
+      class="w-full h-full object-cover brightness-[0.3]"
+      src="/img/out.jpg"
+    />
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background/80"
+    ></div>
+    <div class="hud-scanline absolute inset-0"></div>
+  </div>
+
+  <Header />
+
+  <!-- MAIN GRID -->
+  <main
+    class="flex-1 grid grid-cols-12 gap-4 p-3 lg:p-5 z-10 overflow-hidden lg:overflow-hidden overflow-y-auto scroll-hide"
+  >
+    <LeftPanel />
+    <CenterPanel />
+    <RightPanel />
+  </main>
+
+  <MobileChat client:only="react" />
+  <VideoModalListener client:only="react" />
+  <Footer />
+</Layout>

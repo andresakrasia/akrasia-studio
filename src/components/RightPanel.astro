@@ -1,0 +1,201 @@
+---
+import projectsData from '../data/projects.json';
+
+const { projects } = projectsData;
+
+const statusColors: Record<string, string> = {
+  in_production: 'bg-primary animate-pulse',
+  completed: 'bg-primary',
+};
+
+const timelineColors: Record<string, string> = {
+  in_production: 'border-primary/40',
+  completed: 'border-slate-800',
+};
+
+const titleColors: Record<string, string> = {
+  in_production: 'text-white',
+  completed: 'text-primary',
+};
+---
+
+<aside
+  class="col-span-12 lg:col-span-3 flex flex-col gap-4 lg:overflow-hidden"
+>
+  <!-- Portfolio Reciente -->
+  <div
+    class="glass-panel p-4 lg:p-5 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto"
+  >
+    <div
+      class="text-xs text-primary opacity-50 mb-5 uppercase tracking-[0.2em] flex justify-between items-center"
+    >
+      <span>Portfolio_Reciente</span>
+      <span
+        class="material-symbols-outlined text-sm text-slate-600 cursor-pointer hover:text-primary transition-colors"
+      >
+        tune
+      </span>
+    </div>
+    <div class="flex-1 overflow-y-auto space-y-3 scroll-hide">
+      {projects.map((project) => (
+        <div
+          class:list={[
+            'relative pl-5 py-4',
+            project.status === 'in_production'
+              ? 'border-l border-primary/40 bg-primary/5 rounded-r'
+              : 'border-l border-slate-800',
+          ]}
+        >
+          <div
+            class:list={[
+              'absolute -left-1 top-5 w-2 h-2 rounded-full',
+              statusColors[project.status] || 'bg-slate-600',
+            ]}
+          ></div>
+          <div
+            class:list={[
+              'text-xs font-bold',
+              project.status === 'in_production' ? 'text-white' : 'text-slate-400',
+            ]}
+          >
+            {project.title}
+          </div>
+          <div
+            class:list={[
+              'text-[11px]',
+              project.status === 'in_production'
+                ? 'text-primary/70'
+                : 'text-slate-500',
+            ]}
+          >
+            {project.type} | {project.duration} | {project.statusLabel}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Trabajos (thumbnails) -->
+  <div
+    class="glass-panel p-4 lg:p-5 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto order-first lg:order-none"
+  >
+    <div
+      class="text-xs text-primary opacity-50 mb-5 uppercase tracking-[0.2em]"
+    >
+      Trabajos
+    </div>
+    <div class="flex-1 overflow-y-auto scroll-hide">
+      <div class="grid grid-cols-2 gap-3">
+        {projects.filter(p => p.status === 'completed').slice(0, 6).map((project) => (
+          <div
+            class="thumb-card aspect-video glass-bubble overflow-hidden relative group"
+            data-project-video={project.videoUrl}
+            data-project-title={project.title}
+          >
+            <img
+              class="object-cover w-full h-full opacity-40 transition-all duration-300 group-hover:opacity-70"
+              src={project.thumbnail}
+              alt={project.title}
+              loading="lazy"
+            />
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center backdrop-blur-sm">
+                <span class="material-symbols-outlined text-primary text-xl">play_arrow</span>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent"
+            >
+              <div class="text-[9px] text-primary font-bold">
+                {project.title}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- System Logs -->
+  <div
+    class="glass-panel p-4 lg:p-5 flex-none h-36 lg:h-40 overflow-hidden"
+  >
+    <div class="text-xs text-primary opacity-50 mb-3">Estudio_Logs</div>
+    <div class="text-[10px] space-y-1 font-mono leading-tight" id="systemLogs">
+      <p class="text-slate-500">
+        [18:17:32] <span class="text-green-500">LISTO:</span> Motor de IA
+        sincronizado.
+      </p>
+      <p class="text-slate-500">
+        [18:17:28] <span class="text-primary">CORE:</span> Agente Acrasia
+        conectado.
+      </p>
+      <p class="text-slate-500">
+        [18:17:15] <span class="text-yellow-500">AVISO:</span> Nuevo proyecto
+        en cola.
+      </p>
+      <p class="text-slate-500">
+        [18:17:02] [INFO] Render 4K finalizado.
+      </p>
+    </div>
+  </div>
+</aside>
+
+<script>
+  if (!(window as any).__rightPanelInit) {
+    (window as any).__rightPanelInit = true;
+
+    document.querySelectorAll('[data-project-video]').forEach((el) => {
+      el.addEventListener('click', () => {
+        document.dispatchEvent(
+          new CustomEvent('video-open', {
+            detail: {
+              videoUrl: (el as HTMLElement).dataset.projectVideo,
+              title: (el as HTMLElement).dataset.projectTitle,
+            },
+          })
+        );
+      });
+    });
+
+    const logMessages = [
+      { text: 'Render 4K finalizado — NEON ODYSSEY', type: 'success' },
+      { text: 'Color grade exportado — ASCENSION', type: 'info' },
+      { text: 'Nuevo proyecto en cola', type: 'warning' },
+      { text: 'Render 4K finalizado — CITY PULSE', type: 'success' },
+      { text: 'Motor de IA sincronizado', type: 'success' },
+      { text: 'Sesion de cliente iniciada', type: 'info' },
+      { text: 'Exportacion HDR completada', type: 'success' },
+      { text: 'VFX composite renderizado — VOID FRAGMENTS', type: 'info' },
+      { text: 'Backup automatico completado', type: 'info' },
+      { text: 'Audio mix finalizado — SIGNAL NOIR', type: 'success' },
+      { text: 'Pipeline de IA recalibrado', type: 'warning' },
+      { text: 'Cliente nuevo registrado', type: 'info' },
+    ];
+
+    const typeConfig = {
+      success: { label: 'LISTO:', cls: 'text-green-500' },
+      info: { label: 'CORE:', cls: 'text-primary' },
+      warning: { label: 'AVISO:', cls: 'text-yellow-500' },
+    };
+
+    function logNow() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+    }
+
+    setInterval(() => {
+      const logsEl = document.getElementById('systemLogs');
+      if (!logsEl) return;
+      const msg = logMessages[Math.floor(Math.random() * logMessages.length)];
+      const cfg = typeConfig[msg.type as keyof typeof typeConfig];
+      const p = document.createElement('p');
+      p.className = 'text-slate-500';
+      p.innerHTML = `[${logNow()}] <span class="${cfg.cls}">${cfg.label}</span> ${msg.text}`;
+      logsEl.prepend(p);
+      while (logsEl.children.length > 6) {
+        logsEl.lastElementChild?.remove();
+      }
+    }, 5000);
+  }
+</script>

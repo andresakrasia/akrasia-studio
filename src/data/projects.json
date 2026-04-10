@@ -1,0 +1,108 @@
+{
+  "projects": [
+    {
+      "id": "neon-odyssey",
+      "title": "NEON ODYSSEY",
+      "type": "Spot publicitario",
+      "duration": "30s",
+      "status": "in_production",
+      "statusLabel": "En produccion",
+      "category": "commercial",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU",
+      "resolution": "7680x4320",
+      "aspect": "2.39:1",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "city-pulse",
+      "title": "CITY PULSE",
+      "type": "Videoclip musical",
+      "duration": "3:42s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "music-video",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0",
+      "resolution": "3840x2160",
+      "aspect": "16:9",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "void-fragments",
+      "title": "VOID FRAGMENTS",
+      "type": "Corto experimental",
+      "duration": "12:00s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "experimental",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuA_jahNr4muf_2RPYh7NpX7zXRVhJ7Cxv9N1dzNq4tfnM_0bpndC3rRJW9rZ63-M-mJ5GCnxXce073AjWj_0qJmsviy4cb8COpCgQHanDph1euGaeZb9PGAhIxb9r6Kg9Zuv3XU-rLLWzjx1ZFhmZYSkpQYh6hI-fezL7LlEDrx9-2jX-xVxselfUSkBUHE0zhDTCguBI_PL_H-c9hbtq65bi__hfVPZ09IjraMratEA2FrVqUGcMMCf1I0I_9z9iP7_6umhZjgHqM",
+      "resolution": "4096x2160",
+      "aspect": "1.90:1",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "ascension",
+      "title": "ASCENSION",
+      "type": "Branded content",
+      "duration": "60s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "branded",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU",
+      "resolution": "7680x4320",
+      "aspect": "2.39:1",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "signal-noir",
+      "title": "SIGNAL NOIR",
+      "type": "Fashion film",
+      "duration": "45s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "fashion",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0",
+      "resolution": "3840x2160",
+      "aspect": "16:9",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "chrome-dreams",
+      "title": "CHROME DREAMS",
+      "type": "Documental",
+      "duration": "25:00s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "documentary",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuA_jahNr4muf_2RPYh7NpX7zXRVhJ7Cxv9N1dzNq4tfnM_0bpndC3rRJW9rZ63-M-mJ5GCnxXce073AjWj_0qJmsviy4cb8COpCgQHanDph1euGaeZb9PGAhIxb9r6Kg9Zuv3XU-rLLWzjx1ZFhmZYSkpQYh6hI-fezL7LlEDrx9-2jX-xVxselfUSkBUHE0zhDTCguBI_PL_H-c9hbtq65bi__hfVPZ09IjraMratEA2FrVqUGcMMCf1I0I_9z9iP7_6umhZjgHqM",
+      "resolution": "3840x2160",
+      "aspect": "16:9",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "echo-chamber",
+      "title": "ECHO CHAMBER",
+      "type": "Instalacion inmersiva",
+      "duration": "Loop",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "installation",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuCy8_Pwy45KvXXwMe2zFuBVQx-te4NpVdATxcGvTffOI8VV08UO6wBDUeF1gpT_GmHu2W_fOO0_X0dE9-yYHpGMtXF9heZt-aL4tkJbwIid1qXxspfnHDk1tyLU7F7tsMBnSSQ8MKaViqs0OtqD9PS3WPHLGo0Irn9oJxbxmDIv6SsVpLn6HgKquZIWnT9wJrzJ4HmSm_EuppXH9AmKVdjlbgOKVnUjgGW89ZCYz00wHGnbKF-hffHEZ8hGa_uFapqYBr7ztIFtGgU",
+      "resolution": "4096x2160",
+      "aspect": "1.90:1",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+      "id": "silicon-dawn",
+      "title": "SILICON DAWN",
+      "type": "Branded content",
+      "duration": "45s",
+      "status": "completed",
+      "statusLabel": "Completado",
+      "category": "branded",
+      "thumbnail": "https://lh3.googleusercontent.com/aida-public/AB6AXuBj9IwwXJuP9tM7ew6D6n7ardX95MLNqyelLdOojSKrBtmAhrf-DUlANlTSQWGz82B_k1y_7zgsNGE_K8Yr-emTTU6QCNu_ajR9Qqr86VKLyn7fPB4Y3T8pFATMI4Bo5SwmzhUna-Tb889Rp_KpmMF1uCPyNNY0fJmh9-W_PpOmIRZE7uiaSuHJ4BMWBIflqIHudxLrpnMbkRHSxtAIlE3D8nQBXyksibxZpGOkApq8LIvprpQY4mSVDLY0TPxQeomJ0TYwaRThNe0",
+      "resolution": "3840x2160",
+      "aspect": "16:9",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    }
+  ]
+}

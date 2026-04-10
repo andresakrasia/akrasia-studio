@@ -1,0 +1,35 @@
+{
+  "services": [
+    {
+      "id": "direction",
+      "title": "Direction",
+      "description": "Direccion creativa con criterio humano e IA",
+      "icon": "movie",
+      "highlighted": true
+    },
+    {
+      "id": "ai-generation",
+      "title": "AI Generation",
+      "description": "Contenido generado y supervisado al 100%",
+      "icon": "auto_fix_high"
+    },
+    {
+      "id": "vfx-post",
+      "title": "VFX & Post",
+      "description": "Efectos visuales y postproduccion avanzada",
+      "icon": "layers"
+    },
+    {
+      "id": "sound-design",
+      "title": "Sound Design",
+      "description": "Diseno sonoro inmersivo",
+      "icon": "graphic_eq"
+    },
+    {
+      "id": "branded-content",
+      "title": "Branded Content",
+      "description": "Piezas unicas para marcas que quieren destacar",
+      "icon": "campaign"
+    }
+  ]
+}

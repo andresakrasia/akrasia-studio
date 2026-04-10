@@ -1,0 +1,45 @@
+---
+export interface Props {
+  title?: string;
+}
+
+const { title = 'AKRASIA STUDIO | AI Cinema Engine' } = Astro.props;
+---
+
+<!doctype html>
+<html class="dark" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0"
+      name="viewport"
+    />
+    <title>{title}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@200;300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="relative h-screen flex flex-col">
+    <slot />
+
+    <script>
+      document.querySelectorAll('.glass-panel').forEach((panel) => {
+        const speed = (6 + Math.random() * 10).toFixed(1);
+        const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
+        const delay = (-Math.random() * 10).toFixed(1);
+        panel.style.setProperty('--sweep-speed', speed + 's');
+        panel.style.setProperty('--sweep-dir', dir);
+        panel.style.setProperty('--sweep-delay', delay + 's');
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

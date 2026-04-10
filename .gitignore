@@ -8,3 +8,11 @@ dist/
 .astro/
 .vercel/
 .netlify/
+.vscode/
+*.swp
+*.swo
+
+# SSH keys
+*.pub
+G1thub.Sound3ox*
+b3BlbnNzaC1rZXktdjEAAAA*

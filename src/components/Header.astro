@@ -1,0 +1,59 @@
+---
+---
+
+<header
+  class="h-14 flex items-center justify-between px-3 lg:px-4 z-50 relative glass-panel"
+>
+  <div class="flex items-center gap-4 lg:gap-6">
+    <div class="flex items-center gap-3">
+      <div
+        class="w-5 h-5 bg-primary/20 border border-primary/40 flex items-center justify-center"
+      >
+        <div class="w-2 h-2 bg-primary"></div>
+      </div>
+      <span
+        class="text-primary font-bold tracking-widest text-sm lg:text-sm font-headline"
+      >
+        AKRASIA <span class="text-slate-500 font-light">//</span> STUDIO
+      </span>
+    </div>
+    <div
+      class="hidden md:flex gap-4 text-xs text-slate-500 uppercase tracking-tighter"
+    >
+      <span class="text-primary/50">ENGINE: ACTIVE</span>
+      <span>STUDIO: ONLINE</span>
+      <span>SESSION: VISITOR</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-3 lg:gap-4 text-xs font-bold">
+    <span
+      class="text-primary animate-pulse items-center gap-1 hidden sm:flex"
+    >
+      <span class="material-symbols-outlined text-sm">circle</span> EN DIRECTO
+    </span>
+    <span class="text-slate-400 font-mono hidden sm:inline" id="headerClock"
+      >18:17:58</span
+    >
+    <button
+      class="bg-primary text-black px-3 lg:px-4 py-1 angular-cut hover:bg-white transition-colors uppercase tracking-wider text-[11px] lg:text-xs"
+    >
+      Iniciar Proyecto
+    </button>
+  </div>
+</header>
+
+<script>
+  if (!(window as any).__headerInit) {
+    (window as any).__headerInit = true;
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const el = document.getElementById('headerClock');
+      if (el) el.textContent = `${h}:${m}:${s}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  }
+</script>

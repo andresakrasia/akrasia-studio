@@ -1,0 +1,231 @@
+---
+import Chat from './Chat.tsx';
+---
+
+<section
+  class="hidden lg:flex col-span-12 lg:col-span-7 flex-col gap-4 overflow-hidden"
+>
+  <!-- Viewport Principal -->
+  <div class="relative flex-1 overflow-hidden border border-white/5">
+    <!-- HUD Overlay -->
+    <div
+      class="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between z-[5]"
+    >
+      <div class="flex justify-between items-start">
+        <div class="text-primary space-y-1">
+          <div
+            class="text-3xl font-black font-headline tracking-tighter glitch-text uppercase"
+            id="viewportHudTitle"
+          >
+            Akrasia Studio
+          </div>
+          <div
+            class="text-xs tracking-[0.4em] opacity-70"
+            id="engineStatus"
+          >
+            AI_CINEMA_ENGINE: ONLINE
+          </div>
+        </div>
+        <div class="text-right text-xs text-primary/60">
+          <div id="viewportHudRes">RESOLUCION: 7680 x 4320</div>
+          <div id="viewportHudAspect">ASPECTO: 2.39:1</div>
+          <div>COLOR: ACES</div>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <div class="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
+        <div
+          class="text-[13px] text-white/80 font-headline font-light tracking-[0.3em] italic"
+        >
+          <span id="typewriter"></span><span
+            class="text-primary/60"
+            id="tw-cursor"
+          >_</span
+          >
+        </div>
+        <div
+          class="text-[10px] text-slate-500 mt-2 tracking-wider"
+        >
+          Productora audiovisual de nueva generacion. Profesionales del sector.
+          Tecnologia sin limites.
+        </div>
+      </div>
+
+      <!-- Datos Inferiores -->
+      <div class="flex justify-between items-end">
+        <div class="flex gap-4">
+          <div
+            class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm"
+          >
+            <div class="text-[10px] opacity-50">UBICACION</div>
+            <div class="text-sm">BARCELONA</div>
+          </div>
+          <div
+            class="p-2 border border-primary/30 bg-black/40 angular-cut backdrop-blur-sm"
+          >
+            <div class="text-[10px] opacity-50">MODO</div>
+            <div class="text-sm">STUDIO</div>
+          </div>
+        </div>
+        <div
+          class="text-xs uppercase font-bold text-primary tracking-widest"
+        >
+          Akrasia Studio // v1.0
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic project image -->
+    <img
+      id="viewportProject"
+      class="absolute inset-0 w-full h-full object-cover brightness-[0.3] transition-opacity duration-700 opacity-0 z-[1]"
+      alt=""
+    />
+
+    <!-- Radar Animado -->
+    <div class="radar-container" id="radarContainer">
+      <div class="radar-ring radar-ring-outer"></div>
+      <div class="radar-ring radar-ring-mid"></div>
+      <div class="radar-ring radar-ring-inner"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-cross"></div>
+      <div class="radar-core"></div>
+      <div class="radar-label">AI ENGINE</div>
+    </div>
+
+    <!-- Chat (React island) -->
+    <Chat client:only="react" />
+  </div>
+</section>
+
+<script>
+  if (!(window as any).__centerPanelInit) {
+    (window as any).__centerPanelInit = true;
+
+    // Engine status typewriter
+    (function () {
+      const el = document.getElementById('engineStatus');
+      if (!el) return;
+      const messages = [
+        'AI_CINEMA_ENGINE: ONLINE',
+        'DIRECCION_CREATIVA: ACTIVA',
+        'CREACION_DE_CONTENIDO: READY',
+        'PRODUCTOS_AUDIOVISUALES: ON',
+        'CONTENIDO_PARA_MARCAS: LIVE',
+        'POSTPRODUCCION_AVANZADA: SYNC',
+        'DISENO_SONORO: ENGAGED',
+      ];
+      let idx = 0;
+      let charIdx = 0;
+      let deleting = false;
+
+      function tick() {
+        const current = messages[idx];
+        if (!deleting) {
+          charIdx++;
+          el.textContent = current.substring(0, charIdx);
+          if (charIdx === current.length) {
+            deleting = true;
+            setTimeout(tick, 2500);
+            return;
+          }
+          setTimeout(tick, 50);
+        } else {
+          charIdx--;
+          el.textContent = current.substring(0, charIdx);
+          if (charIdx === 0) {
+            deleting = false;
+            idx = (idx + 1) % messages.length;
+            setTimeout(tick, 300);
+            return;
+          }
+          setTimeout(tick, 25);
+        }
+      }
+
+      el.textContent = '';
+      setTimeout(tick, 500);
+    })();
+
+    // Tagline typewriter
+    (function () {
+      const el = document.getElementById('typewriter');
+      if (!el) return;
+      const phrases = [
+        '"We don\'t prompt. We direct."',
+        '"Craft meets machine."',
+        '"Human vision. Machine power."',
+        '"The new studio. The new craft."',
+      ];
+      let phraseIdx = 0;
+      let charIdx = 0;
+      let deleting = false;
+      let paused = false;
+
+      function tick() {
+        const current = phrases[phraseIdx];
+        if (paused) {
+          paused = false;
+          deleting = true;
+          setTimeout(tick, 1500);
+          return;
+        }
+        if (!deleting) {
+          charIdx++;
+          el.textContent = current.substring(0, charIdx);
+          if (charIdx === current.length) {
+            paused = true;
+            setTimeout(tick, 3000);
+            return;
+          }
+          setTimeout(tick, 65);
+        } else {
+          charIdx--;
+          el.textContent = current.substring(0, charIdx);
+          if (charIdx === 0) {
+            deleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            setTimeout(tick, 400);
+            return;
+          }
+          setTimeout(tick, 30);
+        }
+      }
+
+      setTimeout(tick, 1000);
+    })();
+
+    // Viewport project selector
+    (function () {
+      const viewportImg = document.getElementById('viewportProject') as HTMLImageElement | null;
+      const hudRes = document.querySelector('#viewportHudRes');
+      const hudAspect = document.querySelector('#viewportHudAspect');
+      const hudTitle = document.querySelector('#viewportHudTitle');
+      const radar = document.getElementById('radarContainer');
+      let currentSrc = '';
+
+      function selectProject(data: { thumbnail: string; title: string; resolution: string; aspect: string }) {
+        if (!viewportImg) return;
+        if (data.thumbnail === currentSrc) return;
+        currentSrc = data.thumbnail;
+
+        const img = new Image();
+        img.onload = () => {
+          viewportImg.src = data.thumbnail;
+          viewportImg.alt = data.title;
+          viewportImg.style.opacity = '1';
+        };
+        img.src = data.thumbnail;
+        if (hudRes) hudRes.textContent = 'RESOLUCION: ' + data.resolution;
+        if (hudAspect) hudAspect.textContent = 'ASPECTO: ' + data.aspect;
+        if (hudTitle) hudTitle.textContent = data.title;
+        if (radar) radar.style.opacity = '0.3';
+      }
+
+      document.addEventListener('project-select', ((e: CustomEvent) => {
+        selectProject(e.detail);
+      }) as EventListener);
+    })();
+  }
+</script>
