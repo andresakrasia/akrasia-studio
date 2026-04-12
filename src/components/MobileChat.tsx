@@ -1,56 +1,21 @@
 import { useState, useRef, useCallback } from 'react';
-
-const AGENT_WELCOME =
-  'Hola. Soy el agente de Akrasia Studio. En que puedo ayudarte?';
-
-const AGENT_RESPONSES = [
-  'Entendido. En Akrasia Studio trabajamos con marcas que buscan un impacto visual real.',
-  'Nuestra ventaja es que combinamos oficio profesional con tecnologia IA.',
-  'Podemos adaptarnos a cualquier formato: spots, videoclips, fashion films...',
-  'Para un presupuesto exacto cuentame sobre tu proyecto: formato, duracion, estilo visual.',
-  'Nuestro proceso: brief creativo, pre-produccion con IA, produccion, post y entrega.',
-];
-
-interface Message {
-  id: number;
-  role: 'user' | 'agent';
-  text: string;
-}
+import { useChat } from '../hooks/ChatContext';
 
 export default function MobileChat() {
+  const { messages, isTyping, streamingText, chatRef, sendMessage } = useChat();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 0, role: 'agent', text: AGENT_WELCOME },
-  ]);
   const [input, setInput] = useState('');
-  const chatRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  let nextId = useRef(1);
 
   const toggle = useCallback(() => setOpen((prev) => !prev), []);
 
   const handleSend = useCallback(() => {
     const msg = input.trim();
-    if (!msg) return;
-
-    const userMsg: Message = { id: nextId.current++, role: 'user', text: msg };
-    setMessages((prev) => [...prev, userMsg]);
+    if (!msg || isTyping) return;
+    sendMessage(msg);
     setInput('');
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
-
-    setTimeout(() => {
-      const response =
-        AGENT_RESPONSES[Math.floor(Math.random() * AGENT_RESPONSES.length)];
-      setMessages((prev) => [
-        ...prev,
-        { id: nextId.current++, role: 'agent', text: response },
-      ]);
-      if (chatRef.current)
-        chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }, 800);
-
-    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
-  }, [input]);
+  }, [input, isTyping, sendMessage]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -64,7 +29,6 @@ export default function MobileChat() {
 
   return (
     <>
-      {/* FAB */}
       <button
         className={`lg:hidden fixed bottom-6 right-6 z-[100] w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform ${open ? 'hidden' : ''}`}
         onClick={toggle}
@@ -74,13 +38,11 @@ export default function MobileChat() {
         </span>
       </button>
 
-      {/* Overlay */}
       {open && (
         <div className="lg:hidden fixed inset-0 z-[90] flex flex-col">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={toggle} />
           <div className="absolute inset-x-0 bottom-0 top-14 flex flex-col z-10">
             <div className="glass-panel m-2 flex-1 flex flex-col overflow-hidden">
-              {/* Header */}
               <div className="p-3 flex items-center justify-between border-b border-white/5">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-sm">
@@ -101,7 +63,6 @@ export default function MobileChat() {
                 </button>
               </div>
 
-              {/* Messages */}
               <div
                 ref={chatRef}
                 className="flex-1 overflow-y-auto p-3 space-y-3 scroll-hide"
@@ -115,7 +76,7 @@ export default function MobileChat() {
                         </span>
                         AGENTE_AKRASIA
                       </div>
-                      <div className="text-[11px] text-slate-200 leading-relaxed">
+                      <div className="text-[11px] text-slate-200 leading-relaxed whitespace-pre-wrap">
                         {m.text}
                       </div>
                     </div>
@@ -128,9 +89,25 @@ export default function MobileChat() {
                     </div>
                   )
                 )}
+                {isTyping && (
+                  <div className="chat-bubble-agent">
+                    <div className="text-[8px] text-primary/60 mb-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[10px]">
+                        smart_toy
+                      </span>
+                      AGENTE_AKRASIA
+                    </div>
+                    <div className="text-[11px] text-slate-200 leading-relaxed whitespace-pre-wrap">
+                      {streamingText || (
+                        <span className="text-primary/40 italic animate-pulse">
+                          Escribiendo...
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Input */}
               <div className="p-3 border-t border-white/5">
                 <div className="flex gap-3 items-center">
                   <textarea
@@ -145,7 +122,8 @@ export default function MobileChat() {
                   />
                   <button
                     onClick={handleSend}
-                    className="bg-primary text-black px-4 py-2 text-[10px] font-black hover:bg-white transition-all angular-cut uppercase"
+                    disabled={isTyping}
+                    className="bg-primary text-black px-4 py-2 text-[10px] font-black hover:bg-white transition-all angular-cut uppercase disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     Enviar
                   </button>

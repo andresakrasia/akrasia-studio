@@ -249,17 +249,24 @@ button {
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   gap: 12px;
   z-index: 10;
-  pointer-events: none;
+  pointer-events: auto;
 }
 .chat-layer::-webkit-scrollbar {
-  display: none;
+  width: 3px;
+}
+.chat-layer::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-layer::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.15);
+  border-radius: 2px;
 }
 .chat-layer {
   -ms-overflow-style: none;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.15) transparent;
 }
 
 .chat-bubble-user {
@@ -295,6 +302,32 @@ button {
     0 4px 20px rgba(0, 0, 0, 0.4),
     inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   pointer-events: auto;
+}
+
+.formatted-text p {
+  margin: 0;
+}
+.formatted-text p + p {
+  margin-top: 6px;
+}
+.formatted-text strong {
+  color: #00f0ff;
+  font-weight: 600;
+}
+.formatted-text em {
+  color: #94a3b8;
+  font-style: italic;
+}
+.formatted-text ul, .formatted-text ol {
+  margin: 4px 0;
+  padding-left: 16px;
+}
+.formatted-text li {
+  margin: 2px 0;
+}
+.formatted-text a {
+  color: #00f0ff;
+  text-decoration: underline;
 }
 
 @keyframes bubbleIn {
@@ -444,5 +477,73 @@ button {
     box-shadow:
       0 0 18px rgba(0, 240, 255, 0.7),
       0 0 40px rgba(0, 240, 255, 0.3);
+  }
+}
+
+@keyframes logoGlow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 4px rgba(0, 240, 255, 0.1),
+      0 0 12px rgba(0, 240, 255, 0.05);
+  }
+  50% {
+    text-shadow:
+      0 0 6px rgba(0, 240, 255, 0.5),
+      0 0 20px rgba(0, 240, 255, 0.2),
+      0 0 40px rgba(0, 240, 255, 0.1);
+  }
+}
+
+.logo-glow {
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+.neon-char {
+  color: #00f0ff;
+  animation: neonFlicker var(--neon-dur, 4s) ease-in-out var(--neon-delay, 0s) infinite;
+}
+
+@keyframes neonFlicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow:
+      0 0 4px rgba(0, 240, 255, 0.4),
+      0 0 11px rgba(0, 240, 255, 0.2),
+      0 0 30px rgba(0, 240, 255, 0.1);
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.5;
+  }
+  40% {
+    text-shadow:
+      0 0 8px rgba(0, 240, 255, 0.9),
+      0 0 20px rgba(0, 240, 255, 0.5),
+      0 0 50px rgba(0, 240, 255, 0.3),
+      0 0 80px rgba(0, 240, 255, 0.1);
+    opacity: 1;
+  }
+  70% {
+    text-shadow:
+      0 0 6px rgba(0, 240, 255, 0.6),
+      0 0 15px rgba(0, 240, 255, 0.3);
+    opacity: 0.95;
+  }
+}
+
+.neon-sub {
+  color: rgba(0, 240, 255, 0.25);
+  animation: neonSubGlow 3s ease-in-out infinite;
+}
+
+@keyframes neonSubGlow {
+  0%, 100% {
+    color: rgba(0, 240, 255, 0.2);
+    text-shadow: 0 0 6px rgba(0, 240, 255, 0.05);
+  }
+  50% {
+    color: rgba(0, 240, 255, 0.35);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
   }
 }

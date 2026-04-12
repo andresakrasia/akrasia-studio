@@ -11,8 +11,8 @@
 ```
 FASE 0: Pre-Produccion                        ✅ COMPLETADO
 FASE 1: Shell Estatico                        ✅ COMPLETADO
-FASE 2: Datos Dinamicos (JSON)                ← ACTUAL
-FASE 3: Chat con Agente IA                    Chat funcional con OpenAI
+FASE 2: Datos Dinamicos (JSON)                ✅ COMPLETADO
+FASE 3: Chat con Agente IA                    ← ACTUAL
 FASE 4: Captacion de Leads + Base de Datos    Supabase + extraccion automatica
 FASE 5: Admin Dashboard                       Panel privado sin login
 FASE 6: Pulido y Animaciones                  Refinamiento visual
@@ -103,26 +103,27 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 ---
 
-## FASE 3: Chat con Agente IA
+## FASE 3: Chat con Agente IA ← ACTUAL
 
 **Objetivo:** Sistema de chat funcional conectado a API de OpenAI.
 
 **Duracion estimada:** 2-3 sesiones
 
-| Tarea | Prioridad | Descripcion |
-|-------|-----------|-------------|
-| ChatInput component (React) | ALTA | Input + boton de envio |
-| ChatMessage component (React) | ALTA | Mensaje individual con estilo |
-| ChatPanel component (React) | ALTA | Contenedor con historial |
-| Endpoint API (OpenAI) | ALTA | Endpoint seguro para respuestas |
-| System prompt de Acrasia | ALTA | Personalidad y tono del agente |
-| Mostrar chat en viewport | ALTA | Reemplazar overlay con chat |
-| Toggle entre chat y viewport | MEDIA | Cambiar vista sin perder estado |
-| Indicador "escribiendo..." | MEDIA | Feedback visual mientras responde |
-| Respuestas con formato | BAJA | Markdown o HTML en respuestas |
-| Historial de sesion | MEDIA | Mantener contexto en localStorage |
+| Tarea | Prioridad | Descripcion | Estado |
+|-------|-----------|-------------|--------|
+| Endpoint API (OpenAI) | ALTA | Endpoint seguro con streaming SSE | ✅ `/api/chat` |
+| System prompt de Acrasia | ALTA | Personalidad y tono del agente | ✅ `src/data/systemPrompt.ts` |
+| ChatInput + ChatMessage + ChatPanel (React) | ALTA | Componentes integrados en ChatWrapper | ✅ |
+| ChatContext compartido | ALTA | Estado sincronizado desktop/mobile | ✅ React Context + Portal |
+| Streaming visual en tiempo real | ALTA | Texto aparece progresivamente | ✅ SSE + ReadableStream |
+| Indicador "escribiendo..." | MEDIA | Feedback visual mientras responde | ✅ |
+| Historial de sesion (localStorage) | MEDIA | Mantener contexto entre visitas | ✅ MAX 50 mensajes |
+| Respuestas con formato | BAJA | Markdown o HTML en respuestas | PENDIENTE |
+| Toggle entre chat y viewport | MEDIA | Cambiar vista sin perder estado | PENDIENTE |
 
 **Criterio de aceptacion:** El usuario puede escribir y recibir respuestas del agente Acrasia con personalidad definida.
+
+**Branch:** `fase-3`
 
 ---
 

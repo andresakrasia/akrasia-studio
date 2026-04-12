@@ -1,5 +1,4 @@
 ---
-import Chat from './Chat.tsx';
 ---
 
 <section
@@ -94,8 +93,8 @@ import Chat from './Chat.tsx';
       <div class="radar-label">AI ENGINE</div>
     </div>
 
-    <!-- Chat (React island) -->
-    <Chat client:only="react" />
+    <!-- Chat desktop slot (rendered by ChatWrapper via portal) -->
+    <div id="chat-desktop-root" class="absolute inset-0 hidden lg:block"></div>
   </div>
 </section>
 

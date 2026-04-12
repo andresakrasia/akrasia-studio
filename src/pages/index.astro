@@ -5,7 +5,7 @@ import LeftPanel from '../components/LeftPanel.astro';
 import CenterPanel from '../components/CenterPanel.astro';
 import RightPanel from '../components/RightPanel.astro';
 import Footer from '../components/Footer.astro';
-import MobileChat from '../components/MobileChat.tsx';
+import ChatWrapper from '../components/ChatWrapper.tsx';
 import VideoModalListener from '../components/VideoModalListener.tsx';
 ---
 
@@ -34,7 +34,7 @@ import VideoModalListener from '../components/VideoModalListener.tsx';
     <RightPanel />
   </main>
 
-  <MobileChat client:only="react" />
+  <ChatWrapper client:only="react" />
   <VideoModalListener client:only="react" />
   <Footer />
 </Layout>

@@ -5,31 +5,36 @@
       "title": "Direction",
       "description": "Direccion creativa con criterio humano e IA",
       "icon": "movie",
-      "highlighted": true
+      "highlighted": true,
+      "chatMessage": "Me interesa vuestro servicio de direccion creativa"
     },
     {
       "id": "ai-generation",
       "title": "AI Generation",
       "description": "Contenido generado y supervisado al 100%",
-      "icon": "auto_fix_high"
+      "icon": "auto_fix_high",
+      "chatMessage": "Me interesa saber mas sobre la generacion de contenido con IA"
     },
     {
       "id": "vfx-post",
       "title": "VFX & Post",
       "description": "Efectos visuales y postproduccion avanzada",
-      "icon": "layers"
+      "icon": "layers",
+      "chatMessage": "Me interesa vuestro servicio de VFX y postproduccion"
     },
     {
       "id": "sound-design",
       "title": "Sound Design",
       "description": "Diseno sonoro inmersivo",
-      "icon": "graphic_eq"
+      "icon": "graphic_eq",
+      "chatMessage": "Me interesa vuestro servicio de diseno sonoro"
     },
     {
       "id": "branded-content",
       "title": "Branded Content",
       "description": "Piezas unicas para marcas que quieren destacar",
-      "icon": "campaign"
+      "icon": "campaign",
+      "chatMessage": "Me interesa vuestro servicio de branded content"
     }
   ]
 }

@@ -52,6 +52,7 @@ const { services } = servicesData;
               : 'border-l-2 border-slate-700',
           ]}
           data-service-index={i}
+          data-chat-message={service.chatMessage}
         >
           <span
             class:list={[
@@ -147,6 +148,15 @@ const { services } = servicesData;
       services[current].classList.add('service-highlight');
       current = (current + 1) % services.length;
     }, 2500);
+
+    services.forEach((el) => {
+      el.addEventListener('click', () => {
+        const msg = (el as HTMLElement).dataset.chatMessage;
+        if (msg) {
+          document.dispatchEvent(new CustomEvent('chat-trigger', { detail: { message: msg } }));
+        }
+      });
+    });
 
     const feedMessages = [
       { text: 'Render 4K finalizado — NEON ODYSSEY', level: 'high' },

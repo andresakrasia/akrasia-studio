@@ -1,67 +1,20 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-
-const AGENT_RESPONSES = [
-  'Entendido. En Akrasia Studio trabajamos con marcas que buscan un impacto visual real. Puedo prepararte una propuesta personalizada si me das mas detalles.',
-  'Buena pregunta. Nuestra ventaja es que combinamos oficio profesional con tecnologia IA, lo que nos permite entregar resultados de alto nivel en tiempos y presupuestos ajustados.',
-  'Podemos adaptarnos a cualquier formato: spots, videoclips, fashion films, cortos experimentales... Todo con la estética cinematográfica que nos define.',
-  'Si quieres, puedo mostrarte ejemplos de nuestro portfolio reciente. Tenemos piezas en NEON ODYSSEY, CITY PULSE y VOID FRAGMENTS que te pueden dar una idea clara.',
-  'Para un presupuesto exacto necesito saber: formato, duracion estimada, estilo visual y fecha limite. Con esos datos te lo preparo en minutos.',
-  'Nuestro proceso es sencillo: brief creativo, pre-produccion con IA, produccion, post y entrega. Todo supervisado por profesionales del sector.',
-];
-
-const AGENT_WELCOME =
-  'Hola. Soy el agente de Akrasia Studio. Estoy aqui para ayudarte con informacion sobre nuestros servicios, presupuestos o cualquier consulta. Que necesitas?';
-
-interface Message {
-  id: number;
-  role: 'user' | 'agent';
-  text: string;
-}
+import { useState, useRef, useCallback } from 'react';
+import { useChat } from '../hooks/ChatContext';
 
 export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 0, role: 'agent', text: AGENT_WELCOME },
-  ]);
+  const { messages, isTyping, streamingText, chatRef, sendMessage } = useChat();
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  let nextId = useRef(1);
-
-  const scrollToBottom = useCallback(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
 
   const handleSend = useCallback(() => {
     const msg = input.trim();
-    if (!msg) return;
-
-    const userMsg: Message = { id: nextId.current++, role: 'user', text: msg };
-    setMessages((prev) => [...prev, userMsg]);
+    if (!msg || isTyping) return;
+    sendMessage(msg);
     setInput('');
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const response =
-        AGENT_RESPONSES[Math.floor(Math.random() * AGENT_RESPONSES.length)];
-      const agentMsg: Message = {
-        id: nextId.current++,
-        role: 'agent',
-        text: response,
-      };
-      setMessages((prev) => [...prev, agentMsg]);
-      setIsTyping(false);
-    }, 800);
-  }, [input]);
+  }, [input, isTyping, sendMessage]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -96,7 +49,7 @@ export default function Chat() {
                 </span>
                 AGENTE_AKRASIA
               </div>
-              <div className="text-[11px] text-slate-200 leading-relaxed">
+              <div className="text-[11px] text-slate-200 leading-relaxed whitespace-pre-wrap">
                 {m.text}
               </div>
             </div>
@@ -117,8 +70,12 @@ export default function Chat() {
               </span>
               AGENTE_AKRASIA
             </div>
-            <div className="text-[11px] text-primary/40 italic animate-pulse">
-              Escribiendo...
+            <div className="text-[11px] text-slate-200 leading-relaxed whitespace-pre-wrap">
+              {streamingText || (
+                <span className="text-primary/40 italic animate-pulse">
+                  Escribiendo...
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -143,7 +100,8 @@ export default function Chat() {
           </div>
           <button
             onClick={handleSend}
-            className="bg-primary/10 border border-primary/40 text-primary px-6 py-2 text-[10px] font-black hover:bg-primary hover:text-black transition-all angular-cut uppercase tracking-wider"
+            disabled={isTyping}
+            className="bg-primary/10 border border-primary/40 text-primary px-6 py-2 text-[10px] font-black hover:bg-primary hover:text-black transition-all angular-cut uppercase tracking-wider disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Enviar
           </button>

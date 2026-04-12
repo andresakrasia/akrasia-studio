@@ -5,17 +5,11 @@
   class="h-14 flex items-center justify-between px-3 lg:px-4 z-50 relative glass-panel"
 >
   <div class="flex items-center gap-4 lg:gap-6">
-    <div class="flex items-center gap-3">
-      <div
-        class="w-5 h-5 bg-primary/20 border border-primary/40 flex items-center justify-center"
-      >
-        <div class="w-2 h-2 bg-primary"></div>
-      </div>
-      <span
-        class="text-primary font-bold tracking-widest text-sm lg:text-sm font-headline"
-      >
-        AKRASIA <span class="text-slate-500 font-light">//</span> STUDIO
-      </span>
+    <div class="flex flex-col items-center justify-center cursor-pointer chat-trigger-logo" data-chat-message="Hola, quiero saber mas sobre Akrasia Studio">
+      <span class="text-primary font-bold tracking-widest font-headline whitespace-nowrap inline-flex items-baseline leading-none">
+          <span class="neon-char" style="font-size:0.7rem;letter-spacing:-0.04em;margin-right:-0.04em;--neon-delay:0s;--neon-dur:4.2s">Λ</span><span class="neon-char" style="font-size:0.84rem;letter-spacing:-0.05em;--neon-delay:0.3s;--neon-dur:3.8s">K</span><span class="neon-char" style="font-size:0.98rem;letter-spacing:-0.05em;--neon-delay:0.7s;--neon-dur:4.5s">R</span><span class="neon-char" style="font-size:1.12rem;letter-spacing:-0.05em;--neon-delay:1.1s;--neon-dur:3.5s">Λ</span><span class="neon-char" style="font-size:0.98rem;letter-spacing:-0.05em;--neon-delay:0.5s;--neon-dur:4.8s">S</span><span class="neon-char" style="font-size:0.84rem;letter-spacing:-0.05em;--neon-delay:0.9s;--neon-dur:3.9s">I</span><span class="neon-char" style="font-size:0.7rem;--neon-delay:1.4s;--neon-dur:4.1s">Λ</span>
+        </span>
+        <span class="neon-sub text-[7px] font-light tracking-[0.4em] font-headline uppercase leading-none mt-0.5">STUDIO</span>
     </div>
     <div
       class="hidden md:flex gap-4 text-xs text-slate-500 uppercase tracking-tighter"
@@ -35,7 +29,8 @@
       >18:17:58</span
     >
     <button
-      class="bg-primary text-black px-3 lg:px-4 py-1 angular-cut hover:bg-white transition-colors uppercase tracking-wider text-[11px] lg:text-xs"
+      class="bg-primary text-black px-3 lg:px-4 py-1 angular-cut hover:bg-white transition-colors uppercase tracking-wider text-[11px] lg:text-xs chat-trigger-btn"
+      data-chat-message="Quiero iniciar un proyecto con vosotros"
     >
       Iniciar Proyecto
     </button>
@@ -55,5 +50,23 @@
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    document.querySelectorAll('.chat-trigger-btn').forEach((el) => {
+      el.addEventListener('click', () => {
+        const msg = (el as HTMLElement).dataset.chatMessage;
+        if (msg) {
+          document.dispatchEvent(new CustomEvent('chat-trigger', { detail: { message: msg } }));
+        }
+      });
+    });
+
+    document.querySelectorAll('.chat-trigger-logo').forEach((el) => {
+      el.addEventListener('click', () => {
+        const msg = (el as HTMLElement).dataset.chatMessage;
+        if (msg) {
+          document.dispatchEvent(new CustomEvent('chat-trigger', { detail: { message: msg } }));
+        }
+      });
+    });
   }
 </script>
