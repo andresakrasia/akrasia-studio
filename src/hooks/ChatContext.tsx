@@ -7,6 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
+import { getOrCreateVisitorId } from '../lib/visitorId';
 
 const STORAGE_KEY = 'akrasia_chat_history';
 const MAX_HISTORY = 50;
@@ -81,10 +82,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }));
 
       try {
+        const visitorId = getOrCreateVisitorId();
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: currentMessages }),
+          body: JSON.stringify({ messages: currentMessages, visitor_id: visitorId }),
         });
 
         if (!res.ok) {

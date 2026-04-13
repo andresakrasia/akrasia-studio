@@ -1,6 +1,9 @@
 import type { APIRoute } from 'astro';
 import OpenAI from 'openai';
 import { AKRASIA_SYSTEM_PROMPT } from '../../data/systemPrompt';
+import { upsertVisitor, getOrCreateConversation, saveMessage, upsertLead } from '../../lib/supabase';
+import { extractContactData } from '../../lib/extractContactData';
+import { sendLeadNotification } from '../../lib/notify';
 
 export const POST: APIRoute = async ({ request }) => {
   const apiKey = import.meta.env.OPENROUTER_API_KEY;
@@ -12,7 +15,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  let body: { messages?: Array<{ role: string; content: string }> };
+  let body: { messages?: Array<{ role: string; content: string }>; visitor_id?: string };
   try {
     body = await request.json();
   } catch {
@@ -28,6 +31,42 @@ export const POST: APIRoute = async ({ request }) => {
       JSON.stringify({ error: 'Messages array required' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
+  }
+
+  const visitorId = body.visitor_id || '';
+
+  if (visitorId) {
+    await upsertVisitor(visitorId);
+  }
+
+  const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
+  const extracted = lastUserMessage ? extractContactData(lastUserMessage.content) : null;
+
+  if (visitorId && extracted && (extracted.emails.length > 0 || extracted.phones.length > 0)) {
+    const conversationId = await getOrCreateConversation(visitorId);
+    if (conversationId) {
+      await saveMessage(conversationId, 'user', lastUserMessage!.content);
+      await upsertLead(visitorId, conversationId, {
+        email: extracted.emails[0] || null,
+        phone: extracted.phones[0] || null,
+        projectType: extracted.projectType || null,
+      });
+      await sendLeadNotification({
+        email: extracted.emails[0],
+        phone: extracted.phones[0],
+        projectType: extracted.projectType,
+        visitorId,
+        lastMessage: lastUserMessage!.content,
+      });
+    }
+  } else if (visitorId && lastUserMessage) {
+    const conversationId = await getOrCreateConversation(visitorId);
+    if (conversationId) {
+      await saveMessage(conversationId, 'user', lastUserMessage.content);
+      if (extracted?.projectType) {
+        await upsertLead(visitorId, conversationId, { projectType: extracted.projectType });
+      }
+    }
   }
 
   const openai = new OpenAI({
@@ -55,6 +94,9 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     const encoder = new TextEncoder();
+    let fullResponse = '';
+
+    const conversationId = visitorId ? await getOrCreateConversation(visitorId) : null;
 
     const readable = new ReadableStream({
       async start(controller) {
@@ -62,11 +104,16 @@ export const POST: APIRoute = async ({ request }) => {
           for await (const chunk of stream) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
+              fullResponse += content;
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
             }
           }
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
+
+          if (conversationId && fullResponse) {
+            await saveMessage(conversationId, 'assistant', fullResponse);
+          }
         } catch (err) {
           controller.error(err);
         }

@@ -1,15 +1,73 @@
 ---
-import servicesData from '../data/services.json';
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  chat_message: string;
+  highlighted: boolean;
+  sort_order: number;
+}
 
-const { services } = servicesData;
+interface Stat {
+  key: string;
+  value: number;
+  label: string;
+}
+
+interface FeedEntry {
+  id: string;
+  text: string;
+  level: string;
+  created_at: string;
+  project_title?: string;
+}
+
+let services: Service[] = [];
+let stats: Stat[] = [];
+let feedEntries: FeedEntry[] = [];
+
+try {
+  const baseUrl = Astro.url.origin;
+  const [servicesRes, statsRes, feedRes] = await Promise.all([
+    fetch(`${baseUrl}/api/services`).catch(() => null),
+    fetch(`${baseUrl}/api/stats`).catch(() => null),
+    fetch(`${baseUrl}/api/feed`).catch(() => null),
+  ]);
+  if (servicesRes?.ok) {
+    const data = await servicesRes.json();
+    services = data.services || [];
+  }
+  if (statsRes?.ok) stats = await statsRes.json();
+  if (feedRes?.ok) feedEntries = await feedRes.json();
+} catch {}
+
+if (services.length === 0) {
+  try {
+    const fallback = await import('../data/services.json');
+    services = (fallback.default.services || []).map((s: any) => ({
+      ...s,
+      chat_message: s.chatMessage || s.chat_message || '',
+      highlighted: s.highlighted || false,
+      sort_order: s.sort_order || 0,
+    }));
+  } catch {}
+}
+
+const statMap: Record<string, Stat> = {};
+for (const s of stats) statMap[s.key] = s;
+
+const statProjects = statMap['active_projects'] || { value: 3, label: 'Proyectos en curso' };
+const statPieces = statMap['pieces_delivered'] || { value: 24, label: 'Piezas entregadas' };
+const statClients = statMap['active_clients'] || { value: 7, label: 'Clientes activos' };
+
+const initialFeed = feedEntries.slice(0, 5);
 ---
 
 <aside class="col-span-12 lg:col-span-2 flex flex-col gap-4 lg:overflow-hidden">
   <!-- Sobre Nosotros -->
   <div class="glass-panel p-4 lg:p-5 flex-none">
-    <div
-      class="text-xs text-primary mb-2 opacity-50 uppercase tracking-widest"
-    >
+    <div class="text-xs text-primary mb-2 opacity-50 uppercase tracking-widest">
       Sobre_Nosotros
     </div>
     <p class="text-xs text-slate-400 leading-relaxed">
@@ -34,12 +92,8 @@ const { services } = servicesData;
   </div>
 
   <!-- Servicios -->
-  <div
-    class="glass-panel p-4 lg:p-5 flex-1 flex flex-col gap-4 lg:overflow-y-auto scroll-hide"
-  >
-    <div
-      class="text-xs text-primary opacity-50 uppercase tracking-widest"
-    >
+  <div class="glass-panel p-4 lg:p-5 flex-1 flex flex-col gap-4 lg:overflow-y-auto scroll-hide">
+    <div class="text-xs text-primary opacity-50 uppercase tracking-widest">
       Servicios
     </div>
     <div class="space-y-1">
@@ -47,25 +101,23 @@ const { services } = servicesData;
         <div
           class:list={[
             'service-item flex items-center gap-3 py-2 px-2',
-            i === 0
+            service.highlighted || i === 0
               ? 'border-l-2 border-primary/40'
               : 'border-l-2 border-slate-700',
           ]}
           data-service-index={i}
-          data-chat-message={service.chatMessage}
+          data-chat-message={service.chat_message}
         >
           <span
             class:list={[
               'material-symbols-outlined text-sm',
-              i === 0 ? 'text-primary' : 'text-slate-500',
+              service.highlighted || i === 0 ? 'text-primary' : 'text-slate-500',
             ]}
           >
             {service.icon}
           </span>
           <div>
-            <div class="text-xs font-bold text-slate-300">
-              {service.title}
-            </div>
+            <div class="text-xs font-bold text-slate-300">{service.title}</div>
             <div class="text-[10px] text-slate-600">{service.description}</div>
           </div>
         </div>
@@ -80,35 +132,29 @@ const { services } = servicesData;
       <div class="space-y-3">
         <div>
           <div class="flex justify-between text-xs mb-1">
-            <span class="text-slate-300">Proyectos en curso</span>
-            <span class="text-primary font-bold">3</span>
+            <span class="text-slate-300">{statProjects.label}</span>
+            <span class="text-primary font-bold">{statProjects.value}</span>
           </div>
           <div class="h-[2px] bg-white/5 rounded-full overflow-hidden">
-            <div
-              class="h-full bg-primary progress-glow rounded-full w-[60%]"
-            ></div>
+            <div class="h-full bg-primary progress-glow rounded-full" style={`width: ${Math.min(statProjects.value * 10, 100)}%`}></div>
           </div>
         </div>
         <div>
           <div class="flex justify-between text-xs mb-1">
-            <span class="text-slate-300">Piezas entregadas</span>
-            <span class="text-primary font-bold">24</span>
+            <span class="text-slate-300">{statPieces.label}</span>
+            <span class="text-primary font-bold">{statPieces.value}</span>
           </div>
           <div class="h-[2px] bg-white/5 rounded-full overflow-hidden">
-            <div
-              class="h-full bg-primary/70 progress-glow rounded-full w-[24%]"
-            ></div>
+            <div class="h-full bg-primary/70 progress-glow rounded-full" style={`width: ${Math.min(statPieces.value * 2, 100)}%`}></div>
           </div>
         </div>
         <div>
           <div class="flex justify-between text-xs mb-1">
-            <span class="text-slate-300">Clientes activos</span>
-            <span class="text-primary font-bold">7</span>
+            <span class="text-slate-300">{statClients.label}</span>
+            <span class="text-primary font-bold">{statClients.value}</span>
           </div>
           <div class="h-[2px] bg-white/5 rounded-full overflow-hidden">
-            <div
-              class="h-full bg-primary/50 progress-glow rounded-full w-[14%]"
-            ></div>
+            <div class="h-full bg-primary/50 progress-glow rounded-full" style={`width: ${Math.min(statClients.value * 5, 100)}%`}></div>
           </div>
         </div>
       </div>
@@ -120,18 +166,22 @@ const { services } = servicesData;
         AI_Generation_Live
       </div>
       <div class="space-y-2" id="aiFeed">
-        <div class="text-[11px] border-l-2 border-primary/30 pl-2 py-1 bg-primary/5">
-          <span class="text-primary/50">18:17</span>
-          <span class="text-slate-300">Render 4K finalizado — NEON ODYSSEY</span>
-        </div>
-        <div class="text-[11px] border-l-2 border-primary/20 pl-2 py-1">
-          <span class="text-primary/50">18:15</span>
-          <span class="text-slate-300">Color grade exportado — ASCENSION</span>
-        </div>
-        <div class="text-[11px] border-l-2 border-slate-700 pl-2 py-1">
-          <span class="text-slate-400">18:12</span>
-          <span class="text-slate-300">Sesion de cliente iniciada</span>
-        </div>
+        {initialFeed.map((entry) => {
+          const isHigh = entry.level === 'high';
+          const isLow = entry.level === 'low';
+          const time = new Date(entry.created_at);
+          const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
+          return (
+            <div class={`text-[11px] border-l-2 pl-2 py-1 ${isHigh ? 'border-primary/30 bg-primary/5' : isLow ? 'border-slate-700' : 'border-primary/20'}`}>
+              <span class={isLow ? 'text-slate-400' : 'text-primary/50'}>{timeStr}</span>
+              {entry.project_title && <span class="text-primary/40 ml-1">[{entry.project_title}]</span>}
+              <span class="text-slate-300"> {entry.text}</span>
+            </div>
+          );
+        })}
+        {initialFeed.length === 0 && (
+          <div class="text-[11px] text-slate-500">Sin actividad reciente</div>
+        )}
       </div>
     </div>
   </div>
@@ -145,7 +195,7 @@ const { services } = servicesData;
     let current = 0;
     setInterval(() => {
       services.forEach((s) => s.classList.remove('service-highlight'));
-      services[current].classList.add('service-highlight');
+      if (services[current]) services[current].classList.add('service-highlight');
       current = (current + 1) % services.length;
     }, 2500);
 
@@ -158,38 +208,31 @@ const { services } = servicesData;
       });
     });
 
-    const feedMessages = [
-      { text: 'Render 4K finalizado — NEON ODYSSEY', level: 'high' },
-      { text: 'Color grade exportado — ASCENSION', level: 'mid' },
-      { text: 'Sesion de cliente iniciada', level: 'low' },
-      { text: 'Generacion de frames IA — VOID FRAGMENTS', level: 'high' },
-      { text: 'Composite VFX completo — CITY PULSE', level: 'mid' },
-      { text: 'Audio master procesado — SIGNAL NOIR', level: 'mid' },
-      { text: 'Upscale 8K completado', level: 'high' },
-      { text: 'Pre-produccion iniciada — nuevo proyecto', level: 'low' },
-      { text: 'Motion tracking finalizado', level: 'mid' },
-      { text: 'Exportacion HDR — CHROME DREAMS', level: 'high' },
-    ];
-
-    const levelStyles = {
-      high: { border: 'border-primary/30', bg: 'bg-primary/5', time: 'text-primary/50' },
-      mid: { border: 'border-primary/20', bg: '', time: 'text-primary/50' },
-      low: { border: 'border-slate-700', bg: '', time: 'text-slate-400' },
-    };
+    async function loadFeed() {
+      try {
+        const res = await fetch('/api/feed');
+        if (!res.ok) return [];
+        return await res.json();
+      } catch { return []; }
+    }
 
     function feedNow() {
       const d = new Date();
       return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     }
 
-    setInterval(() => {
+    setInterval(async () => {
       const feed = document.getElementById('aiFeed');
       if (!feed) return;
-      const msg = feedMessages[Math.floor(Math.random() * feedMessages.length)];
-      const style = levelStyles[msg.level as keyof typeof levelStyles];
+      const entries = await loadFeed();
+      if (!entries || entries.length === 0) return;
+      const entry = entries[Math.floor(Math.random() * entries.length)];
+      const isHigh = entry.level === 'high';
+      const isLow = entry.level === 'low';
+      const projTag = entry.project_title ? `<span class="text-primary/40 ml-1">[${entry.project_title}]</span>` : '';
       const div = document.createElement('div');
-      div.className = `text-xs border-l-2 ${style.border} pl-2 py-1 ${style.bg}`;
-      div.innerHTML = `<span class="${style.time}">${feedNow()}</span> <span class="text-slate-300">${msg.text}</span>`;
+      div.className = `text-xs border-l-2 pl-2 py-1 ${isHigh ? 'border-primary/30 bg-primary/5' : isLow ? 'border-slate-700' : 'border-primary/20'}`;
+      div.innerHTML = `<span class="${isLow ? 'text-slate-400' : 'text-primary/50'}">${feedNow()}</span>${projTag} <span class="text-slate-300">${entry.text}</span>`;
       feed.prepend(div);
       while (feed.children.length > 5) {
         feed.lastElementChild?.remove();

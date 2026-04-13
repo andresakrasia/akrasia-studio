@@ -1,8 +1,8 @@
 # AKRASIA STUDIO — Roadmap de Desarrollo
 
-> **Version:** 2.0  
+> **Version:** 3.0  
 > **Fecha:** 2026-04-09  
-> **Ultima actualizacion:** Incorporacion de Fase 4 (Leads) y Fase 5 (Admin Dashboard)
+> **Ultima actualizacion:** Fase 5 completada
 
 ---
 
@@ -12,10 +12,10 @@
 FASE 0: Pre-Produccion                        ✅ COMPLETADO
 FASE 1: Shell Estatico                        ✅ COMPLETADO
 FASE 2: Datos Dinamicos (JSON)                ✅ COMPLETADO
-FASE 3: Chat con Agente IA                    ← ACTUAL
-FASE 4: Captacion de Leads + Base de Datos    Supabase + extraccion automatica
-FASE 5: Admin Dashboard                       Panel privado sin login
-FASE 6: Pulido y Animaciones                  Refinamiento visual
+FASE 3: Chat con Agente IA                    ✅ COMPLETADO
+FASE 4: Captacion de Leads + Base de Datos    ✅ COMPLETADO
+FASE 5: Admin Dashboard                       ✅ COMPLETADO
+FASE 6: Pulido y Animaciones                  ← ACTUAL
 FASE 7: Responsive y Accesibilidad            Multi-dispositivo
 FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 ```
@@ -103,7 +103,7 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 ---
 
-## FASE 3: Chat con Agente IA ← ACTUAL
+## FASE 3: Chat con Agente IA ✅
 
 **Objetivo:** Sistema de chat funcional conectado a API de OpenAI.
 
@@ -118,7 +118,7 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 | Streaming visual en tiempo real | ALTA | Texto aparece progresivamente | ✅ SSE + ReadableStream |
 | Indicador "escribiendo..." | MEDIA | Feedback visual mientras responde | ✅ |
 | Historial de sesion (localStorage) | MEDIA | Mantener contexto entre visitas | ✅ MAX 50 mensajes |
-| Respuestas con formato | BAJA | Markdown o HTML en respuestas | PENDIENTE |
+| Respuestas con formato | BAJA | Markdown o HTML en respuestas | ✅ FormattedText.tsx |
 | Toggle entre chat y viewport | MEDIA | Cambiar vista sin perder estado | PENDIENTE |
 
 **Criterio de aceptacion:** El usuario puede escribir y recibir respuestas del agente Acrasia con personalidad definida.
@@ -127,48 +127,58 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 ---
 
-## FASE 4: Captacion de Leads + Base de Datos
+## FASE 4: Captacion de Leads + Base de Datos ✅
 
 **Objetivo:** El chat se convierte en herramienta de captacion automatica. Supabase como backend.
 
 **Duracion estimada:** 2-3 sesiones
 
-| Tarea | Prioridad | Descripcion |
-|-------|-----------|-------------|
-| Configurar proyecto Supabase | ALTA | Base de datos + API |
-| Tabla `visitors` | ALTA | Identificacion anonima (cookie/localStorage) |
-| Tabla `conversations` | ALTA | Historial completo de chats |
-| Tabla `leads` | ALTA | Datos de contacto extraidos |
-| Extraccion automatica de datos | ALTA | IA detecta email, telefono, empresa en el chat |
-| Guardar conversaciones en BD | ALTA | Cada mensaje se almacena |
-| Asociar visitor → conversation → lead | ALTA | Relaciones entre tablas |
-| Notificacion de lead nuevo | MEDIA | Email o Telegram al capturar un lead |
-| Tag automatico de leads | BAJA | Clasificar por interes (web, branding, etc.) |
-| Estadisticas basicas | BAJA | Contador de visitantes y leads |
+| Tarea | Prioridad | Descripcion | Estado |
+|-------|-----------|-------------|--------|
+| Configurar proyecto Supabase | ALTA | Base de datos + API | ✅ REST API directa |
+| Tabla `visitors` | ALTA | Identificacion anonima (localStorage UUID) | ✅ |
+| Tabla `conversations` | ALTA | Historial completo de chats | ✅ |
+| Tabla `messages` | ALTA | Mensajes individuales de chat | ✅ |
+| Tabla `leads` | ALTA | Datos de contacto extraidos | ✅ |
+| Extraccion automatica de datos | ALTA | Regex detecta email, telefono, tipo proyecto | ✅ `extractContactData.ts` |
+| Guardar conversaciones en BD | ALTA | Cada mensaje se almacena via PostgREST | ✅ |
+| Asociar visitor → conversation → lead | ALTA | Relaciones entre tablas | ✅ |
+| Notificacion de lead nuevo | MEDIA | Telegram al capturar un lead | ✅ `notify.ts` |
+| Tag automatico de leads | BAJA | Clasificar por tipo proyecto | ✅ project_type en leads |
+| Estadisticas basicas | BAJA | Contador de visitantes y leads | DEFERIDO → Fase 5 |
 
 **Criterio de aceptacion:** Cuando un visitante menciona su email o telefono en el chat, se captura automaticamente como lead en Supabase.
 
 ---
 
-## FASE 5: Admin Dashboard
+## FASE 5: Admin Dashboard ✅
 
 **Objetivo:** Panel privado para gestionar leads, conversaciones y contenido web — sin tocar codigo, sin sistema de login.
 
 **Duracion estimada:** 2-3 sesiones
 
-| Tarea | Prioridad | Descripcion |
-|-------|-----------|-------------|
-| Ruta secreta `/dashboard/{secret}` | ALTA | Acceso via URL secreta (sin login) |
-| Vista de visitantes | ALTA | Lista con tags, estado (color), ultima actividad |
-| Vista de conversaciones | ALTA | Historial completo por visitante |
-| Vista de leads | ALTA | Datos de contacto + origen + estado |
-| Exportar leads a CSV | MEDIA | Descarga de lista de leads |
-| Editor de contenido web | MEDIA | Editar proyectos y servicios desde el panel |
-| Metricas basicas | MEDIA | Visitas hoy, leads esta semana, pregunta mas frecuente |
-| Filtros y busqueda | BAJA | Buscar por nombre, email, fecha |
-| Marcar lead como contactado | BAJA | Cambiar estado del lead |
+| Tarea | Prioridad | Descripcion | Estado |
+|-------|-----------|-------------|--------|
+| Ruta secreta `/dashboard/{secret}` | ALTA | Acceso via URL secreta (sin login) | ✅ |
+| Vista de visitantes | ALTA | Lista con ultima actividad, busqueda, ver conversaciones | ✅ |
+| Vista de conversaciones | ALTA | Historial completo expandible por conversacion | ✅ |
+| Vista de leads | ALTA | Tabla con estado, filtros, cambio de estado inline | ✅ |
+| Exportar leads a CSV | MEDIA | Descarga de lista completa de leads | ✅ `/api/dashboard/export` |
+| Editor de contenido web | MEDIA | Editar proyectos y servicios (JSON) desde el panel | ✅ Via Supabase `content` table |
+| Metricas basicas | MEDIA | Visitas hoy, leads semana, leads por estado | ✅ |
+| Filtros y busqueda | BAJA | Buscar por nombre, email, fecha | ✅ |
+| Marcar lead como contactado | BAJA | Cambiar estado del lead via dropdown | ✅ |
 
-**Criterio de aceptacion:** Desde el panel se pueden ver todos los leads, leer conversaciones y editar el contenido de la web.
+**Criterio de aceptacion:** Desde el panel se pueden ver todos los leads, leer conversaciones y editar el contenido de la web. ✅
+
+**Archivos creados:**
+- `src/pages/dashboard/[secret].astro` — Pagina del dashboard
+- `src/components/dashboard/DashboardApp.tsx` — React SPA con 5 tabs
+- `src/lib/dashboard.ts` — Helper compartido (auth + Supabase queries)
+- `src/pages/api/dashboard/` — 6 API endpoints (visitors, conversations, leads, metrics, content, export)
+- `supabase/migration-v2.sql` — Tabla `content` para editor web
+
+**Branch:** `fase-5`
 
 ---
 
@@ -236,9 +246,9 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 ```
 SEMANA 1:  FASE 0 + FASE 1 (shell estatico)                    ✅
-SEMANA 2:  FASE 2 (migracion Astro + datos dinamicos)           ← ACTUAL
-SEMANA 3:  FASE 3 (chat con IA) + inicio FASE 4 (leads)
-SEMANA 4:  FASE 4 (leads + Supabase) + FASE 5 (admin dashboard)
+SEMANA 2:  FASE 2 (migracion Astro + datos dinamicos)           ✅
+SEMANA 3:  FASE 3 (chat con IA) + FASE 4 (leads + Supabase)     ✅
+SEMANA 4:  FASE 5 (admin dashboard)                              ← ACTUAL
 SEMANA 5:  FASE 6 (pulido) + FASE 7 (responsive)
 SEMANA 6:  FASE 8 (deploy y produccion)
 ```
