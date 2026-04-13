@@ -76,7 +76,7 @@ const completedProjects = projects.filter((p) => p.status === 'completed' || p.s
 const initialLogs = logs.slice(0, 6);
 ---
 
-<aside class="col-span-12 lg:col-span-3 flex flex-col gap-4 lg:overflow-hidden">
+<aside class="col-span-12 lg:col-span-3 flex flex-col gap-4 lg:overflow-hidden fade-in-panel">
   <!-- Portfolio Reciente -->
   <div class="glass-panel p-4 lg:p-5 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto">
     <div class="text-xs text-primary opacity-50 mb-5 uppercase tracking-[0.2em] flex justify-between items-center">
@@ -93,7 +93,7 @@ const initialLogs = logs.slice(0, 6);
         return (
           <div
             class:list={[
-              'relative pl-5 py-4',
+              'relative pl-5 py-4 timeline-item',
               project.status === 'in_production'
                 ? 'border-l border-primary/40 bg-primary/5 rounded-r'
                 : `border-l ${timelineColors[project.status] || 'border-slate-800'}`,
@@ -239,7 +239,7 @@ const initialLogs = logs.slice(0, 6);
       };
       const cfg = typeConfig[entry.log_type] || typeConfig.info;
       const p = document.createElement('p');
-      p.className = 'text-slate-500';
+      p.className = 'text-slate-500 log-entry-new';
       p.innerHTML = `[${logNow()}] <span class="${cfg.cls}">${cfg.label}</span> ${entry.text}`;
       logsEl.prepend(p);
       while (logsEl.children.length > 6) {

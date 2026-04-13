@@ -188,17 +188,16 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 **Duracion estimada:** 1-2 sesiones
 
-| Tarea | Prioridad | Descripcion |
-|-------|-----------|-------------|
-| Animaciones de entrada | ALTA | Fade-in de paneles al cargar |
-| Hover effects en thumbnails | ALTA | Zoom o reveal al pasar cursor |
-| Transicion entre vistas | MEDIA | Smooth swap entre viewport y chat |
-| Parallax sutil en overlay | BAJA | Movimiento del overlay con mouse |
-| Sonido ambiente (opcional) | BAJA | Click en botones, envio de chat |
-| Loading state | MEDIA | Pantalla de carga con logo animado |
-| Micro-interacciones | BAJA | Feedback visual en cada accion |
+| Tarea | Prioridad | Descripcion | Estado |
+|-------|-----------|-------------|--------|
+| Pantalla de carga con logo | ALTA | Loader animado con barra de progreso + logo AKRASIA | ✅ `#akrasia-loader` |
+| Fade-in de paneles al cargar | ALTA | Header, Left, Center, Right, Footer con delays escalonados | ✅ `.fade-in-panel` |
+| Hover effects en thumbnails | ALTA | Glow border + play icon reveal + image zoom | ✅ `.thumb-card::after` |
+| Transicion entre vistas | MEDIA | Smooth backdrop blur reveal al abrir chat | ✅ `.chatRevealIn` |
+| Parallax sutil en overlay | BAJA | Movimiento del HUD overlay con mouse | ✅ `.hud-overlay-parallax` |
+| Micro-interacciones | BAJA | Pulse en botones, slide-in en feed/logs, timeline hover | ✅ `.btn-pulse`, `.feed-entry-new`, `.log-entry-new` |
 
-**Criterio de aceptacion:** La experiencia se siente fluida y profesional.
+**Criterio de aceptacion:** La experiencia se siente fluida y profesional. ✅
 
 ---
 

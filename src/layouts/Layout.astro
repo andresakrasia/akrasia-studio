@@ -25,9 +25,46 @@ const { title = 'AKRASIA STUDIO | AI Cinema Engine' } = Astro.props;
     />
   </head>
   <body class="relative h-screen flex flex-col">
+    <div id="akrasia-loader">
+      <div class="loader-logo">
+        <span class="neon-char text-primary font-black font-headline" style="font-size:1.8rem;letter-spacing:-0.04em;margin-right:-0.04em;--neon-delay:0s;--neon-dur:4.2s">Λ</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.2rem;letter-spacing:-0.05em;--neon-delay:0.3s;--neon-dur:3.8s">K</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.6rem;letter-spacing:-0.05em;--neon-delay:0.7s;--neon-dur:4.5s">R</span><span class="neon-char text-primary font-black font-headline" style="font-size:3rem;letter-spacing:-0.05em;--neon-delay:1.1s;--neon-dur:3.5s">Λ</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.6rem;letter-spacing:-0.05em;--neon-delay:0.5s;--neon-dur:4.8s">S</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.2rem;letter-spacing:-0.05em;--neon-delay:0.9s;--neon-dur:3.9s">I</span><span class="neon-char text-primary font-black font-headline" style="font-size:1.8rem;--neon-delay:1.4s;--neon-dur:4.1s">Λ</span>
+      </div>
+      <div class="loader-sub">STUDIO</div>
+      <div class="loader-bar-track">
+        <div class="loader-bar-fill" id="loaderBar"></div>
+      </div>
+    </div>
     <slot />
 
     <script>
+      (function () {
+        const bar = document.getElementById('loaderBar');
+        const loader = document.getElementById('akrasia-loader');
+        if (!bar || !loader) return;
+
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 25 + 10;
+          if (progress > 90) progress = 90;
+          bar.style.width = progress + '%';
+        }, 200);
+
+        function hide() {
+          clearInterval(interval);
+          bar.style.width = '100%';
+          setTimeout(() => {
+            loader.classList.add('loader-hidden');
+          }, 400);
+        }
+
+        if (document.readyState === 'complete') {
+          hide();
+        } else {
+          window.addEventListener('load', hide);
+        }
+        setTimeout(hide, 3000);
+      })();
+
       document.querySelectorAll('.glass-panel').forEach((panel) => {
         const speed = (6 + Math.random() * 10).toFixed(1);
         const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
