@@ -229,16 +229,21 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Configurar Vercel/Netlify | ALTA | Deploy automatico desde Git |
-| Dominio akrasia.studio | ALTA | DNS y SSL |
-| SEO meta tags | ALTA | Title, description, og:image |
-| Favicon | ALTA | Logo como favicon |
-| Performance audit | MEDIA | Lighthouse score > 90 |
-| Analytics (opcional) | BAJA | Google Analytics o similar |
-| Error pages | BAJA | 404 custom |
-| Variables de entorno | ALTA | API keys, URL secreta, Supabase creds |
+| Configurar Vercel | ALTA | Proyecto ya usa `@astrojs/vercel`. Conectar repo Git con Vercel para deploy automatico |
+| Variables de entorno en Vercel | ALTA | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `DASHBOARD_SECRET` |
+| Dominio akrasia.studio | ALTA | Apuntar DNS a Vercel + SSL automatico |
+| SEO meta tags | ALTA | Title, description, og:image en Layout.astro |
+| Favicon | ALTA | Logo AKRASIA como favicon.ico + SVG |
+| Performance audit | MEDIA | Lighthouse score > 90. Lazy load imagenes, preconnect fonts |
+| Error pages | BAJA | 404 custom con estilo AKRASIA |
+| Analytics | BAJA | Google Analytics o Plausible |
 
 **Criterio de aceptacion:** La web esta publicada y accesible en akrasia.studio.
+
+### Pre-requisitos antes de deploy
+1. **Ejecutar `migration-v3.sql`** en Supabase SQL Editor (projects, tasks, feed, logs, stats, services)
+2. **Ejecutar `migration-v4.sql`** en Supabase SQL Editor (clients, client_id en projects, priority en tasks)
+3. Verificar que el dashboard funciona: crear cliente → crear proyecto → generar tareas IA → completar tarea → verificar feed/logs
 
 ---
 
