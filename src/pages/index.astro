@@ -5,6 +5,7 @@ import LeftPanel from '../components/LeftPanel.astro';
 import CenterPanel from '../components/CenterPanel.astro';
 import RightPanel from '../components/RightPanel.astro';
 import Footer from '../components/Footer.astro';
+import MobileNav from '../components/MobileNav.astro';
 import ChatWrapper from '../components/ChatWrapper.tsx';
 import VideoModalListener from '../components/VideoModalListener.tsx';
 ---
@@ -13,7 +14,7 @@ import VideoModalListener from '../components/VideoModalListener.tsx';
   <!-- Full-screen Background -->
   <div class="fixed inset-0 z-0">
     <img
-      alt="viewport"
+      alt="Akrasia Studio background"
       class="w-full h-full object-cover brightness-[0.3]"
       src="/img/out.jpg"
     />
@@ -28,12 +29,20 @@ import VideoModalListener from '../components/VideoModalListener.tsx';
   <!-- MAIN GRID -->
   <main
     class="flex-1 grid grid-cols-12 gap-4 p-3 lg:p-5 z-10 overflow-hidden lg:overflow-hidden overflow-y-auto scroll-hide"
+    role="main"
   >
-    <LeftPanel />
-    <CenterPanel />
-    <RightPanel />
+    <div class="col-span-12 lg:col-span-2 lg:h-full lg:overflow-hidden fade-in-panel" data-panel="info">
+      <LeftPanel />
+    </div>
+    <div class="col-span-12 lg:col-span-7 lg:h-full flex flex-col gap-4 lg:overflow-hidden fade-in-panel min-h-0" data-panel="viewport">
+      <CenterPanel />
+    </div>
+    <div class="col-span-12 lg:col-span-3 lg:h-full lg:overflow-hidden fade-in-panel min-h-0" data-panel="portfolio">
+      <RightPanel />
+    </div>
   </main>
 
+  <MobileNav />
   <ChatWrapper client:only="react" />
   <VideoModalListener client:only="react" />
   <Footer />

@@ -126,6 +126,26 @@ function ChatDesktop() {
   );
 }
 
+function MobileChatBtn({ slot }: { slot: HTMLElement | null }) {
+  const { messages } = useChat();
+  const handleClick = useCallback(() => {
+    document.dispatchEvent(new CustomEvent('chat-trigger', { detail: { message: messages.length > 0 ? '' : 'Hola, quiero saber mas sobre Akrasia Studio' } }));
+  }, [messages]);
+
+  if (!slot) return null;
+
+  return createPortal(
+    <button
+      className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform"
+      onClick={handleClick}
+      aria-label="Abrir chat"
+    >
+      <span className="material-symbols-outlined text-black text-xl">forum</span>
+    </button>,
+    slot
+  );
+}
+
 function MobileChat() {
   const { messages, isTyping, streamingText, sendMessage } = useChat();
   const [open, setOpen] = useState(false);
@@ -133,7 +153,36 @@ function MobileChat() {
   const chatRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const scrollToBottom = useCallback(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, streamingText, scrollToBottom]);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(scrollToBottom, 50);
+    }
+  }, [open, scrollToBottom]);
+
   const toggle = useCallback(() => setOpen((prev) => !prev), []);
+
+  useEffect(() => {
+    const closeHandler = () => setOpen(false);
+    const openHandler = (e: Event) => {
+      if (window.innerWidth < 1024) setOpen(true);
+    };
+    document.addEventListener('mobile-chat-close', closeHandler);
+    document.addEventListener('chat-trigger', openHandler);
+    return () => {
+      document.removeEventListener('mobile-chat-close', closeHandler);
+      document.removeEventListener('chat-trigger', openHandler);
+    };
+  }, []);
 
   const handleSend = useCallback(() => {
     const msg = input.trim();
@@ -155,19 +204,10 @@ function MobileChat() {
 
   return (
     <>
-      <button
-        className={`lg:hidden fixed bottom-6 right-6 z-[100] w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 transition-transform ${open ? 'hidden' : ''}`}
-        onClick={toggle}
-      >
-        <span className="material-symbols-outlined text-black text-2xl">
-          forum
-        </span>
-      </button>
-
       {open && (
-        <div className="lg:hidden fixed inset-0 z-[90] flex flex-col">
+        <div className="lg:hidden fixed inset-0 z-[85] flex flex-col">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={toggle} />
-          <div className="absolute inset-x-0 bottom-0 top-14 flex flex-col z-10">
+          <div className="absolute inset-x-0 bottom-0 top-12 flex flex-col z-10">
             <div className="glass-panel m-2 flex-1 flex flex-col overflow-hidden">
               <div className="p-3 flex items-center justify-between border-b border-white/5">
                 <div className="flex items-center gap-2">
@@ -300,15 +340,18 @@ function ChatHint() {
 
 export default function ChatWrapper() {
   const [desktopRoot, setDesktopRoot] = useState<HTMLElement | null>(null);
+  const [mobileChatSlot, setMobileChatSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setDesktopRoot(document.getElementById('chat-desktop-root'));
+    setMobileChatSlot(document.getElementById('mobileChatSlot'));
   }, []);
 
   return (
     <ChatProvider>
       {desktopRoot && createPortal(<ChatDesktop />, desktopRoot)}
       {desktopRoot && createPortal(<ChatHint />, desktopRoot)}
+      <MobileChatBtn slot={mobileChatSlot} />
       <MobileChat />
     </ChatProvider>
   );

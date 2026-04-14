@@ -15,8 +15,8 @@ FASE 2: Datos Dinamicos (JSON)                ✅ COMPLETADO
 FASE 3: Chat con Agente IA                    ✅ COMPLETADO
 FASE 4: Captacion de Leads + Base de Datos    ✅ COMPLETADO
 FASE 5: Admin Dashboard                       ✅ COMPLETADO
-FASE 6: Pulido y Animaciones                  ← ACTUAL
-FASE 7: Responsive y Accesibilidad            Multi-dispositivo
+FASE 6: Pulido y Animaciones                  ✅ COMPLETADO
+FASE 7: Responsive y Accesibilidad            ← ACTUAL
 FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 ```
 
@@ -207,16 +207,17 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 **Duracion estimada:** 1-2 sesiones
 
-| Tarea | Prioridad | Descripcion |
-|-------|-----------|-------------|
-| Responsive movil | ALTA | Stack vertical, scroll entre paneles |
-| Responsive tablet | ALTA | Layout adaptado a pantalla media |
-| Navegacion en movil | ALTA | Menu hamburguesa o tabs |
-| Touch interactions | MEDIA | Swipe entre paneles en movil |
-| Accesibilidad basica | MEDIA | Contrast ratio, aria labels |
-| Keyboard navigation | BAJA | Tab navigation funcional |
+| Tarea | Prioridad | Descripcion | Estado |
+|-------|-----------|-------------|--------|
+| Responsive movil | ALTA | Bottom tab nav con 4 tabs: Info, Viewport, Portfolio, Chat | ✅ `MobileNav.astro` |
+| Navegacion en movil | ALTA | Tab bar inferior con iconos + swipe horizontal | ✅ |
+| Responsive panels | ALTA | Paneles visibles segun tab activa, hidden en resto | ✅ `data-panel` wrappers |
+| Touch interactions | MEDIA | Swipe izquierda/derecha para cambiar de tab | ✅ touchstart/touchend |
+| Accesibilidad basica | MEDIA | aria-labels, role attributes, focus-visible, sr-only | ✅ |
+| Responsive tablet | ALTA | Layout adaptado con paneles visibles | ✅ md: breakpoint |
+| Keyboard navigation | BAJA | Tab navigation con focus-visible cyan | ✅ |
 
-**Criterio de aceptacion:** La web es usable en iPhone, Android y tablets.
+**Criterio de aceptacion:** La web es usable en iPhone, Android y tablets. ✅
 
 ---
 

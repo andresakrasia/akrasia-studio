@@ -287,7 +287,7 @@ function OverviewTab({ secret }: { secret: string }) {
 
       <div className="bg-[#0a0a0a] border border-cyan-500/25 rounded-lg p-5">
         <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-3">Leads por estado</p>
-        <div className="flex gap-6">
+        <div className="flex gap-6 flex-wrap">
           {Object.entries(data.leadsByStatus).map(([status, count]) => (
             <div key={status} className="flex items-center gap-2">
               <Badge status={status} />
@@ -333,22 +333,22 @@ function VisitorsTab({ secret }: { secret: string }) {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="flex gap-4 h-full">
+    <div className="flex gap-4 h-full flex-col md:flex-row">
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-2">
           <input
             type="text"
             placeholder="Buscar visitante..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={INPUT_CLS + ' w-64'}
+            className={INPUT_CLS + ' w-full md:w-64'}
           />
           <button onClick={refetch} className="text-[11px] text-slate-500 hover:text-primary transition-colors">
             Actualizar
           </button>
         </div>
 
-        <div className="bg-[#0a0a0a] border border-cyan-500/25 rounded-lg overflow-hidden">
+        <div className="bg-[#0a0a0a] border border-cyan-500/25 rounded-lg overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-[10px] uppercase tracking-wider text-slate-500 border-b border-cyan-500/25">
@@ -389,7 +389,7 @@ function VisitorsTab({ secret }: { secret: string }) {
       </div>
 
       {selectedVisitor && (
-        <div className="w-[45%] bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col">
+        <div className="w-full md:w-[45%] bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col max-h-[50vh] md:max-h-none">
           <div className="p-3 border-b border-cyan-500/25 flex items-center justify-between">
             <p className="text-[10px] uppercase tracking-widest text-slate-500">Conversaciones</p>
             <button onClick={() => setSelectedVisitor(null)} className="text-slate-500 hover:text-slate-300 text-xs">Cerrar</button>
@@ -436,13 +436,13 @@ function ConversationsTab({ secret }: { secret: string }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
         <input
           type="text"
           placeholder="Buscar por visitante o contenido..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className={INPUT_CLS + ' w-80'}
+          className={INPUT_CLS + ' w-full md:w-80'}
         />
         <p className="text-[11px] text-slate-500">{filtered.length} conversaciones</p>
       </div>
@@ -457,8 +457,8 @@ function ConversationsTab({ secret }: { secret: string }) {
               className="w-full flex items-center justify-between p-3 hover:bg-[#0f0f0f] transition-colors text-left"
               onClick={() => setExpanded(expanded === conv.id ? null : conv.id)}
             >
-              <div className="flex items-center gap-4">
-                <span className="text-[10px] uppercase tracking-wider text-slate-500 w-28">{formatDate(conv.created_at)}</span>
+              <div className="flex items-center gap-4 flex-wrap min-w-0">
+                <span className="text-[10px] uppercase tracking-wider text-slate-500">{formatDate(conv.created_at)}</span>
                 <span className="text-[11px] font-mono text-slate-400">{conv.visitor_id.slice(0, 16)}...</span>
                 <span className="text-[10px] text-slate-600">{conv.messages?.length || 0} msgs</span>
               </div>
@@ -822,16 +822,16 @@ function ProjectsTab({ secret }: { secret: string }) {
   const done = tasks.filter(t => t.status === 'completed');
 
   return (
-    <div className="flex gap-3 h-[calc(100vh-140px)]">
+    <div className="flex gap-3 h-[calc(100vh-140px)] md:h-[calc(100vh-140px)] flex-col md:flex-row">
       {/* COL 1: Clients */}
-      <div className="w-[200px] flex-shrink-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col">
+      <div className={`md:w-[200px] flex-shrink-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col ${selectedProjectId || isNewProject ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-3 border-b border-cyan-500/25">
           <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Clientes</p>
           <button onClick={startNewClient} className="w-full text-[11px] px-3 py-1.5 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors">
             + Nuevo
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto max-h-[40vh] md:max-h-none">
           <button
             onClick={() => { setSelectedClientId(null); setSelectedProjectId(null); setIsNewProject(false); }}
             className={`w-full text-left p-3 border-b border-cyan-500/25 hover:bg-[#0f0f0f] transition-colors ${!selectedClientId ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}
@@ -875,14 +875,14 @@ function ProjectsTab({ secret }: { secret: string }) {
       </div>
 
       {/* COL 2: Projects */}
-      <div className="w-[240px] flex-shrink-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col">
+      <div className={`md:w-[240px] flex-shrink-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg flex flex-col ${selectedProjectId || isNewProject ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-3 border-b border-cyan-500/25 flex items-center justify-between">
           <p className="text-[10px] uppercase tracking-widest text-slate-500">{selectedClient?.name || 'Proyectos'}</p>
           <button onClick={startNewProject} className="text-[11px] px-2 py-1 rounded bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors">
             + Nuevo
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto max-h-[40vh] md:max-h-none">
           {filteredProjects?.map(p => {
             const t = p.tasks || [];
             const total = t.length;
@@ -916,7 +916,16 @@ function ProjectsTab({ secret }: { secret: string }) {
       </div>
 
       {/* COL 3: Detail */}
-      <div className="flex-1 min-w-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg overflow-y-auto">
+      <div className={`flex-1 min-w-0 bg-[#0a0a0a] border border-cyan-500/25 rounded-lg overflow-y-auto ${selectedProjectId || isNewProject ? 'flex flex-col' : 'hidden md:flex'}`}>
+        {/* Mobile back button */}
+        {(selectedProjectId || isNewProject) && (
+          <button
+            onClick={() => { setSelectedProjectId(null); setIsNewProject(false); setForm({}); }}
+            className="md:hidden text-[11px] px-3 py-2 border-b border-cyan-500/25 text-slate-400 hover:text-primary flex items-center gap-1"
+          >
+            <span className="text-sm">←</span> Volver
+          </button>
+        )}
         {!showForm ? (
           <div className="flex items-center justify-center h-full text-slate-500 text-sm">
             Selecciona o crea un proyecto
@@ -946,10 +955,10 @@ function ProjectsTab({ secret }: { secret: string }) {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1 block">Titulo</label>
-                <input value={form.title || ''} onChange={setField('title')} className={INPUT_CLS} placeholder="GIFTMEFY" />
+                <input value={form.title || ''} onChange={setField('title')} className={INPUT_CLS} placeholder="GIFTMEFYY" />
               </div>
               <div>
                 <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1 block">Cliente</label>
@@ -962,7 +971,7 @@ function ProjectsTab({ secret }: { secret: string }) {
                   {clients?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 md:col-span-2">
                 <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1 block">Descripcion del proyecto</label>
                 <textarea value={form.description || ''} onChange={setField('description')} rows={2} className={INPUT_CLS + ' resize-none'} placeholder="Videoclip para redes sociales, spot publicitario..." />
               </div>
@@ -1043,7 +1052,7 @@ function ProjectsTab({ secret }: { secret: string }) {
                 </div>
 
                 {taskView === 'kanban' ? (
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {([['pending', 'Por hacer', todo], ['in_progress', 'Haciendo', doing], ['completed', 'Finalizado', done]] as const).map(([status, label, items]) => (
                       <div key={status} className="bg-[#080808] border border-cyan-500/25 rounded-lg p-3">
                         <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">{label} ({items.length})</p>
@@ -1184,7 +1193,7 @@ function FeedTab({ secret }: { secret: string }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-[#0a0a0a] border border-cyan-500/25 rounded-lg">
           <div className="p-3 border-b border-cyan-500/25">
             <p className="text-[10px] uppercase tracking-widest text-slate-500">AI Generation Live</p>
@@ -1335,13 +1344,13 @@ function StudioTab({ secret }: { secret: string }) {
         </div>
         <div className="p-4 space-y-3">
           {stats?.map(stat => (
-            <div key={stat.key} className="flex items-center gap-3">
-              <span className="text-xs text-slate-400 w-40">{stat.label || stat.key}</span>
+            <div key={stat.key} className="flex items-center gap-3 flex-wrap">
+              <span className="text-xs text-slate-400 w-32 md:w-40">{stat.label || stat.key}</span>
               <input
                 type="number"
                 value={statValues[stat.key] ?? stat.value}
                 onChange={e => setStatValues(v => ({ ...v, [stat.key]: Number(e.target.value) }))}
-                className={INPUT_CLS + ' w-32'}
+                className={INPUT_CLS + ' w-24 md:w-32'}
               />
               <button
                 onClick={() => saveStat(stat.key)}
@@ -1366,7 +1375,7 @@ function StudioTab({ secret }: { secret: string }) {
 
         {showSvcForm && (
           <div className="p-4 border-b border-cyan-500/25 bg-[#080808] space-y-2">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] uppercase tracking-widest text-slate-500 mb-1 block">Titulo</label>
                 <input value={svcForm.title} onChange={e => setSvcForm(f => ({ ...f, title: e.target.value }))} className={INPUT_CLS} />
@@ -1449,7 +1458,7 @@ function ContentTab({ secret }: { secret: string }) {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
         <button
           onClick={() => { setContentType('projects'); setEditData(''); }}
           className={`text-[11px] px-3 py-1.5 rounded border transition-colors ${contentType === 'projects' ? 'border-primary/40 text-primary bg-primary/5' : 'border-cyan-500/25 text-slate-500 hover:text-slate-300'}`}
@@ -1531,7 +1540,7 @@ export default function DashboardApp({ secret }: Props) {
         ))}
       </nav>
 
-      <main className="flex-1 p-6 overflow-y-auto">
+      <main className="flex-1 p-3 md:p-6 overflow-y-auto">
         {activeTab === 'overview' && <OverviewTab secret={secret} />}
         {activeTab === 'visitors' && <VisitorsTab secret={secret} />}
         {activeTab === 'conversations' && <ConversationsTab secret={secret} />}

@@ -811,3 +811,101 @@ button {
 .log-entry-new {
   animation: logSlideIn 0.3s ease-out forwards;
 }
+
+/* ==========================================
+   FASE 7 — Responsive + Accesibilidad
+   ========================================== */
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (max-width: 1023px) {
+  #mobileNav {
+    bottom: env(safe-area-inset-bottom, 16px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .fade-in-panel {
+    animation: none;
+    opacity: 1;
+  }
+  .fade-in-header {
+    animation: none;
+    opacity: 1;
+  }
+  .fade-in-footer {
+    animation: none;
+    opacity: 1;
+  }
+
+  body {
+    cursor: auto;
+  }
+
+  a, button, [role="button"], .thumb-card, .timeline-item, .service-item, .nav-link, .chat-trigger-btn, .chat-trigger-logo, .chat-trigger-link {
+    cursor: auto;
+  }
+
+  input, textarea, select, [contenteditable] {
+    cursor: auto;
+  }
+
+  [data-panel] {
+    min-height: 0;
+  }
+
+  .glass-panel::before {
+    display: none;
+  }
+
+  .radar-container {
+    width: 150px;
+    height: 150px;
+  }
+
+  .radar-ring-outer {
+    width: 150px;
+    height: 150px;
+  }
+
+  .radar-sweep {
+    width: 75px;
+    height: 75px;
+  }
+
+  .radar-cross {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  [data-panel] {
+    display: block !important;
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(0, 240, 255, 0.6);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .mobile-panel-hidden {
+    display: none !important;
+  }
+}
