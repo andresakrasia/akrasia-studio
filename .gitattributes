@@ -1,0 +1,2 @@
+# Migration hashes are byte-based and must match Windows and Linux checkouts.
+*.sql text eol=lf
