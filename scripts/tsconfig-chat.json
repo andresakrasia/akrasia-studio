@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "../src/env.d.ts",
+    "../src/pages/api/chat.ts",
+    "../src/pages/api/visitor-history.ts",
+    "../src/pages/api/maintenance/retention.ts",
+    "../src/pages/api/bookings.ts",
+    "../src/hooks/ChatContext.tsx",
+    "../src/components/ChatWrapper.tsx",
+    "../src/lib/chat-client.ts",
+    "../src/lib/privacy-notice.ts",
+    "./privacy-chat-browser.tsx"
+  ]
+}

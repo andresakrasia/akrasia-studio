@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "../src/env.d.ts", "../src/lib/project-upload.ts", "../src/lib/csv.ts",
+    "../src/lib/public-media.ts", "../src/pages/api/project-media/[...name].ts",
+    "../src/pages/api/dashboard/upload.ts", "../src/pages/api/dashboard/export.ts",
+    "../src/components/dashboard/DashboardApp.tsx", "../src/middleware.ts"
+  ]
+}
