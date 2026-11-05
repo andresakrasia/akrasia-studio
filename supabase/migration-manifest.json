@@ -1,0 +1,131 @@
+{
+  "format": 1,
+  "scope": "akrasia schema only; optional demo seeds excluded",
+  "migrations": [
+    {
+      "version": 1,
+      "name": "migration.sql",
+      "sha256": "c12ac0a2476b7c55dba07acf7ac49ab811b975a0035be403b5f7ff4f8e8d9802"
+    },
+    {
+      "version": 2,
+      "name": "migration-v2.sql",
+      "sha256": "b0add83eab661d7fc37ab009317f1d92e2d6bc6ecbfd764bcc34af30e9b2630e"
+    },
+    {
+      "version": 3,
+      "name": "migration-v3.sql",
+      "sha256": "dfee3ef1ded597b75d3927a2563baa37ff48f49f997a5997f588045c550ea715"
+    },
+    {
+      "version": 4,
+      "name": "migration-v4.sql",
+      "sha256": "5901c59f7ef6ee4240b2b9925094a7aafd1f15a8c416fb8cf7fdcae4ad8b824d"
+    },
+    {
+      "version": 5,
+      "name": "migration-v5.sql",
+      "sha256": "f3c3e9f74e5a1579c966e48010cc4789d5eb79155a182918e66280892952cf58"
+    },
+    {
+      "version": 6,
+      "name": "migration-v6.sql",
+      "sha256": "ba98821645536930bf71cb8fc8ad8a19845b4f7a1f9ee2abbb64c58110d77e5f"
+    },
+    {
+      "version": 7,
+      "name": "migration-v7.sql",
+      "sha256": "2bc1993046747fb3e849766b0626797fe6b114e4d67d65520f994fee9368d5fa"
+    },
+    {
+      "version": 8,
+      "name": "migration-v8.sql",
+      "sha256": "1338ddd33a3aa68355c91308e46fb725cf664af929d9b27cf90a0f3b91edb450"
+    },
+    {
+      "version": 9,
+      "name": "migration-v9.sql",
+      "sha256": "12222acf8d022fbcc7078e2dd563346013adc87c029c178f48fa74d360cb02ca"
+    },
+    {
+      "version": 10,
+      "name": "migration-v10.sql",
+      "sha256": "d8ecb41931963e1e99dff84b0fa8f02456f15afaa439830884c8049ee3689378"
+    },
+    {
+      "version": 11,
+      "name": "migration-v11.sql",
+      "sha256": "463eb626926786484e00fb5eeefbdd74c230e1f542479eb0a9cf78fe0cea7cd8"
+    },
+    {
+      "version": 12,
+      "name": "migration-v12.sql",
+      "sha256": "50df2c8a3e0187548057ed69df521546d6cb7a1aef0bdb8b9d6cfcb7c67f9fa4"
+    },
+    {
+      "version": 13,
+      "name": "migration-v13.sql",
+      "sha256": "cda036fe00a08301d7cf96d250db0794ae2db2b62dad97e268f289af3022ebf5"
+    },
+    {
+      "version": 14,
+      "name": "migration-v14.sql",
+      "sha256": "64918daade79b821fe56d721553ee006fa9166bceeddccd883a5d6c6a3bc021d"
+    },
+    {
+      "version": 15,
+      "name": "migration-v15.sql",
+      "sha256": "5e4d6a93cf6b122e2f61207b932f12ff75808737689df015031f33aaed765d6a"
+    },
+    {
+      "version": 16,
+      "name": "migration-v16.sql",
+      "sha256": "6364c2ac6a8a1e7302a8cf4fe65da022018a86c184ca469ed80121c6204e536e"
+    },
+    {
+      "version": 17,
+      "name": "migration-v17.sql",
+      "sha256": "7ef05353ae088d7dbac0283bd80ab5014304a412b3c3821af20bd7fa26eb2897"
+    },
+    {
+      "version": 18,
+      "name": "migration-v18.sql",
+      "sha256": "d1603c3a6f626fcafd90a1a3f648db2600c26dece66608831844415794b3f365"
+    },
+    {
+      "version": 19,
+      "name": "migration-v19.sql",
+      "sha256": "2a204c29f3021564745961ccf1cd312713b5a7a9db68c9ae422326cea9f29866"
+    },
+    {
+      "version": 20,
+      "name": "migration-v20.sql",
+      "sha256": "9aff03d013c7d5fdc0df1a2c457f0c5551dbe5c00f2a574c0eedd8f649b53b5d"
+    },
+    {
+      "version": 21,
+      "name": "migration-v21.sql",
+      "sha256": "bab926b42a7ee82a8676964e58435196310199e8b77c9593017a087519c2655d"
+    },
+    {
+      "version": 22,
+      "name": "migration-v22.sql",
+      "sha256": "82ea9ec5a824e608f3367ce4351a072de520efc2a03c272b2956d05ed08566e2"
+    },
+    {
+      "version": 23,
+      "name": "migration-v23.sql",
+      "sha256": "caa5ae75dcf5fa8ffbe2437505b9f3482e49cb2982794811f1000236652b3cef"
+    },
+    {
+      "version": 24,
+      "name": "migration-v24.sql",
+      "sha256": "71c68bc32cf8f75fed53f278836ec3e730031a660bd4fe46b1c2df6a735fb21a"
+    },
+    {
+      "version": 25,
+      "name": "migration-v25.sql",
+      "sha256": "666992b1d307d86b057e557f56dfd2ae611bb6890d9d3a5846d7eabf5bf20b04"
+    }
+  ]
+}
