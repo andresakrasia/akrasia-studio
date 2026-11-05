@@ -1,8 +1,10 @@
 # AKRASIA STUDIO — Roadmap de Desarrollo
 
+Actualización de producción, 2 de octubre de 2026: las fases marcadas como completadas reflejan hitos históricos de implementación. El lanzamiento continúa pendiente de staging, infraestructura, integraciones y revisión editorial/jurídica. Consultar [Estado de producción](ESTADO_PRODUCCION.md) y [Entorno y validación](ENTORNO_Y_VALIDACION.md) para las correcciones y evidencias actuales; no usar las estimaciones antiguas como autorización de despliegue.
+
 > **Version:** 4.0  
 > **Fecha:** 2026-04-14  
-> **Ultima actualizacion:** Fase 7 completada, Fase 8-14 planificadas
+> **Ultima actualizacion:** Fase 14 completada, Fase 15 planificada
 
 ---
 
@@ -16,14 +18,14 @@ FASE 3: Chat con Agente IA                    ✅ COMPLETADO
 FASE 5: Admin Dashboard                       ✅ COMPLETADO
 FASE 6: Pulido y Animaciones                  ✅ COMPLETADO
 FASE 7: Responsive y Accesibilidad            ✅ COMPLETADO
-FASE 8: Seguridad y SEO                       ← AHORA
-FASE 9: Analytics y Graficas                  Pre-deploy
-FASE 10: Telegram Bidireccional               Notificaciones inteligentes
-FASE 11: Agente IA con Memoria                Conversaciones entre sesiones
-FASE 12: Booking + Qualifier                  Cal.com + cualificacion IA
-FASE 13: Email Builder                        Constructor desde dashboard
-FASE 14: i18n + Contenido Estatico            Ingles, SEO pages, case studies
-FASE 15: Deploy Produccion                    Vercel + dominio
+FASE 8: Seguridad y SEO                       ✅ COMPLETADO
+FASE 9: Analytics y Graficas                  ✅ COMPLETADO
+FASE 10: Telegram Bidireccional               ✅ COMPLETADO
+FASE 11: Agente IA con Memoria                ✅ COMPLETADO
+FASE 12: Booking + Qualifier                  ✅ COMPLETADO
+FASE 13: Email Builder                        ✅ COMPLETADO
+FASE 14: i18n + Contenido Estatico            ✅ COMPLETADO
+FASE 15: Deploy Produccion                    ← AHORA
 ```
 
 ---
@@ -39,13 +41,13 @@ FASE 15: Deploy Produccion                    Vercel + dominio
 | Rate limiting chat | URGENTE | Limite 20 msgs/hora por visitor_id en el endpoint `/api/chat`. Middleware simple con contador en memoria o Supabase |
 | SEO meta tags | ALTA | Title, description, og:image en `Layout.astro`. Open Graph para LinkedIn/WhatsApp |
 | Favicon | ALTA | Logo AKRASIA como favicon.ico + SVG |
-| PIN dashboard | MEDIA | Ademas del secret URL, pedir un PIN (env var `DASHBOARD_PIN`). Cookie httpOnly con expiracion 7 dias. No hace falta Supabase Auth para un solo usuario |
+| Sesión dashboard | ALTA | A01 corregido con contraseña y sesión revocable de 8 horas, autorización central, CSRF y límite persistente. Configuración en `docs/ACCESO_ADMINISTRATIVO.md` |
 | Paginas de servicios estaticas | MEDIA | `/servicios/branded-content`, `/servicios/cortometraje`, etc. con texto real para Google. No son el foco de la experiencia pero indexan bien |
 
 **Archivos afectados:**
 - `src/pages/api/chat.ts` — Rate limiting
 - `src/layouts/Layout.astro` — Meta tags OG
-- `src/pages/dashboard/[secret].astro` — PIN check
+- `src/pages/dashboard/login.astro` y `src/middleware.ts` — acceso y sesión; la URL antigua redirige a `/dashboard`
 - `src/pages/servicios/[slug].astro` — Paginas SEO (nuevo)
 
 **Criterio de aceptacion:** Un bot no puede disparar costes de API. La URL se ve bien en WhatsApp/LinkedIn.
@@ -214,7 +216,7 @@ Si visitor da email o telefono → lead confirmado
 - `src/hooks/ChatContext.tsx` — Deteccion de idioma
 - `astro.config.mjs` — Plugin sitemap
 
-**Criterio de aceptacion:** Google puede indexar las paginas de servicios. El chat responde en ingles si el visitante escribe en ingles.
+**Criterio de aceptación vigente (2026-10-02):** la portada y sus variantes ES/EN son indexables; servicios y proyectos se exploran dentro del chat mediante mensajes predefinidos y contenido público aprobado. No se añaden páginas comerciales separadas para SEO. Las páginas legales mantienen acceso directo. El chat respeta el idioma de la interfaz.
 
 ---
 
@@ -235,7 +237,7 @@ Si visitor da email o telefono → lead confirmado
 
 **Pre-requisitos completados:**
 - [ ] Rate limiting en chat (Fase 8)
-- [ ] PIN dashboard (Fase 8)
+- [ ] Configurar contraseña y migración de sesiones del dashboard (Fase 8, A01)
 - [ ] SEO meta tags (Fase 8)
 - [ ] Todas las migraciones SQL ejecutadas
 
@@ -280,10 +282,10 @@ SEMANA 2:  FASE 2 (migracion Astro + datos dinamicos)           ✅
 SEMANA 3:  FASE 3 (chat con IA) + FASE 4 (leads + Supabase)     ✅
 SEMANA 4:  FASE 5 (admin dashboard)                              ✅
 SEMANA 5:  FASE 6 (pulido) + FASE 7 (responsive)                ✅
-SEMANA 6:  FASE 8 (seguridad + SEO)                              ← AHORA
-SEMANA 7:  FASE 9-10 (analytics + telegram)
-SEMANA 8:  FASE 11-12 (memoria IA + booking)
-SEMANA 9:  FASE 13-14 (email + i18n)
+SEMANA 6:  FASE 8 (seguridad + SEO)                              ✅
+SEMANA 7:  FASE 9 (analytics + graficas)                          ✅
+SEMANA 8:  FASE 10-11 (telegram + memoria IA)                     ✅
+SEMANA 9:  FASE 13-14 (email + i18n)                              ✅
 SEMANA 10: FASE 15 (deploy produccion)
 ```
 
@@ -295,5 +297,5 @@ SEMANA 10: FASE 15 (deploy produccion)
 - Se puede hacer deploy en cualquier momento despues de FASE 8.
 - Las fases son incrementales: cada una anade sobre la anterior sin reescribir.
 - Fase 8 (rate limiting) es urgente antes de poner la web publica.
-- PIN de dashboard es suficiente para un solo usuario. Supabase Auth solo si hay multi-usuario.
+- Dashboard con contraseña y sesión comprobada por servidor para el administrador actual; MFA y proveedor de identidad quedan pendientes.
 - SEO: las paginas de servicios estaticas indexan bien. La web HUD no depende de SEO organico — el canal principal es LinkedIn + referencias.
