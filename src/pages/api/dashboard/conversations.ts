@@ -1,38 +1,22 @@
-import type { APIRoute } from 'astro';
-import { validateDashboardSecret, dashResponse, dashError, sbQuery } from '../../../lib/dashboard';
-
-export const GET: APIRoute = async ({ request }) => {
-  if (!validateDashboardSecret(request)) return dashError('Unauthorized');
-
-  const url = new URL(request.url);
-  const visitorId = url.searchParams.get('visitor_id');
-
-  let convQuery = 'order=created_at.desc&limit=200';
-  if (visitorId) convQuery += `&visitor_id=eq.${visitorId}`;
-
-  const conversations = await sbQuery('conversations', convQuery);
-
-  if (!conversations || conversations.length === 0) return dashResponse([]);
-
-  const convIds = conversations.map((c: { id: string }) => c.id).join(',');
-  const allMessages = await sbQuery(
-    'messages',
-    `order=created_at.asc&conversation_id=in.(${convIds})`
-  ).catch(() => []);
-
-  const messagesByConv: Record<string, unknown[]> = {};
-  if (Array.isArray(allMessages)) {
-    for (const msg of allMessages) {
-      const cid = msg.conversation_id;
-      if (!messagesByConv[cid]) messagesByConv[cid] = [];
-      messagesByConv[cid].push(msg);
-    }
+import { dashboardRoute, dashboardList, dashResponse, sbRequest, dashboardRows, requireDashboardId, DashboardInputError, DashboardStorageError } from '../../../lib/dashboard';
+export const GET = dashboardRoute(async ({ request }) => {
+  const params = new URL(request.url).searchParams; const visitor = params.get('visitor_id');
+  if (visitor && !/^[a-zA-Z0-9_-]{1,128}$/.test(visitor)) throw new DashboardInputError('Visitante inválido.');
+  const conversationId = params.get('conversation_id');
+  let query = 'select=id,visitor_id,created_at,updated_at,message_count&order=created_at.desc,id.desc';
+  if (visitor) query += `&visitor_id=eq.${visitor}`;
+  if (conversationId) query += `&id=eq.${requireDashboardId(conversationId)}`;
+  const response = await dashboardList('conversations',query,request);
+  const conversations = dashboardRows(await response.json());
+  const offsetText = params.get('messages_offset') ?? '0';
+  if (!/^\d{1,8}$/.test(offsetText)) throw new DashboardInputError('Paginación de mensajes inválida.');
+  const offset = Number(offsetText); if (offset && !conversationId) throw new DashboardInputError('Indica una conversación para paginar mensajes.');
+  const enriched = [];
+  for (const conversation of conversations) {
+    const result = await sbRequest(`messages?select=id,conversation_id,role,content,created_at&conversation_id=eq.${conversation.id}&order=created_at.desc,role.asc,id.desc&limit=100&offset=${offset}`,'GET',undefined,'count=exact');
+    const messages = dashboardRows(result.data); const count = Number(result.headers.get('content-range')?.split('/')[1]);
+    if (!Number.isSafeInteger(count) || count < messages.length) throw new DashboardStorageError();
+    enriched.push({ ...conversation, message_count:count,messages:messages.reverse(),messages_next_offset:offset + messages.length < count ? offset + messages.length : null });
   }
-
-  const result = conversations.map((c: { id: string; [k: string]: unknown }) => ({
-    ...c,
-    messages: messagesByConv[c.id] || [],
-  }));
-
-  return dashResponse(result);
-};
+  return dashResponse(enriched,200,Object.fromEntries(response.headers));
+});

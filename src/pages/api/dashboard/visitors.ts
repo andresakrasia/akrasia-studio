@@ -1,9 +1,2 @@
-import type { APIRoute } from 'astro';
-import { validateDashboardSecret, dashResponse, dashError, sbQuery } from '../../../lib/dashboard';
-
-export const GET: APIRoute = async ({ request }) => {
-  if (!validateDashboardSecret(request)) return dashError('Unauthorized');
-
-  const visitors = await sbQuery('visitors', 'order=last_seen.desc&limit=500');
-  return dashResponse(visitors);
-};
+import { dashboardRoute, dashboardList } from '../../../lib/dashboard';
+export const GET = dashboardRoute(async ({ request }) => dashboardList('visitors','select=id,visitor_id,first_seen,last_seen,source&order=last_seen.desc,id.desc',request));
