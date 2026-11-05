@@ -1,0 +1,66 @@
+---
+import { pageLang } from '../lib/public-ui';
+import { analyticsDestination, analyticsOptionsFromEnv } from '../lib/analytics';
+const english = !['/privacidad', '/aviso-legal', '/cookies'].includes(Astro.url.pathname) && pageLang(Astro.url) === 'en';
+const analyticsOptions = analyticsOptionsFromEnv(import.meta.env);
+const analyticsEnabled = Boolean(analyticsDestination(analyticsOptions));
+---
+
+<div id="privacyConsent" data-analytics-enabled={String(analyticsEnabled)} data-gtm-reviewed={String(analyticsOptions.analyticsEnabled)} data-container-id={analyticsOptions.containerId} data-measurement-id={analyticsOptions.measurementId} data-ga4-reviewed={String(analyticsOptions.ga4Reviewed)}>
+  <section id="privacyBanner" aria-label={english ? 'Cookie preferences' : 'Preferencias de cookies'} hidden>
+    <h2>{english ? 'Your privacy' : 'Tu privacidad'}</h2>
+    <p>{english ? 'Chat and navigation use necessary storage. Analytics and external videos only load if you allow them. You can change your choice at any time.' : 'El chat y la navegación usan almacenamiento técnico. Solo cargaremos analítica y vídeos externos si eliges permitirlos. Puedes cambiar tu elección en cualquier momento.'} <a href="/cookies">{english ? 'Cookie information (ES)' : 'Información de cookies'}</a> · <a href="/privacidad">{english ? 'Privacy (ES)' : 'Privacidad'}</a>.</p>
+    <div class="privacy-actions">
+      <button type="button" data-privacy-accept>{english ? 'Allow optional cookies' : 'Aceptar opcionales'}</button>
+      <button type="button" data-privacy-reject>{english ? 'Reject optional cookies' : 'Rechazar opcionales'}</button>
+      <button type="button" data-privacy-settings>{english ? 'Configure' : 'Configurar'}</button>
+    </div>
+  </section>
+  <button id="privacyPersistentControl" type="button" data-privacy-settings aria-haspopup="dialog">Cookies</button>
+  <dialog id="privacyDialog" aria-labelledby="privacyDialogTitle" aria-describedby="privacyDialogDescription">
+    <h2 id="privacyDialogTitle">{english ? 'Configure privacy' : 'Configurar privacidad'}</h2>
+    <p id="privacyDialogDescription">{english ? 'These choices are independent of chat. The selection lasts at most 180 days and you can withdraw it here.' : 'Las opciones son independientes del chat. La selección dura 180 días como máximo y puedes retirarla aquí.'}</p>
+    <p>{english ? 'Necessary storage: session, security and remembering this choice.' : 'Almacenamiento técnico: necesario para la sesión, la seguridad y recordar esta elección.'}</p>
+    <label><input id="privacyAnalytics" type="checkbox" disabled={!analyticsEnabled} /> {english ? 'Analytics (Google)' : 'Analítica (Google)'}</label>
+    {!analyticsEnabled && <p>{english ? 'Analytics are not enabled on this website.' : 'La analítica no está habilitada en este sitio.'}</p>}
+    <label><input id="privacyMedia" type="checkbox" /> {english ? 'External videos (YouTube or Vimeo)' : 'Vídeos externos (YouTube o Vimeo)'}</label>
+    <p>{english ? 'When played, the provider receives connection data and may use storage. Your choice applies to subsequent videos.' : 'Al reproducirlos, el proveedor recibe datos de conexión y puede usar su almacenamiento. La elección se aplica a los siguientes vídeos.'} <a href="/cookies">{english ? 'Details and providers (ES)' : 'Ver detalles y proveedores'}</a>.</p>
+    <p>{english ? 'Withdrawing analytics reloads this page to stop active tags. It does not erase information already sent to providers.' : 'Retirar la analítica recarga la página para detener las etiquetas activas. Esto no borra información ya enviada a proveedores.'}</p>
+    <div class="privacy-actions">
+      <button type="button" id="privacySave">{english ? 'Save selection' : 'Guardar selección'}</button>
+      <button type="button" data-privacy-reject>{english ? 'Reject optional cookies' : 'Rechazar opcionales'}</button>
+      <button type="button" id="privacyCancel">{english ? 'Close without changes' : 'Cerrar sin cambiar'}</button>
+    </div>
+  </dialog>
+  <noscript><p class="privacy-nojs">{english ? 'Analytics and external videos stay blocked without JavaScript.' : 'La analítica y los vídeos externos permanecen bloqueados sin JavaScript.'} <a href="/privacidad">{english ? 'Privacy (ES)' : 'Privacidad'}</a> · <a href="/cookies">Cookies</a> · <a href="/aviso-legal">{english ? 'Legal notice (ES)' : 'Aviso legal'}</a>.</p></noscript>
+</div>
+
+<script>
+  import { initializePrivacyRuntime } from '../lib/privacy-consent';
+  import { bindPrivacyControls } from '../lib/privacy-controls';
+  const root = document.getElementById('privacyConsent');
+  if (root) {
+    initializePrivacyRuntime({ analyticsEnabled: root.dataset.gtmReviewed === 'true', containerId: root.dataset.containerId || '',
+      measurementId: root.dataset.measurementId || '', ga4Reviewed: root.dataset.ga4Reviewed === 'true' });
+    bindPrivacyControls(document, root.dataset.analyticsEnabled === 'true');
+  }
+</script>
+
+<style is:global>
+  #privacyBanner, #privacyDialog { box-sizing: border-box; color: #e2e8f0; background: #101820; border: 1px solid #00f0ff; padding: 1.2rem; font: 0.85rem/1.55 system-ui, sans-serif; }
+  #privacyBanner { position: fixed; z-index: 10001; inset: auto 1rem 1rem; max-width: 56rem; margin-inline: auto; max-height: 80dvh; overflow-y: auto; box-shadow: 0 10px 40px #000; }
+  #privacyBanner[hidden] { display: none; }
+  #privacyBanner h2, #privacyDialog h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  #privacyDialog { width: min(36rem, calc(100vw - 2rem)); max-height: 85dvh; margin: auto; overflow-y: auto; z-index: 10002; }
+  #privacyDialog::backdrop { background: #000a; }
+  #privacyDialog p { margin-block: 0.7rem; }
+  #privacyDialog label { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 0; font-weight: 600; }
+  #privacyDialog input { width: 1.1rem; height: 1.1rem; accent-color: #00f0ff; }
+  .privacy-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+  .privacy-actions button { flex: 1 1 10rem; padding: 0.7rem 0.8rem; color: #e2e8f0; border: 1px solid #7dd3fc; background: #0e2630; min-height: 44px; font-size: 0.85rem; }
+  #privacyConsent a { text-decoration: underline; }
+  #privacyConsent :focus-visible { outline: 3px solid #facc15; outline-offset: 3px; }
+  #privacyPersistentControl { position: fixed; z-index: 190; right: 0.5rem; bottom: 0.3rem; border: 1px solid #94a3b8; color: #e2e8f0; background: #101820; padding: 0.45rem 0.7rem; font: 0.75rem system-ui,sans-serif; min-height: 44px; }
+  .privacy-nojs { padding: 1rem; color: #e2e8f0; background: #101820; font: .9rem/1.5 system-ui, sans-serif; }
+  @media (max-width: 1023px) { #privacyPersistentControl { bottom: 0.15rem; right: 0.25rem; font-size: 0.65rem; padding: 0.3rem; } #privacyBanner { inset-inline: 0.5rem; bottom: 0.5rem; } }
+</style>

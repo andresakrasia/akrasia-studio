@@ -1,82 +1,104 @@
 ---
+import PrivacyConsent from '../components/PrivacyConsent.astro';
+import '../styles/global.css';
+import '../styles/studio-hub.css';
+import '../styles/studio-sidebar.css';
+import '../styles/studio-neon-chrome.css';
+import '../styles/studio-living-hub.css';
+import '../styles/studio-glass-interactions.css';
+import '../styles/studio-ambient-glass.css';
+import '../styles/studio-screen-depth.css';
+import '../styles/studio-hologram-chat.css';
+import '../styles/studio-portfolio-redesign.css';
+import '../styles/studio-service-scan.css';
+import '../styles/studio-future-type.css';
+import '../styles/studio-precision.css';
+import { pageLang, publicCanonical } from '../lib/public-ui';
 export interface Props {
-  title?: string;
+  title?: string; description?: string; ogImage?: string;
+  lang?: string; bilingual?: boolean; noindex?: boolean; home?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
-
-const { title = 'AKRASIA STUDIO | AI Cinema Engine' } = Astro.props;
+const htmlLang = Astro.props.lang === 'es' ? 'es' : Astro.props.lang === 'en' ? 'en' : pageLang(Astro.url);
+const english = htmlLang === 'en';
+const {
+  title = english ? 'AI audiovisual production | Akrasia Studio' : 'Producción audiovisual con IA | Akrasia Studio',
+  description = english ? 'Audiovisual production and creative direction with AI. Content, VFX, post-production and sound design.' : 'Producción audiovisual y dirección creativa con IA. Contenido, VFX, postproducción y diseño sonoro.',
+  ogImage = '/img/og-akrasia.png',
+  bilingual = true, noindex = false,
+} = Astro.props;
+const canonicalURL = publicCanonical(Astro.url.pathname, htmlLang);
+const socialImage = new URL(ogImage, 'https://akrasia.studio').href;
+const verificationValue = (import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION || '').trim();
+const googleVerification = /^[A-Za-z0-9_-]{20,200}$/.test(verificationValue) ? verificationValue : '';
+const organization = {
+  '@context': 'https://schema.org', '@type': 'Organization',
+  '@id': 'https://akrasia.studio/#organization',
+  name: 'AKRASIA STUDIO', url: 'https://akrasia.studio', email: 'info@akrasia.studio',
+  logo: 'https://akrasia.studio/favicon.svg',
+};
+const structuredData = [organization, ...(Array.isArray(Astro.props.structuredData) ? Astro.props.structuredData : Astro.props.structuredData ? [Astro.props.structuredData] : [])];
 ---
-
 <!doctype html>
-<html class="dark" lang="es">
+<html class="dark" lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
-    <meta
-      content="width=device-width, initial-scale=1.0"
-      name="viewport"
-    />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{title}</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@200;300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="description" content={description} />
+    {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonicalURL} />
+    {bilingual && <>
+      <link rel="alternate" hreflang="es" href={publicCanonical(Astro.url.pathname, 'es')} />
+      <link rel="alternate" hreflang="en" href={publicCanonical(Astro.url.pathname, 'en')} />
+      <link rel="alternate" hreflang="x-default" href={publicCanonical(Astro.url.pathname, 'es')} />
+    </>}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {Astro.props.home && <link rel="preload" href="/fonts/oxanium-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />}
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content={english ? 'en_GB' : 'es_ES'} />
+    <meta property="og:site_name" content="AKRASIA STUDIO" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="referrer" content="no-referrer" />
+    {structuredData.map(entry => <script type="application/ld+json" set:html={JSON.stringify(entry).replace(/</g, '\\u003c')} />)}
   </head>
-  <body class="relative h-screen flex flex-col">
-    <div id="akrasia-loader">
-      <div class="loader-logo">
-        <span class="neon-char text-primary font-black font-headline" style="font-size:1.8rem;letter-spacing:-0.04em;margin-right:-0.04em;--neon-delay:0s;--neon-dur:4.2s">Λ</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.2rem;letter-spacing:-0.05em;--neon-delay:0.3s;--neon-dur:3.8s">K</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.6rem;letter-spacing:-0.05em;--neon-delay:0.7s;--neon-dur:4.5s">R</span><span class="neon-char text-primary font-black font-headline" style="font-size:3rem;letter-spacing:-0.05em;--neon-delay:1.1s;--neon-dur:3.5s">Λ</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.6rem;letter-spacing:-0.05em;--neon-delay:0.5s;--neon-dur:4.8s">S</span><span class="neon-char text-primary font-black font-headline" style="font-size:2.2rem;letter-spacing:-0.05em;--neon-delay:0.9s;--neon-dur:3.9s">I</span><span class="neon-char text-primary font-black font-headline" style="font-size:1.8rem;--neon-delay:1.4s;--neon-dur:4.1s">Λ</span>
-      </div>
-      <div class="loader-sub">STUDIO</div>
-      <div class="loader-bar-track">
-        <div class="loader-bar-fill" id="loaderBar"></div>
-      </div>
-    </div>
+  <body class:list={['relative flex flex-col public-site', { 'home-screen': Astro.props.home }]}>
+    <a href="#main-content" class="skip-link">{english ? 'Skip to content' : 'Saltar al contenido'}</a>
     <slot />
-
+    <PrivacyConsent />
     <script>
-      (function () {
-        const bar = document.getElementById('loaderBar');
-        const loader = document.getElementById('akrasia-loader');
-        if (!bar || !loader) return;
-
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += Math.random() * 25 + 10;
-          if (progress > 90) progress = 90;
-          bar.style.width = progress + '%';
-        }, 200);
-
-        function hide() {
-          clearInterval(interval);
-          bar.style.width = '100%';
-          setTimeout(() => {
-            loader.classList.add('loader-hidden');
-          }, 400);
-        }
-
-        if (document.readyState === 'complete') {
-          hide();
-        } else {
-          window.addEventListener('load', hide);
-        }
-        setTimeout(hide, 3000);
-      })();
-
-      document.querySelectorAll('.glass-panel').forEach((panel) => {
-        const speed = (6 + Math.random() * 10).toFixed(1);
-        const dir = Math.random() > 0.5 ? 'normal' : 'reverse';
-        const delay = (-Math.random() * 10).toFixed(1);
-        panel.style.setProperty('--sweep-speed', speed + 's');
-        panel.style.setProperty('--sweep-dir', dir);
-        panel.style.setProperty('--sweep-delay', delay + 's');
+      import { initializeLocalIcons } from '../lib/local-icons';
+      import { parseChatIntentUrl } from '../lib/chat-navigation';
+      initializeLocalIcons();
+      // Navigation and links in answers share the same conversational entry point.
+      document.addEventListener('click', event => {
+        if (!(event.target instanceof Element) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        if (!document.documentElement.hasAttribute('data-chat-ready')) return;
+        const trigger = event.target.closest<HTMLElement>('[data-chat-message]');
+        const anchor = event.target.closest<HTMLAnchorElement>('a[href]');
+        const linked = anchor ? parseChatIntentUrl(anchor.href, window.location.origin, document.documentElement.lang === 'en' ? 'en' : 'es') : null;
+        const message = trigger?.dataset.chatMessage || linked?.message;
+        if (!message) return;
+        event.preventDefault();
+        document.dispatchEvent(new CustomEvent('chat-trigger', { detail: { message } }));
       });
     </script>
   </body>
 </html>
-
 <style is:global>
-  @import '../styles/global.css';
+  body, .font-mono { font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace; }
+  .font-headline { font-family: 'Space Grotesk', system-ui, 'Segoe UI', sans-serif; }
+  .material-symbols-outlined[data-local-icon] { display: inline-flex; align-items: center; justify-content: center; font-size: 0 !important; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+  .material-symbols-outlined[data-local-icon]::before { content: ''; display: block; width: 100%; height: 100%; background: currentColor; mask: var(--local-icon) center / contain no-repeat; -webkit-mask: var(--local-icon) center / contain no-repeat; }
 </style>

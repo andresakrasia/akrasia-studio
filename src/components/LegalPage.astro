@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PRIVACY_NOTICE } from '../lib/privacy-notice';
+
+interface Props { title: string; description: string; current: 'privacidad' | 'aviso-legal' | 'cookies' }
+const { title, description, current } = Astro.props;
+const links = [
+  { id: 'privacidad', label: 'Privacidad' },
+  { id: 'aviso-legal', label: 'Aviso legal' },
+  { id: 'cookies', label: 'Cookies' },
+];
+---
+
+<Layout title={`${title} | AKRASIA STUDIO`} description={description} lang="es" bilingual={false}>
+  <a class="legal-skip" href="#main-content">Saltar al contenido</a>
+  <div class="legal-document" lang="es">
+    <header class="legal-header">
+      <a href="/" class="legal-brand" aria-label="Akrasia Studio, volver al inicio">ΛKRΛSIΛ <span>STUDIO</span></a>
+      <a href="/">Volver al estudio</a>
+    </header>
+    <nav class="legal-nav" aria-label="Información legal">
+      {links.map(link => <a href={`/${link.id}`} aria-current={current === link.id ? 'page' : undefined}>{link.label}</a>)}
+      <button type="button" data-privacy-settings>Configurar cookies</button>
+    </nav>
+    <main id="main-content" tabindex="-1">
+      <p class="legal-eyebrow">INFORMACIÓN Y CONTROL DE TUS DATOS</p>
+      <h1>{title}</h1>
+      <p class="legal-date">Actualizada el <time datetime={PRIVACY_NOTICE.updatedAt}>{PRIVACY_NOTICE.updatedLabel}</time>. Texto en español.</p>
+      <slot />
+    </main>
+    <footer class="legal-footer">
+      <p>{PRIVACY_NOTICE.commercialName} · <a href={`mailto:${PRIVACY_NOTICE.email}`}>{PRIVACY_NOTICE.email}</a></p>
+      <a href="/">Volver al estudio y al chat</a>
+    </footer>
+  </div>
+</Layout>
+
+<style is:global>
+  body:has(.legal-document) { height: auto; min-height: 100vh; overflow-y: auto; }
+  .legal-document { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 1.5rem 0 16rem; color: #cbd5e1; font-family: system-ui, sans-serif; line-height: 1.7; overflow-wrap: anywhere; }
+  .legal-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1rem 0 1.5rem; border-bottom: 1px solid #15535a; }
+  .legal-brand { color: #00f0ff !important; text-decoration: none !important; font-size: 1.7rem; font-weight: 800; letter-spacing: .08em; }
+  .legal-brand span { font-size: .7rem; letter-spacing: .25em; }
+  .legal-nav { display: flex; flex-wrap: wrap; gap: .6rem 1.2rem; align-items: center; padding: 1.3rem 0; }
+  .legal-document a { color: #67e8f9; text-decoration: underline; text-underline-offset: .2em; }
+  .legal-document a[aria-current="page"] { color: #f8fafc; font-weight: 700; }
+  .legal-document button { color: #e2e8f0; border: 1px solid #64748b; border-radius: .3rem; padding: .6rem .85rem; background: #111827; font-size: 1rem; }
+  .legal-document :is(a, button):focus-visible, .legal-skip:focus-visible { outline: 3px solid #00f0ff; outline-offset: 4px; }
+  .legal-eyebrow { color: #67e8f9; font: .75rem ui-monospace, monospace; letter-spacing: .1em; margin-top: 1.5rem; }
+  .legal-document h1 { color: #f8fafc; font-size: clamp(2rem, 7vw, 3rem); line-height: 1.2; margin: .75rem 0; }
+  .legal-date { color: #94a3b8; font-size: .9rem; margin-bottom: 2rem; }
+  .legal-document h2 { color: #f8fafc; font-size: 1.4rem; line-height: 1.4; margin: 2rem 0 .75rem; }
+  .legal-document h3 { color: #f8fafc; font-size: 1.05rem; margin: 1.3rem 0 .5rem; }
+  .legal-document p { margin: .75rem 0; }
+  .legal-document ul, .legal-document ol { padding-left: 1.5rem; margin: .8rem 0; }
+  .legal-document li { margin: .4rem 0; }
+  .legal-document dl { margin: 1rem 0; }
+  .legal-document dt { font-weight: 700; color: #f8fafc; margin-top: .65rem; }
+  .legal-document dd { margin-left: 0; }
+  .legal-document .legal-notice { border-left: 3px solid #67e8f9; padding: .75rem 1rem; background: #0b1820; margin: 1.5rem 0; }
+  .legal-document .legal-pending { border-color: #fbbf24; background: #1b170c; }
+  .legal-document .legal-table-wrap { max-width: 100%; overflow-x: auto; margin: 1rem 0; }
+  .legal-document table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  .legal-document caption { text-align: left; font-weight: 700; margin-bottom: .75rem; color: #e2e8f0; }
+  .legal-document th, .legal-document td { text-align: left; vertical-align: top; border-bottom: 1px solid #334155; padding: .8rem; min-width: 8rem; }
+  .legal-document th { color: #f8fafc; background: #0f172a; }
+  .legal-document code { font-family: ui-monospace, monospace; font-size: .85em; }
+  .legal-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #15535a; }
+  .legal-skip { position: absolute; top: .5rem; left: .5rem; transform: translateY(-200%); z-index: 10000; background: #111827; color: #f8fafc; padding: .75rem; }
+  .legal-skip:focus { transform: translateY(0); }
+  @media (max-width: 600px) { .legal-document { width: min(100% - 1.5rem, 58rem); padding-top: .5rem; } .legal-document th, .legal-document td { padding: .6rem; } }
+</style>

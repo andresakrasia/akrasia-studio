@@ -1,0 +1,40 @@
+---
+import { loadPublicActivity, type PublicActivityEntry } from '../lib/public-activity';
+import { chatIntentPath, chatIntentMessage } from '../lib/chat-navigation';
+import { activityDate } from '../lib/hud-activity';
+import { pageLang } from '../lib/public-ui';
+interface Props { channel: 'feed' | 'logs' }
+const { channel } = Astro.props;
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+let entries: PublicActivityEntry[] = [];
+let unavailable = false;
+try { entries = await loadPublicActivity(channel); } catch { unavailable = true; }
+const choose = (original: string, translated: string) => english && translated ? translated : original;
+---
+<section class="glass-panel hud-section hud-activity" data-studio-activity={channel}>
+  <div class="hud-activity-heading">
+    <h2 class="hud-section-title">{channel === 'feed' ? (english ? 'Creative_Activity' : 'Actividad_Creativa') : (english ? 'Studio_Logs' : 'Estudio_Logs')}</h2>
+    <span class="hud-activity-indicator" aria-hidden="true"></span>
+  </div>
+  <p class="hud-activity-caption">{english ? 'Public journal · approved updates' : 'Historial público · avances aprobados'}</p>
+  <div class="hud-activity-scroll scroll-hide" tabindex="0" aria-label={english ? 'Published studio activity' : 'Actividad publicada del estudio'}>
+    <ul class="hud-activity-list" aria-live="off">
+      {entries.map(entry => <li class="hud-activity-entry" data-activity-id={entry.id}>
+        <div class="hud-activity-meta"><time datetime={entry.occurred_at}>{activityDate(entry.occurred_at, lang)}</time><span>{entry.event_type === 'milestone' ? (english ? 'MILESTONE' : 'HITO') : entry.event_type === 'process' ? (english ? 'PROCESS' : 'PROCESO') : 'STUDIO'}</span></div>
+        <strong lang={english && !entry.title_en ? 'es' : lang}>{choose(entry.title, entry.title_en)}</strong>
+        <p lang={english && !entry.text_en ? 'es' : lang}>{choose(entry.text, entry.text_en)}</p>
+        {entry.project && <a href={chatIntentPath(`project:${entry.project.slug}`, lang)} data-chat-message={chatIntentMessage(`project:${entry.project.slug}`, lang)} lang="es">{entry.project.title} <span aria-hidden="true">↗</span></a>}
+      </li>)}
+    </ul>
+  </div>
+  <p class="hud-activity-empty" role="status" hidden={entries.length > 0}>{unavailable ? (english ? 'Activity temporarily unavailable.' : 'Actividad no disponible en este momento.') : (english ? 'New approved updates will appear here.' : 'Aquí aparecerán los nuevos avances aprobados.')}</p>
+  {channel === 'feed' ? <button id="activityPause" class="hud-activity-pause" type="button" aria-pressed="false">{english ? 'Pause activity' : 'Pausar actividad'}</button> : <div class="hud-system" aria-live="off">
+    <span class="hud-system-label">{english ? 'Interface ambience' : 'Ambiente de interfaz'}</span>
+    <p><span class="hud-system-prefix" aria-hidden="true">&gt; </span><span id="hudAmbientText">{english ? 'CHAT // Explore the studio' : 'CHAT // Explora el estudio'}</span><span class="hud-system-cursor" aria-hidden="true">_</span></p>
+  </div>}
+</section>
+<script>
+  import { initializeStudioActivity } from '../lib/hud-activity';
+  initializeStudioActivity();
+</script>

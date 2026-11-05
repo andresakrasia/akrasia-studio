@@ -1,0 +1,124 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+
+if (Astro.locals.dashboardSession) return Astro.redirect('/dashboard');
+---
+
+<DashboardLayout title="AKRASIA // Acceso al panel">
+  <main class="min-h-screen flex items-center justify-center px-4 py-8">
+    <form id="dashboard-login" method="POST" action="/api/dashboard/auth/login" class="w-full max-w-sm bg-[#0a0a0a] border border-cyan-500/25 rounded-xl p-8">
+      <h1 class="text-lg font-bold text-primary mb-2">AKRASIA // DASHBOARD</h1>
+      <p class="text-xs text-slate-400 mb-6">Acceso privado a la administración del estudio.</p>
+      <label for="dashboard-password" class="block text-xs text-slate-300 mb-2">Contraseña</label>
+      <input
+        id="dashboard-password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        maxlength="256"
+        required
+        autofocus
+        class="w-full px-4 py-3 rounded-lg border text-sm mb-4 focus:outline-none focus:border-primary"
+      />
+      <p id="login-message" class="text-xs text-red-300 mb-4 hidden" role="alert" aria-live="polite"></p>
+      <button id="login-submit" type="submit" class="w-full px-4 py-3 rounded-lg bg-primary/10 border border-primary/40 text-primary font-semibold hover:bg-primary/20 disabled:opacity-50 transition-colors">
+        Acceder
+      </button>
+      <noscript><p class="text-xs text-slate-400 mt-4">Activa JavaScript para acceder al panel.</p></noscript>
+      <a href="/" class="block text-center text-xs text-slate-500 hover:text-primary mt-5">Volver al sitio</a>
+    </form>
+  </main>
+</DashboardLayout>
+
+<script>
+  import { isCivilDate } from '../../lib/civil-time';
+  const form = document.querySelector<HTMLFormElement>('#dashboard-login');
+  const password = document.querySelector<HTMLInputElement>('#dashboard-password');
+  const submit = document.querySelector<HTMLButtonElement>('#login-submit');
+  const message = document.querySelector<HTMLParagraphElement>('#login-message');
+  let blockedUntil = 0;
+  let retryTimer: ReturnType<typeof setInterval> | undefined;
+
+  function showMessage(text: string) {
+    if (!message) return;
+    message.textContent = text;
+    message.classList.remove('hidden');
+  }
+
+  function destination() {
+    const incoming = new URLSearchParams(window.location.search);
+    const candidate = incoming.get('returnTo');
+    const url = new URL('/dashboard', window.location.origin);
+    if (!candidate || incoming.getAll('returnTo').length !== 1) return url.pathname;
+    try {
+      const requested = new URL(candidate, window.location.origin);
+      if (requested.origin !== url.origin || requested.pathname !== '/dashboard') return url.pathname;
+      const tab = requested.searchParams.get('tab');
+      const visitor = requested.searchParams.get('visitor_id');
+      const tabs = ['overview', 'visitors', 'conversations', 'leads', 'projects', 'feed', 'studio', 'content', 'bookings'];
+      if (tab && tabs.includes(tab)) url.searchParams.set('tab', tab);
+      if (visitor && /^[a-zA-Z0-9_-]{1,128}$/.test(visitor)) url.searchParams.set('visitor_id', visitor);
+      const date = requested.searchParams.get('date');
+      if (tab === 'bookings' && requested.searchParams.getAll('tab').length === 1 && requested.searchParams.getAll('date').length === 1 && isCivilDate(date)) url.searchParams.set('date', date);
+      return `${url.pathname}${url.search}`;
+    } catch {
+      return url.pathname;
+    }
+  }
+
+  function countdown() {
+    const seconds = Math.max(0, Math.ceil((blockedUntil - Date.now()) / 1000));
+    if (seconds > 0) {
+      showMessage(`Demasiados intentos. Podrás volver a intentarlo en ${seconds} segundos.`);
+    } else {
+      clearInterval(retryTimer);
+      if (submit) submit.disabled = false;
+      showMessage('Ya puedes volver a intentarlo.');
+    }
+  }
+
+  if (new URLSearchParams(window.location.search).get('expired') === '1') {
+    showMessage('La sesión ha terminado. Introduce la contraseña para continuar.');
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!password || !submit || Date.now() < blockedUntil || submit.disabled) return;
+    submit.disabled = true;
+    submit.textContent = 'Accediendo…';
+    message?.classList.add('hidden');
+    try {
+      const response = await fetch('/api/dashboard/auth/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password.value }),
+      });
+      password.value = '';
+      if (response.ok) {
+        window.location.replace(destination());
+        return;
+      }
+      if (response.status === 429) {
+        const retryAfter = Number(response.headers.get('Retry-After'));
+        const seconds = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter, 3600) : 60;
+        blockedUntil = Date.now() + seconds * 1000;
+        countdown();
+        retryTimer = setInterval(countdown, 1000);
+      } else if (response.status === 401) {
+        showMessage('No se pudo acceder. Comprueba la contraseña e inténtalo de nuevo.');
+      } else if (response.status === 403) {
+        showMessage('El acceso no está autorizado desde esta dirección. Abre el panel en su dirección configurada.');
+      } else {
+        showMessage('El acceso no está disponible. Inténtalo de nuevo más tarde.');
+      }
+    } catch {
+      password.value = '';
+      showMessage('No se pudo conectar. Comprueba la conexión e inténtalo de nuevo.');
+    } finally {
+      submit.textContent = 'Acceder';
+      if (Date.now() >= blockedUntil) submit.disabled = false;
+    }
+  });
+</script>

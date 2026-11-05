@@ -1,0 +1,422 @@
+{
+  "ai-generation": {
+    "title": "Producción audiovisual con IA",
+    "titleEn": "AI audiovisual production",
+    "subtitle": "De la idea a una pieza con intención",
+    "subtitleEn": "From an idea to purposeful work",
+    "hero": "Desarrollamos piezas audiovisuales para marcas, proyectos creativos y comunicación. Elegimos recursos de producción, imagen generativa y montaje según el encargo; la dirección y la revisión de la pieza siguen siendo humanas.",
+    "heroEn": "We develop audiovisual work for brands, creative projects and communication. Production resources, generative imagery and editing are chosen for the brief; direction and review remain human.",
+    "features": [
+      {
+        "title": "Concepto y guion",
+        "description": "Definimos la idea, el relato y el formato que necesita el proyecto."
+      },
+      {
+        "title": "Producción de imagen",
+        "description": "Combinamos recursos de producción e IA cuando aportan valor a la pieza."
+      },
+      {
+        "title": "Montaje y acabado",
+        "description": "Damos forma al ritmo, la imagen y la entrega final acordada."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Concept and script",
+        "description": "We define the idea, narrative and format required by the project."
+      },
+      {
+        "title": "Image production",
+        "description": "We combine production resources and AI where they add value to the work."
+      },
+      {
+        "title": "Editing and finishing",
+        "description": "We shape the rhythm, image and agreed final delivery."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Brief y referencias",
+        "description": "Concretamos el objetivo, el público y el uso de la pieza."
+      },
+      {
+        "step": "2",
+        "title": "Propuesta y producción",
+        "description": "Acordamos alcance, recursos y revisiones antes de producir."
+      },
+      {
+        "step": "3",
+        "title": "Revisión y entrega",
+        "description": "Revisamos el resultado y preparamos los formatos acordados."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "Brief and references",
+        "description": "We clarify the objective, audience and intended use."
+      },
+      {
+        "step": "2",
+        "title": "Proposal and production",
+        "description": "Scope, resources and revisions are agreed before production."
+      },
+      {
+        "step": "3",
+        "title": "Review and delivery",
+        "description": "We review the result and prepare the agreed formats."
+      }
+    ]
+  },
+  "marketing-strategy": {
+    "title": "Marketing y estrategia",
+    "titleEn": "Marketing and strategy",
+    "subtitle": "Una idea clara antes de producir",
+    "subtitleEn": "A clear direction before production",
+    "hero": "Trabajamos la dirección de comunicación de una marca o proyecto: qué contar, a quién y en qué canales. Traducimos los objetivos en una propuesta de contenido y acciones que el equipo pueda llevar a la práctica.",
+    "heroEn": "We shape the communication direction of a brand or project: what to say, to whom and through which channels. We turn objectives into a content and action proposal that the team can put into practice.",
+    "features": [
+      {
+        "title": "Enfoque de marca",
+        "description": "Ordenamos el mensaje, el público y la propuesta de comunicación."
+      },
+      {
+        "title": "Estrategia de contenido",
+        "description": "Proponemos temas, formatos y canales adecuados al objetivo."
+      },
+      {
+        "title": "Plan de acción",
+        "description": "Definimos prioridades y un calendario de trabajo ajustado al alcance."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Brand direction",
+        "description": "We clarify the message, audience and communication proposition."
+      },
+      {
+        "title": "Content strategy",
+        "description": "We propose themes, formats and channels suited to the objective."
+      },
+      {
+        "title": "Action plan",
+        "description": "We define priorities and a work schedule matched to the agreed scope."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Contexto y objetivos",
+        "description": "Revisamos la situación de la marca y lo que quieres conseguir."
+      },
+      {
+        "step": "2",
+        "title": "Propuesta estratégica",
+        "description": "Definimos una dirección y las acciones que conviene priorizar."
+      },
+      {
+        "step": "3",
+        "title": "Plan y seguimiento",
+        "description": "Acordamos entregables y cómo revisar su aplicación."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "Context and objectives",
+        "description": "We review the brand context and what you want to achieve."
+      },
+      {
+        "step": "2",
+        "title": "Strategic proposal",
+        "description": "We define a direction and the actions to prioritise."
+      },
+      {
+        "step": "3",
+        "title": "Plan and follow-up",
+        "description": "We agree deliverables and how to review their application."
+      }
+    ]
+  },
+  "content-creation": {
+    "title": "Creación de contenido",
+    "titleEn": "Content creation",
+    "subtitle": "Contenido con una voz propia",
+    "subtitleEn": "Content with a distinct voice",
+    "hero": "Creamos contenido adaptado a la identidad de cada marca y al contexto en el que se publicará. Podemos trabajar piezas individuales o una serie de contenidos, combinando planificación, creación visual y edición.",
+    "heroEn": "We create content adapted to each brand’s identity and publishing context. We can work on individual pieces or a content series, combining planning, visual creation and editing.",
+    "features": [
+      {
+        "title": "Piezas para redes",
+        "description": "Desarrollamos vídeos y recursos visuales adaptados al canal."
+      },
+      {
+        "title": "Contenido de campaña",
+        "description": "Creamos piezas que mantienen un concepto y una identidad común."
+      },
+      {
+        "title": "Adaptaciones",
+        "description": "Preparamos versiones y formatos definidos en el encargo."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Social media pieces",
+        "description": "We develop videos and visual assets adapted to the channel."
+      },
+      {
+        "title": "Campaign content",
+        "description": "We create pieces with a shared concept and identity."
+      },
+      {
+        "title": "Adaptations",
+        "description": "We prepare the versions and formats defined in the brief."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Objetivo y formatos",
+        "description": "Acordamos público, mensaje, canales y volumen de piezas."
+      },
+      {
+        "step": "2",
+        "title": "Creación y revisión",
+        "description": "Desarrollamos el contenido con las revisiones acordadas."
+      },
+      {
+        "step": "3",
+        "title": "Entrega organizada",
+        "description": "Preparamos los archivos y versiones para su uso."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "Objective and formats",
+        "description": "We agree audience, message, channels and the number of pieces."
+      },
+      {
+        "step": "2",
+        "title": "Creation and review",
+        "description": "We develop the content with the agreed reviews."
+      },
+      {
+        "step": "3",
+        "title": "Organised delivery",
+        "description": "We prepare the files and versions for use."
+      }
+    ]
+  },
+  "direction": {
+    "title": "Dirección creativa",
+    "titleEn": "Creative direction",
+    "subtitle": "El criterio creativo guía las herramientas",
+    "subtitleEn": "Creative judgment guides the tools",
+    "hero": "Definimos la visión de una pieza o campaña y acompañamos su desarrollo. La dirección creativa conecta concepto, narrativa y lenguaje visual para que los recursos de producción y las herramientas de IA respondan a una misma intención.",
+    "heroEn": "We define the vision of a piece or campaign and guide its development. Creative direction connects concept, narrative and visual language so that production resources and AI tools serve the same intention.",
+    "features": [
+      {
+        "title": "Conceptualización",
+        "description": "Exploramos ideas y seleccionamos una dirección creativa."
+      },
+      {
+        "title": "Narrativa y referencias",
+        "description": "Desarrollamos el relato y una guía de lenguaje visual."
+      },
+      {
+        "title": "Supervisión creativa",
+        "description": "Acompañamos las decisiones de producción y revisamos la coherencia de la pieza."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Concept development",
+        "description": "We explore ideas and select a creative direction."
+      },
+      {
+        "title": "Narrative and references",
+        "description": "We develop the story and a visual-language guide."
+      },
+      {
+        "title": "Creative supervision",
+        "description": "We guide production decisions and review the coherence of the work."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Escucha y exploración",
+        "description": "Entendemos el encargo y buscamos referencias relevantes."
+      },
+      {
+        "step": "2",
+        "title": "Dirección propuesta",
+        "description": "Presentamos el concepto y el tratamiento creativo."
+      },
+      {
+        "step": "3",
+        "title": "Acompañamiento",
+        "description": "Revisamos las decisiones de la pieza dentro del alcance acordado."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "Listening and exploration",
+        "description": "We understand the brief and look for relevant references."
+      },
+      {
+        "step": "2",
+        "title": "Proposed direction",
+        "description": "We present the concept and creative treatment."
+      },
+      {
+        "step": "3",
+        "title": "Guidance",
+        "description": "We review decisions within the agreed scope."
+      }
+    ]
+  },
+  "vfx-post": {
+    "title": "VFX y postproducción",
+    "titleEn": "VFX and post-production",
+    "subtitle": "Dar forma al resultado final",
+    "subtitleEn": "Shaping the final result",
+    "hero": "Trabajamos el acabado de material grabado o generado: montaje, composición y tratamiento de imagen. Revisamos primero los recursos y las necesidades técnicas para proponer un alcance viable para cada pieza.",
+    "heroEn": "We work on the finishing of recorded or generated material: editing, compositing and image treatment. We first review the assets and technical needs to propose a feasible scope for each piece.",
+    "features": [
+      {
+        "title": "Montaje",
+        "description": "Organizamos el material y desarrollamos el ritmo de la pieza."
+      },
+      {
+        "title": "Composición y efectos",
+        "description": "Integramos elementos visuales según las necesidades del proyecto."
+      },
+      {
+        "title": "Imagen y versiones",
+        "description": "Ajustamos el acabado visual y preparamos los formatos acordados."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Editing",
+        "description": "We organise the material and develop the rhythm of the work."
+      },
+      {
+        "title": "Compositing and effects",
+        "description": "We integrate visual elements according to the project’s needs."
+      },
+      {
+        "title": "Image and versions",
+        "description": "We refine the visual finish and prepare the agreed formats."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Revisión de material",
+        "description": "Comprobamos los archivos, referencias y requisitos de entrega."
+      },
+      {
+        "step": "2",
+        "title": "Postproducción",
+        "description": "Desarrollamos el trabajo y sus revisiones según el alcance."
+      },
+      {
+        "step": "3",
+        "title": "Acabado y exportación",
+        "description": "Revisamos la pieza y generamos los archivos de entrega."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "Asset review",
+        "description": "We check files, references and delivery requirements."
+      },
+      {
+        "step": "2",
+        "title": "Post-production",
+        "description": "We develop the work and its reviews within the agreed scope."
+      },
+      {
+        "step": "3",
+        "title": "Finishing and export",
+        "description": "We review the piece and generate the delivery files."
+      }
+    ]
+  },
+  "sound-design": {
+    "title": "Diseño sonoro",
+    "titleEn": "Sound design",
+    "subtitle": "El sonido también cuenta la historia",
+    "subtitleEn": "Sound tells the story too",
+    "hero": "Diseñamos el tratamiento sonoro de una pieza a partir de su narrativa, ritmo y contexto de reproducción. Acordamos los recursos musicales y de sonido, sus derechos de uso y las necesidades de edición antes de comenzar.",
+    "heroEn": "We design a piece’s sound treatment around its narrative, rhythm and playback context. Music and sound resources, usage rights and editing needs are agreed before work begins.",
+    "features": [
+      {
+        "title": "Ambientes y efectos",
+        "description": "Construimos una propuesta sonora que acompaña la imagen."
+      },
+      {
+        "title": "Edición de audio",
+        "description": "Organizamos y ajustamos los recursos disponibles para la pieza."
+      },
+      {
+        "title": "Integración audiovisual",
+        "description": "Revisamos la relación entre sonido, montaje y mensaje."
+      }
+    ],
+    "featuresEn": [
+      {
+        "title": "Ambiences and effects",
+        "description": "We build a sound proposal that supports the image."
+      },
+      {
+        "title": "Audio editing",
+        "description": "We organise and adjust the available resources for the piece."
+      },
+      {
+        "title": "Audiovisual integration",
+        "description": "We review the relationship between sound, editing and message."
+      }
+    ],
+    "process": [
+      {
+        "step": "1",
+        "title": "Referencias y recursos",
+        "description": "Definimos la intención sonora y revisamos el material disponible."
+      },
+      {
+        "step": "2",
+        "title": "Diseño y edición",
+        "description": "Desarrollamos el sonido con las revisiones acordadas."
+      },
+      {
+        "step": "3",
+        "title": "Integración y entrega",
+        "description": "Revisamos la pieza completa y entregamos los formatos definidos."
+      }
+    ],
+    "processEn": [
+      {
+        "step": "1",
+        "title": "References and assets",
+        "description": "We define the sound direction and review available material."
+      },
+      {
+        "step": "2",
+        "title": "Design and editing",
+        "description": "We develop the sound with the agreed reviews."
+      },
+      {
+        "step": "3",
+        "title": "Integration and delivery",
+        "description": "We review the complete piece and deliver the defined formats."
+      }
+    ]
+  }
+}

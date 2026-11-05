@@ -1,0 +1,32 @@
+---
+import PublicPage from '../components/PublicPage.astro';
+import { pageLang, publicCanonical } from '../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../lib/chat-navigation';
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+const title = english ? 'Contact the audiovisual studio in Barcelona | Akrasia Studio' : 'Contacta con la productora audiovisual en Barcelona | Akrasia Studio';
+const description = english ? 'Contact Akrasia Studio by email, phone or chat to discuss an audiovisual project, creative direction or AI production.' : 'Contacta con Akrasia Studio por email, teléfono o chat para hablar de producción audiovisual, dirección creativa y proyectos con IA.';
+const structuredData = { '@context': 'https://schema.org', '@type': 'ContactPage', name: title, description, url: publicCanonical('/contacto', lang), inLanguage: lang };
+---
+<PublicPage lang={lang} title={title} description={description} structuredData={structuredData}>
+  <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'CONTACT' : 'CONTACTO'}</p>
+  <h1>{english ? 'Talk to the studio' : 'Habla con el estudio'}</h1>
+  <p class="page-intro editorial-intro">{english ? 'We are an audiovisual production studio in Barcelona. Tell us what you want to create: the idea, audience, intended use and deadline help us understand your project.' : 'Somos una productora audiovisual en Barcelona. Cuéntanos qué quieres crear: la idea, el público, el uso de la pieza y el plazo nos ayudan a entender tu proyecto.'}</p>
+  <div class="editorial-grid">
+    <section class="content-card glass-panel">
+      <h2>{english ? 'Direct contact' : 'Contacto directo'}</h2>
+      <p>{english ? 'You can email or call the team to discuss your project.' : 'Puedes escribir o llamar al equipo para hablar de tu proyecto.'}</p>
+      <address class="editorial-contact" style="font-style:normal"><a href="mailto:info@akrasia.studio">info@akrasia.studio</a><a href="tel:+34637264041">+34 637 26 40 41</a><span>Barcelona</span></address>
+    </section>
+    <section class="content-card glass-panel">
+      <h2>{english ? 'Develop your idea in the chat' : 'Desarrolla tu idea en el chat'}</h2>
+      <p>{english ? 'Explore the published services and projects, or explain what you need. You can also request a 30-minute video call: choose an available time and review the proposal before confirming.' : 'Explora los servicios y proyectos publicados o explica qué necesitas. También puedes solicitar una videollamada de 30 minutos: elige un horario disponible y revisa la propuesta antes de confirmarla.'}</p>
+      <a class="primary-action" href={chatIntentPath('contact', lang)} data-chat-message={chatIntentMessage('contact', lang)}>{english ? 'Open the conversation' : 'Abrir la conversación'}</a>
+    </section>
+  </div>
+  <section class="content-card glass-panel">
+    <h2>{english ? 'What to include in your brief' : 'Qué compartir sobre tu proyecto'}</h2>
+    <ul class="editorial-list"><li>{english ? 'The type of piece and its intended use.' : 'Qué tipo de pieza necesitas y para qué la utilizarás.'}</li><li>{english ? 'Your audience and any creative references.' : 'A quién va dirigida y tus referencias creativas.'}</li><li>{english ? 'Your deadline and approximate budget, if available.' : 'Tu plazo y, si lo tienes, un presupuesto orientativo.'}</li></ul>
+    <p>{english ? 'The team will review scope, availability and price before confirming a commission. You can explore the site without booking a call or sharing contact details.' : 'El equipo revisará alcance, disponibilidad y presupuesto antes de confirmar un encargo. Puedes explorar el estudio sin reservar una llamada ni dejar datos de contacto.'}</p>
+  </section>
+</PublicPage>

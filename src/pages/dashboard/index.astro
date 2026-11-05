@@ -1,0 +1,11 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import DashboardApp from '../../components/dashboard/DashboardApp';
+
+const session = Astro.locals.dashboardSession;
+if (!session) return Astro.redirect('/dashboard/login');
+---
+
+<DashboardLayout>
+  <DashboardApp client:only="react" csrfToken={session.csrfToken} expiresAt={session.expiresAt} />
+</DashboardLayout>
