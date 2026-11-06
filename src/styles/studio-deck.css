@@ -161,3 +161,6 @@ html.deck-on.deck-helix .home-screen .chat-heading { bottom: calc(130px + env(sa
 html.deck-on.deck-helix .home-screen .chat-transcript { gap: 10px; }
 html.deck-on.deck-helix .home-screen .chat-transcript .chat-message { font-size: .86rem; line-height: 1.5; }
 html.deck-on.deck-helix .home-screen .chat-hub-starters button { min-height: 34px; }
+
+/* The classic containers stay in the DOM but must never catch pointer events over the scene. */
+html.deck-on .home-screen :is(.home-grid, .home-center, .studio-conversation-shell, #chat-desktop-root, .embedded-chat) { pointer-events: none !important; }
