@@ -164,3 +164,19 @@ html.deck-on.deck-helix .home-screen .chat-hub-starters button { min-height: 34p
 
 /* The classic containers stay in the DOM but must never catch pointer events over the scene. */
 html.deck-on .home-screen :is(.home-grid, .home-center, .studio-conversation-shell, #chat-desktop-root, .embedded-chat) { pointer-events: none !important; }
+
+/* While a card is open, the terminal is fully out of the way (not just faded: its links must not catch taps). */
+html.deck-on.deck-focusing .home-screen :is(.chat-layer, .chat-heading, .chat-latest) { opacity: 0 !important; visibility: hidden !important; transition: opacity .3s, visibility 0s .3s; }
+
+/* Terminal always clears the composer. */
+html.deck-on .home-screen .chat-layer { height: min(52vh, 560px, calc(80dvh - var(--deck-composer, 130px) - 48px)); }
+html.deck-on.deck-helix .home-screen .chat-layer { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px)); height: min(34vh, 300px); }
+html.deck-on.deck-helix .home-screen .chat-heading { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + min(34vh, 300px) - 34px); }
+html.deck-on.deck-helix .home-screen .chat-latest { bottom: calc(var(--deck-composer, 140px) + 42px + env(safe-area-inset-bottom, 0px)); }
+
+/* Compact cards on portrait screens */
+html.deck-helix .deck-card { width: 360px; padding: 16px 16px 14px; }
+html.deck-helix .deck-card h2 { font-size: 1.3rem; }
+html.deck-helix .deck-card__meta { margin-bottom: 8px; }
+html.deck-helix .deck-card__body { font-size: .82rem; -webkit-line-clamp: 3; margin-bottom: 12px; }
+html.deck-helix .deck-act { min-height: 38px; padding: 8px 11px; font-size: .58rem; }

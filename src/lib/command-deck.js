@@ -389,7 +389,7 @@ export function createDeck(root, data) {
   const cardWrap = document.createElement('div'); cardWrap.className = 'deck-card-wrap';
   const card = document.createElement('aside'); card.className = 'deck-card'; card.setAttribute('aria-live', 'polite'); card.hidden = true;
   cardWrap.append(card);
-  const cardObj = new CSS3DObject(cardWrap); cardObj.scale.setScalar(HELIX ? .0064 : .0062); cssScene.add(cardObj);
+  const cardObj = new CSS3DObject(cardWrap); cardObj.scale.setScalar(HELIX ? .005 : .0062); cssScene.add(cardObj);
   const cardTarget = new THREE.Vector3(), camRight = new THREE.Vector3(), tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3();
   let cardSnap = true;
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
@@ -516,6 +516,10 @@ export function createDeck(root, data) {
     if (document.querySelector('.chat-transcript[data-welcome-only="false"]')) talked = true;
     else showGreetingTop();
   });
+  // Keep the terminal above the composer whatever its real height (tools, notice, keyboard).
+  const composerEl = document.querySelector('.chat-composer');
+  const resize = new ResizeObserver(() => { if (composerEl) document.documentElement.style.setProperty('--deck-composer', `${Math.ceil(composerEl.getBoundingClientRect().height)}px`); });
+  if (composerEl) resize.observe(composerEl);
   // While only the greeting is present, show the terminal from its first line.
   function showGreetingTop() { const layer = document.querySelector('.chat-layer'); if (layer && document.querySelector('.chat-transcript[data-welcome-only="true"]')) layer.scrollTop = 0; }
   setTimeout(showGreetingTop, 600); setTimeout(showGreetingTop, 2000);
@@ -649,7 +653,7 @@ export function createDeck(root, data) {
   return {
     focusWork, focusService, unfocus,
     dispose() {
-      ac.abort(); observer.disconnect(); renderer.setAnimationLoop(null); sfx.close();
+      ac.abort(); observer.disconnect(); resize.disconnect(); renderer.setAnimationLoop(null); sfx.close();
       screens.forEach(s => { if (s.video) { s.video.pause(); s.video.removeAttribute('src'); s.video.load(); } });
       disposables.forEach(d => d.dispose?.()); composer.dispose?.(); renderer.dispose();
       root.replaceChildren();
