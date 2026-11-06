@@ -1,35 +1,76 @@
 {
   "services": [
     {
-      "id": "direction",
-      "title": "Direction",
-      "description": "Direccion creativa con criterio humano e IA",
+      "id": "ai-generation",
+      "title": "Producción audiovisual con IA",
+      "titleEn": "AI audiovisual production",
+      "description": "Piezas audiovisuales que combinan dirección humana y herramientas de IA.",
+      "descriptionEn": "Audiovisual work combining human direction and AI tools.",
       "icon": "movie",
-      "highlighted": true
+      "highlighted": true,
+      "sortOrder": 0,
+      "chatMessage": "Quiero información sobre el servicio: ai-generation",
+      "chatMessageEn": "I want information about the service: ai-generation"
     },
     {
-      "id": "ai-generation",
-      "title": "AI Generation",
-      "description": "Contenido generado y supervisado al 100%",
-      "icon": "auto_fix_high"
+      "id": "marketing-strategy",
+      "title": "Marketing y estrategia",
+      "titleEn": "Marketing and strategy",
+      "description": "Estrategia de comunicación y contenido alineada con tu marca.",
+      "descriptionEn": "Communication and content strategy aligned with your brand.",
+      "icon": "campaign",
+      "highlighted": false,
+      "sortOrder": 1,
+      "chatMessage": "Quiero información sobre el servicio: marketing-strategy",
+      "chatMessageEn": "I want information about the service: marketing-strategy"
+    },
+    {
+      "id": "content-creation",
+      "title": "Creación de contenido",
+      "titleEn": "Content creation",
+      "description": "Contenido visual y audiovisual para redes, campañas y comunicación.",
+      "descriptionEn": "Visual and audiovisual content for social media, campaigns and communication.",
+      "icon": "videocam",
+      "highlighted": false,
+      "sortOrder": 2,
+      "chatMessage": "Quiero información sobre el servicio: content-creation",
+      "chatMessageEn": "I want information about the service: content-creation"
+    },
+    {
+      "id": "direction",
+      "title": "Dirección creativa",
+      "titleEn": "Creative direction",
+      "description": "Concepto, narrativa y criterio visual para dar identidad a cada proyecto.",
+      "descriptionEn": "Concept, narrative and visual judgment to give each project its identity.",
+      "icon": "palette",
+      "highlighted": false,
+      "sortOrder": 3,
+      "chatMessage": "Quiero información sobre el servicio: direction",
+      "chatMessageEn": "I want information about the service: direction"
     },
     {
       "id": "vfx-post",
-      "title": "VFX & Post",
-      "description": "Efectos visuales y postproduccion avanzada",
-      "icon": "layers"
+      "title": "VFX y postproducción",
+      "titleEn": "VFX and post-production",
+      "description": "Montaje, composición, tratamiento de imagen y acabado audiovisual.",
+      "descriptionEn": "Editing, compositing, image treatment and audiovisual finishing.",
+      "icon": "layers",
+      "highlighted": false,
+      "sortOrder": 4,
+      "chatMessage": "Quiero información sobre el servicio: vfx-post",
+      "chatMessageEn": "I want information about the service: vfx-post"
     },
     {
       "id": "sound-design",
-      "title": "Sound Design",
-      "description": "Diseno sonoro inmersivo",
-      "icon": "graphic_eq"
-    },
-    {
-      "id": "branded-content",
-      "title": "Branded Content",
-      "description": "Piezas unicas para marcas que quieren destacar",
-      "icon": "campaign"
+      "title": "Diseño sonoro",
+      "titleEn": "Sound design",
+      "description": "Edición y diseño de sonido para reforzar la narrativa audiovisual.",
+      "descriptionEn": "Sound editing and design to support audiovisual storytelling.",
+      "icon": "graphic_eq",
+      "highlighted": false,
+      "sortOrder": 5,
+      "chatMessage": "Quiero información sobre el servicio: sound-design",
+      "chatMessageEn": "I want information about the service: sound-design"
     }
   ]
 }

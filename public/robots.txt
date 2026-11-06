@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+Allow: /api/project-media/
+
+Sitemap: https://akrasia.studio/sitemap.xml

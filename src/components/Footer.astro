@@ -1,31 +1,26 @@
 ---
+import { pageLang, languagePath } from '../lib/public-ui';
+import { PRIVACY_NOTICE } from '../lib/privacy-notice';
+import { textFor } from '../lib/i18n';
+import { chatIntentPath } from '../lib/chat-navigation';
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
 ---
-
-<footer
-  class="h-8 items-center justify-between px-4 text-[11px] text-slate-600 glass-panel z-50 hidden lg:flex"
->
-  <div class="flex gap-4">
-    <a class="nav-link" href="#">Manifiesto</a>
-    <a class="nav-link" href="#">Proyectos</a>
-    <a class="nav-link" href="#">Contacto</a>
-  </div>
-  <div>
-    AKRASIA.STUDIO <span class="text-slate-700">//</span> AI_CINEMA_ENGINE
-    <span class="text-slate-700">//</span> &copy;2025
-  </div>
-  <div class="flex gap-4">
-    <span>PING: 2ms</span>
-    <span class="text-primary">SESION ACTIVA</span>
-  </div>
+<footer class="hud-site-footer glass-panel fade-in-footer">
+  <nav class="hud-footer-navigation" aria-label={english ? 'Studio and contact' : 'Estudio y contacto'}>
+    <a href={chatIntentPath('manifesto', lang)} data-chat-message={textFor('footer.manifiestoMsg', lang)}>{textFor('footer.manifiesto', lang)}</a>
+    <a href={chatIntentPath('portfolio', lang)} data-chat-message={textFor('footer.proyectosMsg', lang)}>{textFor('footer.proyectos', lang)}</a>
+    <a href={chatIntentPath('contact', lang)} data-chat-message={textFor('footer.contactoMsg', lang)}>{textFor('footer.contacto', lang)}</a>
+    <a href={languagePath('/servicios', lang)} class="studio-editorial-link">{english ? 'Service details' : 'Fichas de servicios'}</a>
+    <a href={languagePath('/proyectos', lang)} class="studio-editorial-link">{english ? 'Case studies' : 'Casos de estudio'}</a>
+    <a href={languagePath('/contacto', lang)} class="studio-editorial-link">{english ? 'Direct contact' : 'Contacto directo'}</a>
+  </nav>
+  <p class="hud-footer-signature"><span>AKRASIA.STUDIO</span><span class="hud-footer-separator" aria-hidden="true">//</span><a href={`mailto:${PRIVACY_NOTICE.email}`}>{PRIVACY_NOTICE.email}</a><span class="hud-footer-separator" aria-hidden="true">//</span><span>© {new Date().getFullYear()}</span></p>
+  <nav class="hud-footer-legal" aria-label={english ? 'Legal information (Spanish)' : 'Información legal'}>
+    <a href="/privacidad">{english ? 'Privacy (ES)' : 'Privacidad'}</a>
+    <a href="/aviso-legal">{english ? 'Legal notice (ES)' : 'Aviso legal'}</a>
+    <a href="/cookies">Cookies{english ? ' (ES)' : ''}</a>
+    <button type="button" data-privacy-settings>{english ? 'Cookie settings' : 'Configurar cookies'}</button>
+  </nav>
 </footer>
 
-<footer class="lg:hidden p-4 text-[11px] text-slate-600 glass-panel z-50 mt-2 mb-16">
-  <div class="flex justify-center gap-6 mb-2">
-    <a class="nav-link" href="#">Manifiesto</a>
-    <a class="nav-link" href="#">Proyectos</a>
-    <a class="nav-link" href="#">Contacto</a>
-  </div>
-  <div class="text-center text-[10px] text-slate-700">
-    AKRASIA.STUDIO // AI_CINEMA_ENGINE // &copy;2025
-  </div>
-</footer>

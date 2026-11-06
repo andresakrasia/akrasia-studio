@@ -255,6 +255,12 @@ Referentes de tono: estudio de diseno europeo + mentalidad de startup tecnologic
 
 ---
 
+## Reproductor de vídeos externos
+
+El visor conserva la carcasa del estudio y los controles originales del proveedor. YouTube se carga después de permitir vídeos externos. La cabecera muestra el título del proyecto, el enlace discreto **«YouTube ↗»** y el botón de cierre. El nombre accesible del enlace es **«Ver en YouTube»** (**«Watch on YouTube»** en inglés). Se omite la etiqueta «AUDIOVISUAL / REPRODUCTOR» y el pie de datos repetidos en vídeos de YouTube; las advertencias de demos se conservan. Los vídeos relacionados se limitan al mismo canal. El título y la marca dentro del reproductor los controla YouTube.
+
+La vista local opcional de prueba utiliza **«PRUEBA · TEARS OF STEEL»**, con atribución a Blender Foundation. Es una prueba de reproducción de un vídeo externo, no un trabajo de Akrasia ni una publicación del portfolio real.
+
 ## Control de Cambios
 
 | Fecha | Version | Cambio |

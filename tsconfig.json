@@ -1,5 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*", "astro.config.mjs", "tailwind.config.mjs", "postcss.config.mjs"],
+  "exclude": ["node_modules", "dist", ".vercel"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react"

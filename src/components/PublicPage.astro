@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import ChatWrapper from './ChatWrapper';
+import { pageLang, languagePath, type PublicLang } from '../lib/public-ui';
+interface Props { title: string; description: string; noindex?: boolean; bilingual?: boolean; lang?: PublicLang; structuredData?: Record<string, unknown> | Record<string, unknown>[] }
+const { title, description, noindex = false, bilingual = true, lang = pageLang(Astro.url), structuredData } = Astro.props;
+const english = lang === 'en';
+---
+<Layout title={title} description={description} lang={lang} noindex={noindex} bilingual={bilingual} structuredData={structuredData}>
+  <div class="site-background" aria-hidden="true"><img src="/img/out.webp" width="1360" height="768" alt="" decoding="async" /><div class="hud-scanline"></div></div>
+  <Header bilingual={bilingual} />
+  <main id="main-content" tabindex="-1" class="public-page">
+    <div class="editorial-page">
+      <nav class="editorial-navigation" aria-label={english ? 'Read about the studio' : 'Información del estudio'}>
+        <a href={languagePath('/', lang)}>{english ? 'Studio and chat' : 'Estudio y chat'}</a>
+        <a href={languagePath('/servicios', lang)}>{english ? 'Services' : 'Servicios'}</a>
+        <a href={languagePath('/proyectos', lang)}>{english ? 'Projects' : 'Proyectos'}</a>
+        <a href={languagePath('/contacto', lang)}>{english ? 'Contact' : 'Contacto'}</a>
+      </nav>
+      <slot />
+    </div>
+  </main>
+  <ChatWrapper client:only="react" />
+  <Footer />
+</Layout>
+
+<style is:global>
+  body:has(.editorial-page) { height: auto; min-height: 100vh; overflow-y: auto; }
+  .editorial-page { width: min(100%, 68rem); margin: 0 auto; padding-bottom: 7rem; color: #cbd5e1; line-height: 1.7; overflow-wrap: anywhere; }
+  .editorial-navigation, .editorial-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem; margin: 0 0 1.5rem; }
+  .editorial-navigation a { min-height: 44px; display: inline-flex; align-items: center; color: #a8e9f1; font-size: .8rem; text-decoration: underline; text-underline-offset: .3rem; }
+  .editorial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1.25rem; }
+  .editorial-page .content-card { border: 1px solid #2e535f; background: #0a151bcc; border-radius: .3rem; }
+  .editorial-page .content-card :is(h2, h3) { margin-bottom: .7rem; }
+  .editorial-page .content-card h2 a { color: inherit; text-decoration: underline; text-underline-offset: .25rem; }
+  .editorial-page .content-card p, .editorial-copy { white-space: pre-line; }
+  .editorial-page .editorial-intro { max-width: 52rem; }
+  .editorial-page .editorial-actions { margin-top: 1.5rem; }
+  .editorial-image { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid #2e535f; margin-bottom: 1rem; }
+  .editorial-list { padding-left: 1.3rem; margin: .6rem 0 1rem; }
+  .editorial-list li { margin: .6rem 0; }
+  .editorial-process { padding-left: 1.3rem; }
+  .editorial-process li { margin: 0 0 1.3rem; padding-left: .4rem; }
+  .editorial-contact { display: grid; gap: .5rem; margin: 1rem 0; }
+  .editorial-contact a, .editorial-text-link { color: #67e8f9; text-decoration: underline; text-underline-offset: .25rem; }
+</style>
+

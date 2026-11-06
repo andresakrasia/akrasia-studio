@@ -1,0 +1,52 @@
+---
+import PublicPage from '../../components/PublicPage.astro';
+import { getPublicProjects, type PublicProject, isProjectSlug, localProjectImage, PUBLIC_PROJECT_CACHE_HEADERS } from '../../lib/public-projects';
+import { pageLang, languagePath, publicCanonical } from '../../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../../lib/chat-navigation';
+import { projectHasEnglish, projectIsIndexable, metaDescription } from '../../lib/public-seo';
+const requestedLang = pageLang(Astro.url);
+const slug = Astro.params.slug;
+let project: PublicProject | undefined;
+let unavailable = false;
+if (isProjectSlug(slug)) {
+  try { [project] = await getPublicProjects({ slug }); } catch { unavailable = true; }
+}
+Astro.response.status = unavailable ? 503 : project ? 200 : 404;
+for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
+if (unavailable) Astro.response.headers.set('Retry-After', '60');
+const bilingual = Boolean(project && projectHasEnglish(project));
+if (project && requestedLang === 'en' && !bilingual) {
+  return new Response(null, { status: 302, headers: { ...PUBLIC_PROJECT_CACHE_HEADERS, Location: languagePath(Astro.url.pathname, 'es') } });
+}
+const lang = requestedLang;
+const english = lang === 'en';
+const name = project?.title || (unavailable ? (english ? 'Project temporarily unavailable' : 'Proyecto temporalmente no disponible') : (english ? 'Project not found' : 'Proyecto no encontrado'));
+const study = project ? (english ? project.case_study_en : project.case_study) : null;
+const intro = project ? (english ? project.case_study_en.brief : project.public_description || project.case_study.brief) : '';
+const description = metaDescription(intro) || 'Información de los proyectos audiovisuales publicados de Akrasia Studio.';
+const thumbnail = project && localProjectImage(project.thumbnail);
+const structuredData = project && projectIsIndexable(project) ? {
+  '@context': 'https://schema.org', '@type': 'CreativeWork', name, description,
+  url: publicCanonical(Astro.url.pathname, lang), inLanguage: lang,
+  ...(thumbnail ? { image: new URL(thumbnail, 'https://akrasia.studio').href } : {}),
+  creator: { '@type': 'Organization', '@id': 'https://akrasia.studio/#organization', name: 'AKRASIA STUDIO', url: 'https://akrasia.studio' },
+} : undefined;
+---
+<PublicPage title={`${name} | Akrasia Studio`} description={description} lang={lang} bilingual={bilingual} noindex={!project || !projectIsIndexable(project)} structuredData={structuredData}>
+  <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'CASE STUDY' : 'CASO DE ESTUDIO'}</p>
+  <h1>{name}</h1>
+  {project && study ? <>
+    {(project.type || project.duration) && <p class="page-eyebrow" lang="es">{[project.type, project.duration].filter(Boolean).join(' · ')}</p>}
+    {thumbnail && <img class="editorial-image" src={thumbnail} width="960" height="540" alt={english ? `Still from ${project.title}` : `Fotograma de ${project.title}`} decoding="async" />}
+    {!english && project.public_description && <p class="page-intro editorial-intro editorial-copy">{project.public_description}</p>}
+    {study.brief && <section class="content-card glass-panel"><h2>{english ? 'The brief' : 'El encargo'}</h2><p>{study.brief}</p></section>}
+    {study.process && <section class="content-card glass-panel"><h2>{english ? 'The process' : 'El proceso'}</h2><p>{study.process}</p></section>}
+    {study.result && <section class="content-card glass-panel"><h2>{english ? 'The result' : 'El resultado'}</h2><p>{study.result}</p></section>}
+    {study.services.length > 0 && <section class="content-card glass-panel"><h2>{english ? 'Services involved' : 'Servicios del proyecto'}</h2><ul class="editorial-list">{study.services.map(service => <li>{service}</li>)}</ul><a class="editorial-text-link" href={languagePath('/servicios', lang)}>{english ? 'Explore the services' : 'Conocer los servicios'}</a></section>}
+    <div class="editorial-actions">
+      <a class="primary-action" href={chatIntentPath(`project:${project.slug}`, lang)} data-chat-message={chatIntentMessage(`project:${project.slug}`, lang)}>{english ? 'Discuss this project in the chat' : 'Hablar de este proyecto en el chat'}</a>
+      {project.video_url && <a class="secondary-action" href={project.video_url} target="_blank" rel="noopener noreferrer">{english ? 'Open the published video' : 'Abrir el vídeo publicado'} <span aria-hidden="true">↗</span></a>}
+    </div>
+  </> : <section class="content-card glass-panel" role="status"><p>{unavailable ? (english ? 'Project information is temporarily unavailable. Please try again later or contact the studio.' : 'La información de este proyecto no está disponible temporalmente. Puedes intentarlo más tarde o contactar con el estudio.') : (english ? 'There is no published project at this address.' : 'No hay un proyecto publicado en esta dirección.')}</p><a class="secondary-action" href={languagePath('/contacto', lang)}>{english ? 'Contact the studio' : 'Contactar con el estudio'}</a></section>}
+  <a class="editorial-text-link" href={languagePath('/proyectos', lang)}>{english ? 'All published projects' : 'Todos los proyectos publicados'}</a>
+</PublicPage>

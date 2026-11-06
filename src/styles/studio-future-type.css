@@ -1,0 +1,52 @@
+@font-face {
+  font-family: 'Oxanium';
+  src: url('/fonts/oxanium-latin-wght-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+/* Angular letterforms with open spacing for extended conversations. */
+.home-screen {
+  --studio-font-display: 'Oxanium', 'Space Grotesk', system-ui, sans-serif;
+  --studio-font-body: 'Oxanium', 'Space Grotesk', system-ui, sans-serif;
+  font-family: var(--studio-font-body);
+  font-weight: 450;
+}
+.home-screen :is(.chat-surface, .hud-site-footer) { font-family: var(--studio-font-body); }
+.home-screen :is(.studio-manifesto-copy, .studio-manifesto-close, .studio-empty),
+.home-screen .studio-sidebar .hud-activity-entry :is(strong, p) { font-family: var(--studio-font-body); }
+.home-screen .studio-header :is(.hud-header-navigation a, .hud-header-cta),
+.home-screen #mobileChatSlot .chat-launcher,
+.home-screen .chat-message .formatted-text :is(h2, h3) { font-family: var(--studio-font-display); }
+.home-screen :is(.hud-section-title, .chat-heading h2, .studio-shell-label, .studio-location-heading strong) {
+  font-family: var(--studio-font-display);
+  font-weight: 650;
+  letter-spacing: .13em;
+}
+.home-screen .studio-sidebar .studio-service-list .studio-service strong {
+  font-family: var(--studio-font-display);
+  font-size: .8125rem;
+  font-weight: 550;
+  letter-spacing: .01em;
+  line-height: 1.45;
+}
+.home-screen .studio-manifesto-copy { font-size: .9375rem; line-height: 1.7; }
+.home-screen .studio-manifesto-close { line-height: 1.6; }
+.home-screen .chat-surface .chat-message {
+  font-family: var(--studio-font-body);
+  font-size: 1rem;
+  font-weight: 450;
+  letter-spacing: .012em;
+  line-height: 1.7;
+}
+.home-screen .chat-surface .chat-role { font-family: var(--studio-font-display); font-weight: 650; letter-spacing: .12em; }
+.home-screen .chat-surface .chat-input-row textarea { font-family: var(--studio-font-body); font-size: .9375rem; line-height: 1.5; }
+.home-screen :is(.chat-project-card h3, .chat-project-video-header h3, .chat-project-browser-header h3) {
+  font-family: var(--studio-font-display);
+  font-weight: 650;
+  letter-spacing: .025em;
+}
+@media (max-width: 1023px) {
+  .home-screen .chat-surface .chat-message { font-size: .9375rem; line-height: 1.7; }
+}

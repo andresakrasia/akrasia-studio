@@ -1,0 +1,34 @@
+.studio-core { position: relative; width: 100%; height: 100%; max-width: 300px; max-height: 300px; min-width: 0; min-height: 0; aspect-ratio: 1; margin: auto; isolation: isolate; pointer-events: none; contain: layout paint; }
+.studio-core .studio-core__canvas, .studio-core .studio-core__projection { position: absolute; inset: 0; width: 100%; height: 100%; }
+.studio-core .studio-core__canvas { z-index: 1; }
+.studio-core .studio-core__projection { z-index: 2; overflow: visible; }
+.studio-core .studio-core__aura { position: absolute; inset: 15%; border-radius: 50%; background: radial-gradient(ellipse, rgba(37, 132, 242, .14), rgba(36, 223, 254, .05) 48%, transparent 72%); }
+.studio-core .studio-core__perimeter { opacity: .58; }
+.studio-core .studio-core__calibration { opacity: .34; }
+.studio-core .studio-core__traces { opacity: .68; }
+.studio-core .studio-core__emblem { filter: drop-shadow(0 0 5px rgba(87, 231, 255, .9)) drop-shadow(0 0 12px rgba(45, 133, 255, .45)); }
+.studio-core[data-phase="thinking"] .studio-core__emblem { filter: drop-shadow(0 0 7px #84f7ff) drop-shadow(0 0 15px rgba(39, 144, 255, .7)); }
+.studio-core[data-phase="responding"] .studio-core__perimeter { opacity: .8; }
+.studio-core--compact .studio-core__perimeter { opacity: .4; }
+.studio-core--compact .studio-core__emblem { filter: drop-shadow(0 0 4px rgba(87, 231, 255, .85)); }
+.studio-core--background { width: min(110vw, 125vh, 1000px); height: auto; max-width: none; max-height: none; flex: none; contain: layout; overflow: visible; }
+.studio-core--background .studio-core__field { position: absolute; left: -60%; top: -16.6667%; width: 220%; height: 133.3333%; max-width: none; overflow: visible; z-index: 0; pointer-events: none; }
+.studio-core--background .studio-core__field-orbits { opacity: .6; }
+.studio-core--background .studio-core__field-circuits { opacity: .72; }
+.studio-core--background .studio-core__field-terminals { opacity: .68; }
+.studio-core--background .studio-core__field-reticles { opacity: .54; }
+.studio-core--background .studio-core__field-stars { opacity: .9; }
+.studio-core--background .studio-core__aura { inset: 10%; background: radial-gradient(ellipse, rgba(35, 103, 250, .075), rgba(16, 212, 251, .04) 42%, rgba(35, 125, 236, .015) 60%, transparent 73%); }
+.studio-core--background .studio-core__perimeter { opacity: .48; }
+.studio-core--background .studio-core__emblem { opacity: .3; filter: drop-shadow(0 0 3px rgba(111, 249, 255, .45)) drop-shadow(0 0 9px rgba(43, 138, 255, .22)); }
+.studio-core .studio-core__brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; flex-direction: column; align-items: center; color: #00f0ff; font-size: clamp(22px, 4.1vw, 52px); line-height: 1; opacity: .58; text-shadow: 0 0 5px #00dfff8c, 0 0 18px #00bfff45; pointer-events: none; }
+.studio-core .studio-core__brand .hud-brand-wordmark { line-height: 1; }
+.studio-core .studio-core__brand .hud-brand-subtitle { margin-top: .65em; font-size: .19em; letter-spacing: .42em; padding-left: .42em; color: #83f5ff; text-shadow: 0 0 8px #00dfff59; }
+.studio-core:is([data-paused="true"], [data-core-motion="still"]) .studio-core__brand :is(.neon-char, .neon-sub) { animation-play-state: paused !important; }
+.studio-core--background[data-phase="thinking"] .studio-core__brand, .studio-core--background[data-phase="responding"] .studio-core__brand { opacity: .72; }
+.studio-core--background[data-phase="thinking"] .studio-core__emblem { opacity: .45; filter: drop-shadow(0 0 4px rgba(132, 247, 255, .65)) drop-shadow(0 0 10px rgba(39, 144, 255, .32)); }
+.studio-core--background[data-phase="responding"] .studio-core__emblem { opacity: .45; }
+.studio-core--background[data-phase="responding"] .studio-core__perimeter { opacity: .62; }
+@media (min-width: 1024px) { .studio-core--background { width: min(88vw, 100vh, 860px); } }
+@media (max-width: 1023px) { .studio-core--background .studio-core__field { opacity: .65; } }
+@media (max-width: 640px) { .studio-core--background { width: min(108vw, 1000px); } }

@@ -1,0 +1,74 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { PRIVACY_NOTICE as notice, PRIVACY_SOURCES as sources, publicChatSessionSeconds, durationLabel } from '../lib/privacy-notice';
+import { PRIVACY_STORAGE_KEY, PRIVACY_TTL_MS, PRIVACY_VERSION } from '../lib/privacy-consent';
+import { analyticsDestination, analyticsOptionsFromEnv, ANALYTICS_COOKIE_SECONDS } from '../lib/analytics';
+const chatDuration = durationLabel(publicChatSessionSeconds(import.meta.env));
+const preferenceDays = PRIVACY_TTL_MS / (24 * 60 * 60 * 1000);
+const destination = analyticsDestination(analyticsOptionsFromEnv(import.meta.env));
+const analyticsAvailable = Boolean(destination);
+const analyticsCookieDays = ANALYTICS_COOKIE_SECONDS / (24 * 60 * 60);
+---
+
+<LegalPage title="Cookies y almacenamiento" description="Qué guarda Akrasia Studio en tu navegador, qué opciones son voluntarias y cómo cambiar tu elección." current="cookies">
+  <p>Responsable: {notice.controller}, {notice.commercialName}. Contacto: <a href={`mailto:${notice.email}`}>{notice.email}</a>. La <a href="/privacidad">información de privacidad</a> explica el tratamiento de los datos fuera de tu navegador.</p>
+  <p>Además de cookies, este sitio utiliza almacenamiento local del navegador. Las funciones técnicas, la analítica y los vídeos externos tienen finalidades diferentes. Puedes usar el chat y navegar sin permitir las opciones voluntarias.</p>
+  <div class="legal-notice">
+    <p>La analítica y los vídeos externos empiezan desactivados. Navegar, cerrar el aviso o usar el chat no los autoriza.</p>
+    <button type="button" data-privacy-settings>Configurar, rechazar o retirar cookies opcionales</button>
+  </div>
+  <section aria-labelledby="tecnicas">
+    <h2 id="tecnicas">Almacenamiento técnico y de preferencias</h2>
+    <p>La sesión permite acceder a tus propios datos del chat y proteger el servicio. El historial local facilita mostrar tu conversación; no acredita tu identidad frente al servidor. La elección de cookies se guarda únicamente para recordar tu decisión. No se solicita una aceptación conjunta de estas funciones con la analítica.</p>
+    <div class="legal-table-wrap" role="region" aria-label="Detalle del almacenamiento técnico" tabindex="0">
+      <table>
+        <caption>Almacenamiento del propio sitio</caption>
+        <thead><tr><th scope="col">Nombre y tipo</th><th scope="col">Finalidad y contenido</th><th scope="col">Duración o eliminación</th></tr></thead>
+        <tbody>
+          <tr><td><code>__Host-akrasia_chat</code><br />Cookie de sesión del chat; <code>akrasia_chat</code> en desarrollo.</td><td>Sesión firmada para aislar tus conversaciones y autorizar las acciones del chat. Solo el servidor puede leerla.</td><td>{chatDuration} desde su emisión, según la configuración actual. Borrar la conversación mantiene la sesión y sus límites de seguridad.</td></tr>
+          <tr><td><code>akrasia_chat_session_history</code><br />Almacenamiento local.</td><td>Caché de mensajes, identificador de sesión, caducidad y versión de contexto.</td><td>Válido solo durante la sesión. Se limpia al borrar el chat, detectar otra sesión o comprobar su caducidad al abrir el chat.</td></tr>
+          <tr><td><code>akrasia_chat_erasure</code><br />Almacenamiento local.</td><td>Marcador mínimo, sin mensajes ni credenciales, para que otras pestañas descarten un contexto borrado.</td><td>Solo es válido durante la sesión; se revisa al acceder al chat.</td></tr>
+          <tr><td><code>{PRIVACY_STORAGE_KEY}</code><br />Almacenamiento local.</td><td>Opciones de analítica y vídeos externos, fecha de elección y versión {PRIVACY_VERSION}; no contiene el chat.</td><td>La elección tiene una validez máxima de {preferenceDays} días. Las preferencias ausentes, inválidas, antiguas o caducadas no permiten cargas opcionales.</td></tr>
+          <tr><td><code>__Host-akrasia_admin</code><br />Cookie administrativa; <code>akrasia_admin</code> en desarrollo.</td><td>Autenticar al equipo en el panel; no se crea por navegar como visitante.</td><td>Ocho horas como máximo; revocable al cerrar la sesión. El panel no carga la analítica pública.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>El almacenamiento local no se borra automáticamente mientras el navegador está cerrado. Su validez se comprueba al volver a utilizar el sitio. Puedes eliminarlo desde las opciones de privacidad de tu navegador; eso no borra los datos guardados en el servidor ni cancela una reserva.</p>
+  </section>
+  <section aria-labelledby="analitica">
+    <h2 id="analitica">Analítica opcional</h2>
+    {analyticsAvailable ? <p>La analítica está habilitada en la configuración de esta versión mediante {destination?.kind === 'ga4' ? 'Google Analytics 4' : 'Google Tag Manager'}, pero solo se carga con una elección válida que la permita.</p> : <p class="legal-notice">La analítica no está habilitada en la configuración de esta versión. No se cargan Google Analytics ni Google Tag Manager, aunque se permitan otras opciones.</p>}
+    <p>El sitio prepara dos opciones de Google: Google Analytics 4 para medir directamente visitas e interacciones, o Google Tag Manager para gestionar un contenedor revisado. Solo puede utilizarse una integración cada vez.</p>
+    <p>La integración directa mide visitas, el primer envío válido al chat y las reservas que el servidor confirma. Envía la dirección pública de la página con su idioma; elimina otros parámetros, fragmentos y la dirección de procedencia. No envía mensajes, nombres, emails, teléfonos, identificadores de visitantes o reservas ni los detalles de una cita. No se mide una reserva por abrir la agenda o revisar una propuesta. Las funciones de publicidad personalizada y Google Signals quedan desactivadas.</p>
+    <div class="legal-table-wrap" role="region" aria-label="Cookies de la integración directa con Google Analytics" tabindex="0">
+      <table><caption>Integración directa con Google Analytics 4: solo después de permitir analítica</caption>
+        <thead><tr><th scope="col">Nombre</th><th scope="col">Finalidad</th><th scope="col">Duración configurada</th></tr></thead>
+        <tbody><tr><td><code>_ga</code></td><td>Distinguir navegadores para las estadísticas de visitas. Su identificador es propio de Google Analytics y no se vincula a la sesión del chat.</td><td>{analyticsCookieDays} días; no se renueva en cada visita.</td></tr>
+          <tr><td><code>_ga_*</code></td><td>Mantener el estado de la sesión de medición del flujo de Google Analytics.</td><td>{analyticsCookieDays} días; no se renueva en cada visita.</td></tr></tbody>
+      </table>
+    </div>
+    {destination?.kind !== 'ga4' && <p class="legal-notice legal-pending">El inventario efectivo de etiquetas del contenedor remoto de Google Tag Manager, sus destinatarios, nombres de cookies y plazos no se han verificado. Ese modo debe permanecer deshabilitado hasta que el titular revise el inventario y complete esta información. No se presume que las etiquetas sean exclusivamente analíticas ni que puedan instalar publicidad con esta elección.</p>}
+    <p>Cuando una integración de Google autorizada se ejecuta, Google puede recibir datos de conexión y de interacción. Consulta la <a href="https://policies.google.com/privacy?hl=es">política de privacidad de Google</a>. No se realizan cargas opcionales antes de tu elección ni peticiones analíticas sin JavaScript.</p>
+  </section>
+  <section aria-labelledby="videos">
+    <h2 id="videos">Vídeos externos opcionales</h2>
+    <p>Los vídeos externos compatibles pertenecen a YouTube, de Google, o Vimeo. Antes de permitir esta categoría, no se carga su reproductor. Al permitirla y abrir un vídeo, tu navegador contacta con el proveedor, que recibe al menos datos de conexión y puede utilizar cookies u otro almacenamiento según su configuración y políticas.</p>
+    <p>Los enlaces de YouTube se reproducen mediante su dominio de privacidad mejorada y Vimeo recibe una petición de no seguimiento. Esas opciones no garantizan ausencia de tratamiento ni sustituyen tu elección. La elección de vídeos externos no permite analítica del sitio.</p>
+    <p>Consulta la <a href="https://policies.google.com/privacy?hl=es">política de Google y YouTube</a> y la <a href="https://vimeo.com/legal/privacy">política de Vimeo</a>. El detalle de almacenamiento de cada reproductor, su duración y las garantías aplicables deben confirmarse antes de habilitar vídeos concretos.</p>
+  </section>
+  <section aria-labelledby="cambiar">
+    <h2 id="cambiar">Cambiar o retirar tu elección</h2>
+    <ol>
+      <li>Abre «Configurar cookies» en esta página o «Cookies» en el sitio.</li>
+      <li>Desmarca las categorías que quieras retirar y guarda, o pulsa «Rechazar opcionales».</li>
+      <li>Al retirar analítica activa, la página se recarga para detener las etiquetas. Los reproductores externos abiertos dejan de mostrarse al retirar su categoría.</li>
+    </ol>
+    <button type="button" data-privacy-settings>Abrir configuración de cookies</button>
+    <p>Se intenta eliminar el almacenamiento analítico conocido y accesible del propio sitio. Esta acción no puede borrar cookies ajenas al dominio ni información ya enviada a proveedores. Puedes revisar y eliminar cookies desde la configuración de tu navegador y solicitar información o ejercer tus derechos en <a href={`mailto:${notice.email}`}>{notice.email}</a>.</p>
+    <p>Sin JavaScript, la analítica y los reproductores externos permanecen bloqueados. Si el navegador no permite guardar preferencias, la elección puede durar solo durante la visita.</p>
+  </section>
+  <section aria-labelledby="referencias">
+    <h2 id="referencias">Referencias oficiales</h2>
+    <p>Las funciones técnicas estrictamente necesarias y las opciones voluntarias se distinguen conforme al <a href={`${sources.lssi}#a22`}>artículo 22.2 de la Ley 34/2002</a>. Para información sobre elección informada y retirada, consulta la <a href={sources.cookies}>guía de cookies de la AEPD</a>.</p>
+  </section>
+</LegalPage>

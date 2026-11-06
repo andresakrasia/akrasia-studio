@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": ["../src/env.d.ts", "../src/lib/privacy-consent.ts", "../src/lib/privacy-controls.ts", "../src/lib/local-icons.ts", "../src/lib/public-media.ts", "../src/components/VideoModalListener.tsx"]
+}

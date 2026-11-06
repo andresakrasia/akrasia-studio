@@ -1,0 +1,56 @@
+---
+import PublicPage from '../../components/PublicPage.astro';
+import { loadPublicServices, type PublicService } from '../../lib/public-content';
+import { isProjectSlug, PUBLIC_PROJECT_CACHE_HEADERS } from '../../lib/public-projects';
+import { pageLang, languagePath, publicCanonical } from '../../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../../lib/chat-navigation';
+import { serviceHasEnglish, serviceIsIndexable, metaDescription } from '../../lib/public-seo';
+const requestedLang = pageLang(Astro.url);
+const slug = Astro.params.slug;
+let service: PublicService | undefined;
+let unavailable = false;
+if (isProjectSlug(slug)) {
+  try { [service] = await loadPublicServices({ slug }); } catch { unavailable = true; }
+}
+Astro.response.status = unavailable ? 503 : service ? 200 : 404;
+for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
+if (unavailable) Astro.response.headers.set('Retry-After', '60');
+const bilingual = Boolean(service && serviceHasEnglish(service));
+if (service && requestedLang === 'en' && !bilingual) {
+  return new Response(null, { status: 302, headers: { ...PUBLIC_PROJECT_CACHE_HEADERS, Location: languagePath(Astro.url.pathname, 'es') } });
+}
+const lang = requestedLang;
+const english = lang === 'en';
+const name = service ? (english ? service.title_en : service.title) : (unavailable ? (english ? 'Service temporarily unavailable' : 'Servicio temporalmente no disponible') : (english ? 'Service not found' : 'Servicio no encontrado'));
+const intro = service ? (english ? service.hero_description_en.trim() || service.description_en.trim() : service.hero_description.trim() || service.description.trim()) : '';
+const description = metaDescription(intro) || 'Información de los servicios publicados de Akrasia Studio y contacto directo con el estudio.';
+const features = service ? (english ? service.features_en : service.features) : [];
+const process = service ? (english ? service.process_en : service.process) : [];
+const structuredData = service && serviceIsIndexable(service) ? {
+  '@context': 'https://schema.org', '@type': 'Service', name, description,
+  url: publicCanonical(Astro.url.pathname, lang),
+  provider: { '@type': 'Organization', '@id': 'https://akrasia.studio/#organization', name: 'AKRASIA STUDIO', url: 'https://akrasia.studio' },
+} : undefined;
+---
+<PublicPage title={`${name} | Akrasia Studio`} description={description} lang={lang} bilingual={bilingual} noindex={!service || !serviceIsIndexable(service)} structuredData={structuredData}>
+  <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'SERVICE' : 'SERVICIO'}</p>
+  <h1>{name}</h1>
+  {service ? <>
+    {(english ? service.tagline_en : service.tagline) && <p class="page-intro">{english ? service.tagline_en : service.tagline}</p>}
+    {intro && <p class="page-intro editorial-intro editorial-copy">{intro}</p>}
+    {features.length > 0 && <section aria-labelledby="service-scope">
+      <h2 id="service-scope">{english ? 'What the service covers' : 'Qué abarca el servicio'}</h2>
+      <div class="editorial-grid">{features.map(feature => <article class="content-card glass-panel"><h3>{feature.title}</h3>{feature.description && <p>{feature.description}</p>}</article>)}</div>
+    </section>}
+    {process.length > 0 && <section class="content-card glass-panel" aria-labelledby="service-process">
+      <h2 id="service-process">{english ? 'How we work' : 'Cómo trabajamos'}</h2>
+      <ol class="editorial-process">{process.map(step => <li><h3>{step.title}</h3>{step.description && <p>{step.description}</p>}</li>)}</ol>
+    </section>}
+    <section class="content-card glass-panel">
+      <h2>{english ? 'Tell us what you want to create' : 'Cuéntanos qué quieres crear'}</h2>
+      <p>{english ? 'Share the piece you need, its audience, intended use and deadline. The studio will review scope, availability and price before confirming a commission.' : 'Comparte qué pieza necesitas, para quién, su uso y tu plazo. El estudio revisará alcance, disponibilidad y presupuesto antes de confirmar un encargo.'}</p>
+      <a class="primary-action" href={chatIntentPath(`service:${service.slug}`, lang)} data-chat-message={chatIntentMessage(`service:${service.slug}`, lang)}>{english ? 'Discuss this service in the chat' : 'Hablar de este servicio en el chat'}</a>
+    </section>
+  </> : <section class="content-card glass-panel" role="status"><p>{unavailable ? (english ? 'Service information is temporarily unavailable. Please try again later or contact the studio.' : 'La información de este servicio no está disponible temporalmente. Puedes intentarlo más tarde o contactar con el estudio.') : (english ? 'There is no published service at this address.' : 'No hay un servicio publicado en esta dirección.')}</p><a class="secondary-action" href={languagePath('/contacto', lang)}>{english ? 'Contact the studio' : 'Contactar con el estudio'}</a></section>}
+  <a class="editorial-text-link" href={languagePath('/servicios', lang)}>{english ? 'All published services' : 'Todos los servicios publicados'}</a>
+</PublicPage>

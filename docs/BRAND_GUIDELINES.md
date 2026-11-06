@@ -1,7 +1,7 @@
-# AKRASIA STUDIO — Brand Guidelines v1.1
+# AKRASIA STUDIO — Brand Guidelines v1.4
 
-> **Version:** 1.1  
-> **Fecha:** 2026-04-08  
+> **Version:** 1.4  
+> **Fecha:** 2026-10-06  
 > **Documento de referencia para todo cambio en la web**
 
 ---
@@ -103,12 +103,30 @@ GLITCH_MAGENTA     ████████  #ff00ff11  (con transparencia)
 
 ### 2.5 Reglas de Color (OBLIGATORIAS)
 
-1. **Fondo siempre oscuro**: `#050505` es el fondo base. `#0a0a0a` para paneles.
+1. **Fondo oscuro en la web pública**: `#050505` es el fondo base. `#0a0a0a` para paneles. El panel administrativo admite la excepción de modo día solicitada por el titular y descrita en §2.6.
 2. **Cyan (#00f0ff) como UNICO acento**: No introducir nuevos colores de acento.
 3. **Textos en escala de grises**: Usar la escala slate-300 a slate-600.
 4. **Bordes sutiles**: `#1a1a1a` para separar paneles. Nunca usar cyan como borde general.
 5. **Cyan con moderacion**: Solo en elementos interactivos, labels importantes, y estados activos.
 6. **Transparencia para profundidad**: Usar opacidad (50-70%) y `backdrop-blur` para capas.
+
+### 2.6 Apariencia del panel administrativo
+
+El administrador puede elegir **Noche** (predeterminada) o **Día**. La elección permanece en el navegador, se aplica antes de mostrar el panel y se conserva en la pantalla de acceso. Este cambio está autorizado por el titular para trabajar con fondos claros y textos legibles; no modifica la identidad visual de la web pública ni el diseño de los correos enviados.
+
+| Uso | Noche | Día |
+|-----|-------|-----|
+| Fondo | `#050505` | `#edf3f5` |
+| Panel | `#0a0a0a` | `#ffffff` |
+| Superficie secundaria | `#0f0f0f` | `#f4f8fa` |
+| Texto principal | `#a9b7c9` | `#2a3e4b` |
+| Título | `#e2e8f0` | `#122b38` |
+| Texto secundario | `#8b9aae` | `#4d626f` |
+| Texto terciario | `#7d8a9e` | `#526673` |
+| Acento interactivo | `#00f0ff` | `#006a76` |
+| Borde | `#29313a` | `#c9d7df` |
+
+El acento del modo día es una variante oscura del cyan de marca para mantener contraste. Los botones principales rellenos conservan cyan `#00f0ff` y texto oscuro. Estados de éxito, aviso y error usan variantes oscuras sobre fondos claros. Las tablas, formularios, vistas anidadas y gráficas comparten estas variables; cambiar de tema conserva los borradores y la vista seleccionada. Los textos del modo día cumplen un contraste mínimo de 4.5:1 en las tres superficies base.
 
 ---
 
@@ -118,8 +136,8 @@ GLITCH_MAGENTA     ████████  #ff00ff11  (con transparencia)
 
 | Fuente | Provider | Uso |
 |--------|----------|-----|
-| **Space Grotesk** | Google Fonts | Headlines, titulos, nombre de marca |
-| **JetBrains Mono** | Google Fonts | Todo lo demas: body, labels, datos, inputs, logs |
+| **Space Grotesk** | Autoalojada en `/fonts`, distribución Fontsource, licencia OFL | Headlines, titulos, nombre de marca |
+| **JetBrains Mono** | Autoalojada en `/fonts`, distribución Fontsource, licencia OFL | Todo lo demas: body, labels, datos, inputs, logs |
 
 ### 3.2 Pesos Disponibles
 
@@ -148,6 +166,14 @@ FOOTER             text-[9px]  font-normal                                      
 3. **Todo lo demas**: JetBrains Mono.
 4. **Uppercase**: Solo para labels, secciones y datos tecnicos. Los mensajes del chat van en normal.
 5. **Kerning**: tracking-tighter para headlines grandes, tracking-widest para labels.
+
+### 3.5 Calibración de la portada conversacional
+
+La portada conserva la tipografía angular Oxanium autoalojada, ya incorporada al hub. Esta variante prevalece sobre la escala histórica anterior solo bajo `.home-screen`: mensajes de 16 px en escritorio y 15 px en móvil, entrada móvil de 16 px y detalles funcionales del chat y pie de 11 px. JetBrains Mono se mantiene para estados y datos técnicos; las páginas públicas y el administrador conservan sus propios estilos.
+
+El acabado del hub mantiene columnas, núcleo, logo y cristal. Los contenedores, sus sombras y sus decoraciones comparten esquinas biseladas de 11 px (9 en móvil). Los textos no llevan halos. Las luces visibles y en movimiento de todos los marcos son un rasgo de identidad que el titular pide conservar: no se deben apagar ni atenuar como parte de una limpieza del diseño. La caja bajo el ratón recibe un contorno y halo más potentes, también al usar foco de teclado. Cada marco usa una sola arista, alineada con el bisel del cristal, sin líneas interiores ni esquinas rectangulares salientes. El grosor se mantiene en 1,5 px (2 px en chat); la interacción aumenta su brillo, no su anchura. Se recupera la animación original de marcos, tarjetas, burbujas y visor, manteniendo la pausa general y la preferencia de movimiento reducido.
+
+Los fondos del mensaje se oscurecen para proteger la lectura y dejan visible la proyección en el espacio libre. No se añaden partículas, fuentes remotas ni bucles de dibujo. La calibración final vive en `src/styles/studio-precision.css`; los controles y su foco no se recortan.
 
 ---
 
@@ -384,9 +410,12 @@ tailwind.config = {
 
 ## 9. Control de Cambios
 
-Todo cambio en colores, fuentes o componentes debe actualizarse en este documento. La version actual es **1.1**.
+Todo cambio en colores, fuentes o componentes debe actualizarse en este documento. La version actual es **1.4**. Las correcciones técnicas conservan la composición HUD de tres columnas, radar, logo neón y tipografías de referencia. No implican autorización para rediseñar la interfaz.
 
 | Fecha | Version | Cambio |
 |-------|---------|--------|
 | 2026-04-08 | 1.0 | Version inicial basada en analisis del codigo original |
 | 2026-04-08 | 1.1 | Anadida narrativa de marca, taglines, pilares, tono, manifesto. Ubicacion cambiada a Barcelona. |
+| 2026-10-02 | 1.2 | Restauración del diseño HUD anterior, manteniendo seguridad, publicación aprobada y movimiento reducido. Tipografías originales autoalojadas con licencias OFL. El chat es la navegación: los accesos comerciales abren mensajes predefinidos y muestran su información dentro de la conversación. No introducir páginas comerciales separadas ni rediseños sin encargo del titular. |
+| 2026-10-04 | 1.3 | Modo día y noche en el administrador por solicitud del titular. Variante cyan oscura, superficies claras y contraste mínimo de texto de 4.5:1 en modo día; preferencia persistida en el navegador. La web pública mantiene su fondo oscuro. |
+| 2026-10-06 | 1.4 | Ajuste autorizado del hub sin cambiar composición: luces originales en todos los marcos y refuerzo local de hover/foco por preferencia del titular; lectura sobre cristal oscuro, detalles funcionales más legibles y pausa móvil de 44 px. |

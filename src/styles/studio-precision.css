@@ -1,0 +1,231 @@
+/* Keep the studio's luminous frames; improve the reading surfaces and controls. */
+.home-screen {
+  --studio-control-radius: 6px;
+}
+
+/* Paint the glass and its light with the same bevel, without clipping controls. */
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer) {
+  --instrument-rail-width: 1.5px;
+  --glass-shadow: 0 9px 24px #00081359, 0 0 16px #00cfff12;
+  isolation: isolate;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.home-screen .home-grid .studio-conversation-shell {
+  --instrument-rail-width: 2px;
+  border-radius: 0;
+}
+.home-screen .studio-conversation-shell :is(.chat-layer, .chat-composer) { border-radius: 0; }
+/* The container's shadow must follow the same bevel as its painted decoration. */
+@supports (corner-shape: bevel) {
+  .home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer) {
+    corner-shape: bevel;
+    border-radius: var(--instrument-cut);
+  }
+}
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer)::before {
+  inset: 0;
+  z-index: -1;
+  border-radius: 0;
+  background: var(--glass-surface);
+  backdrop-filter: blur(var(--glass-blur, 16px)) saturate(1.12);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(1.12);
+  clip-path: polygon(
+    var(--instrument-cut) 0, calc(100% - var(--instrument-cut)) 0, 100% var(--instrument-cut),
+    100% calc(100% - var(--instrument-cut)), calc(100% - var(--instrument-cut)) 100%,
+    var(--instrument-cut) 100%, 0 calc(100% - var(--instrument-cut)), 0 var(--instrument-cut));
+}
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer)::after,
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):is(:hover, :focus-within)::after {
+  --instrument-inner-cut: calc(var(--instrument-cut) + var(--instrument-rail-width) * .414214);
+  inset: 0;
+  background-color: var(--instrument-line);
+  /* The inset diagonal is parallel to the outer bevel, including its junctions. */
+  clip-path: polygon(evenodd,
+    var(--instrument-cut) 0, calc(100% - var(--instrument-cut)) 0, 100% var(--instrument-cut),
+    100% calc(100% - var(--instrument-cut)), calc(100% - var(--instrument-cut)) 100%,
+    var(--instrument-cut) 100%, 0 calc(100% - var(--instrument-cut)), 0 var(--instrument-cut), var(--instrument-cut) 0,
+    var(--instrument-inner-cut) var(--instrument-rail-width), var(--instrument-rail-width) var(--instrument-inner-cut),
+    var(--instrument-rail-width) calc(100% - var(--instrument-inner-cut)), var(--instrument-inner-cut) calc(100% - var(--instrument-rail-width)),
+    calc(100% - var(--instrument-inner-cut)) calc(100% - var(--instrument-rail-width)),
+    calc(100% - var(--instrument-rail-width)) calc(100% - var(--instrument-inner-cut)),
+    calc(100% - var(--instrument-rail-width)) var(--instrument-inner-cut),
+    calc(100% - var(--instrument-inner-cut)) var(--instrument-rail-width), var(--instrument-inner-cut) var(--instrument-rail-width));
+}
+.home-screen .home-grid > [data-panel]::before { content: none; }
+.home-screen .chat-heading {
+  border: 0;
+  border-bottom: 1px solid #7be9fa45;
+  border-radius: 0;
+  box-shadow: none;
+}
+.home-screen .chat-composer { border-color: transparent; box-shadow: none; }
+.home-screen .chat-composer .chat-input-row { box-shadow: none; }
+.home-screen .chat-surface .chat-project-browser { box-shadow: 0 0 20px #00cfff0d; }
+.home-screen .chat-surface .chat-project-browser::before { content: none; }
+.home-screen .chat-surface .chat-project-cards .chat-project-card,
+.home-screen .studio-sidebar .studio-portfolio .studio-work-card { box-shadow: 0 8px 20px #000a162b; }
+.home-screen .studio-sidebar .studio-portfolio .studio-project-link,
+.home-screen .studio-sidebar .studio-portfolio .studio-work-copy,
+.home-screen .studio-sidebar .studio-portfolio .studio-work-card:hover .studio-work-copy { box-shadow: none; }
+
+.home-screen .studio-header :is(.hud-header-navigation, .hud-header-navigation a, .hud-language-toggle, .hud-header-cta),
+.home-screen .studio-sidebar .studio-service-list .studio-service,
+.home-screen :is(.chat-input-row, .chat-motion-control) {
+  border-radius: var(--studio-control-radius);
+}
+
+/* Labels keep their sharp letterforms independently of the luminous frames. */
+.home-screen .studio-sidebar .hud-section-title,
+.home-screen :is(.chat-heading h2, .studio-work-label, .studio-section-mark, .studio-service-arrow, .chat-role) {
+  color: #b4dfe7;
+  text-shadow: none;
+}
+.home-screen :is(.studio-service-icon, .chat-composer-icon) { color: #9adbe4; filter: none; }
+.home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible,
+.home-screen .studio-sidebar .studio-service-list .studio-service:has(~ .studio-service:focus-visible),
+.home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible ~ .studio-service {
+  transform: none;
+}
+.home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible {
+  border-color: #8eeef4;
+  background: #0d303ce6;
+  box-shadow: inset 2px 0 #b4ffff, 0 0 16px #00dfff45;
+}
+
+/* The hologram stays visible in open space; prose gets its own darker glass. */
+.home-screen .chat-surface :is(.chat-bubble-agent, .chat-bubble-user) {
+  --message-edge: #bef8ff70;
+  border-color: transparent !important;
+  box-shadow: 0 10px 25px #000a1733, 0 0 16px #00dfff0d;
+  background: linear-gradient(135deg, #0e2834e6, #071722e3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.home-screen .chat-surface :is(.chat-bubble-agent, .chat-bubble-user)::after {
+  inset: -1px;
+  background-color: var(--message-edge);
+}
+.home-screen .chat-surface .chat-bubble-user {
+  background: linear-gradient(135deg, #153b47e8, #0b2734eb);
+}
+.home-screen .chat-surface .chat-message { color: #e4f0f5; text-shadow: none; }
+.home-screen .chat-surface .chat-role { font-size: .6875rem; color: #b4dfe7; text-shadow: none; }
+.home-screen .chat-heading h2 { font-size: .6875rem; letter-spacing: .08em; }
+.home-screen .chat-live-status { font-size: .6875rem; color: #afc9d2; }
+.home-screen .chat-composer {
+  background: #071722cc;
+}
+.home-screen .chat-composer .chat-input-row {
+  background: #0c2430bf;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.home-screen .chat-composer .chat-input-row:focus-within {
+  border-color: #9af8ff;
+  box-shadow: 0 0 0 2px #00e5f51a;
+}
+.home-screen .chat-data-notice { font-size: .6875rem; line-height: 1.5; color: #afc1cd; }
+.home-screen .chat-data-notice a { color: #c3e5ec; }
+.home-screen .chat-tools > .chat-tool,
+.home-screen .chat-privacy-panel summary { font-size: .6875rem; color: #bdd7e1; }
+.home-screen .studio-section-caption { font-size: .6875rem; color: #a8c2ce; }
+.home-screen > .hud-site-footer { font-size: .6875rem; min-height: 44px; }
+.home-screen .hud-site-footer :is(a, button) { color: #b7cbd7; }
+.home-screen .studio-hologram-stage { opacity: .65; }
+.home-screen .studio-hologram-projector { animation: none; box-shadow: 0 0 12px #00dfff26, inset 0 0 10px #40efff30, 0 9px 0 -3px #031320, 0 10px 0 -3px #5adbff45; }
+.home-screen .chat-surface:has(.chat-transcript[data-welcome-only='false']) .studio-hologram-stage { opacity: .36; }
+.home-screen .studio-core--background .studio-core__field-circuits { opacity: .58; }
+.home-screen .studio-core--background .studio-core__field-stars { opacity: .55; }
+.home-screen .studio-core--background .studio-core__aura { opacity: .65; }
+.home-screen .site-background .hud-scanline { opacity: .08; }
+
+/* Match the surrounding glass without touching provider images or controls. */
+.home-screen .chat-surface .chat-project-video-panel {
+  background: linear-gradient(135deg, #102c38e3, #071722e8);
+}
+
+/* All frames stay lit. Hover and keyboard focus add a stronger local halo. */
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):focus-within {
+  --instrument-line: #b4ffffb3;
+  --instrument-rail: #efffff;
+  box-shadow: var(--glass-shadow), 0 0 24px #00dfff4d, 0 0 7px #a0faff52;
+}
+.home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):focus-within::after { opacity: 1; }
+.home-screen .chat-surface :is(.chat-bubble-agent, .chat-bubble-user):focus-within {
+  --message-edge: #b4ffffb3;
+  box-shadow: 0 0 20px #00dfff45;
+}
+.home-screen .studio-sidebar .studio-portfolio .studio-work-card:focus-within,
+.home-screen .studio-sidebar .studio-portfolio .studio-project-link:focus-within,
+.home-screen .chat-surface .chat-project-browser:focus-within,
+.home-screen .chat-surface .chat-project-cards .chat-project-card:focus-within,
+.home-screen .chat-surface .chat-project-video-panel:focus-within {
+  border-color: #b4ffffb3 !important;
+  box-shadow: 0 0 20px #00dfff45;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):hover {
+    --instrument-line: #b4ffffb3;
+    --instrument-rail: #efffff;
+    box-shadow: var(--glass-shadow), 0 0 24px #00dfff4d, 0 0 7px #a0faff52;
+  }
+  .home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):hover::after { opacity: 1; }
+  .home-screen .chat-surface :is(.chat-bubble-agent, .chat-bubble-user):hover {
+    --message-edge: #b4ffffb3;
+    box-shadow: 0 0 20px #00dfff45;
+  }
+  .home-screen .studio-sidebar .studio-portfolio .studio-work-card:hover,
+  .home-screen .studio-sidebar .studio-portfolio .studio-project-link:hover,
+  .home-screen .chat-surface .chat-project-browser:hover,
+  .home-screen .chat-surface .chat-project-cards .chat-project-card:hover,
+  .home-screen .chat-surface .chat-project-video-panel:hover {
+    border-color: #b4ffffb3 !important;
+    box-shadow: 0 0 20px #00dfff45;
+  }
+  .home-screen .chat-composer .chat-input-row:hover {
+    border-color: #b4ffffb3;
+    box-shadow: 0 0 15px #00dfff38;
+  }
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:hover,
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:has(~ .studio-service:hover),
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:hover ~ .studio-service { transform: none; }
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:hover {
+    border-color: #8eeef4;
+    background: #0d303ce6;
+    box-shadow: inset 2px 0 #b4ffff, 0 0 16px #00dfff45;
+  }
+}
+
+/* The projector responds to the existing phase signals; frame motion stays original. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-screen .chat-surface:is([data-chat-phase='thinking'], [data-chat-phase='responding']) .studio-hologram-projector {
+    animation: studioHologramProjectorGlow 6s ease-in-out infinite alternate;
+  }
+}
+@media (max-width: 1023px) {
+  .home-screen .chat-motion-control { width: 44px; height: 44px; min-height: 44px !important; flex-shrink: 0; }
+  .home-screen .chat-surface .chat-input-row textarea { font-size: 1rem; }
+  .home-screen .chat-data-notice { padding-inline-end: 38px; }
+  .home-screen .chat-heading { gap: 8px; }
+}
+html[data-hud-paused='true'] .home-screen .studio-hologram-projector { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .home-screen .studio-hologram-projector { animation: none !important; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-screen :is(.studio-header, .studio-sidebar .hud-section, .hud-site-footer)::before {
+    background: linear-gradient(145deg, #0c1d25f5, #060f1bf5);
+  }
+}
+/* Older engines keep the animated bevel without a rectangular fallback halo. */
+@supports not (corner-shape: bevel) {
+  .home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer),
+  .home-screen :is(.studio-header, .studio-conversation-shell, .studio-sidebar .hud-section, .hud-site-footer):is(:hover, :focus-within) {
+    box-shadow: none;
+  }
+}

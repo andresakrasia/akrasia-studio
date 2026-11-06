@@ -1,0 +1,12 @@
+---
+import { pageLang } from '../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../lib/chat-navigation';
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+---
+<nav id="mobileNav" class="home-mobile-nav" aria-label={english ? 'On this page' : 'En esta página'}>
+  <a href={chatIntentPath('services', lang)} data-chat-message={chatIntentMessage('services', lang)}>{english ? 'Services' : 'Servicios'}</a>
+  <a href={chatIntentPath('portfolio', lang)} data-chat-message={chatIntentMessage('portfolio', lang)}>{english ? 'Projects' : 'Proyectos'}</a>
+  <div id="mobileChatSlot"></div>
+</nav>
+

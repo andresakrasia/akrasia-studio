@@ -1,0 +1,39 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { PRIVACY_NOTICE as notice, PRIVACY_SOURCES as sources } from '../lib/privacy-notice';
+---
+
+<LegalPage title="Aviso legal" description="Identificación del titular, contacto y condiciones de uso de Akrasia Studio." current="aviso-legal">
+  <section aria-labelledby="titular">
+    <h2 id="titular">Titular y contacto</h2>
+    <dl>
+      <dt>Titular</dt><dd>{notice.controller}</dd>
+      <dt>Nombre comercial</dt><dd>{notice.commercialName}</dd>
+      <dt>NIF</dt><dd>{notice.nif}</dd>
+      <dt>Domicilio comunicado por el titular</dt><dd>{notice.address}</dd>
+      <dt>Correo de contacto</dt><dd><a href={`mailto:${notice.email}`}>{notice.email}</a></dd>
+      <dt>Teléfono público del estudio</dt><dd><a href="tel:+34637264041">{notice.phone}</a></dd>
+      <dt>Sitio web</dt><dd><a href="https://akrasia.studio">akrasia.studio</a></dd>
+    </dl>
+    <p>El sitio presenta servicios de producción audiovisual, dirección creativa, contenidos con IA, efectos visuales, postproducción y diseño sonoro.</p>
+    <p class="legal-notice legal-pending">Los datos identificativos anteriores han sido aportados por el titular. La información registral, las autorizaciones o colegiación que pudieran resultar aplicables y la adhesión a códigos de conducta están pendientes de confirmación; no se presume su existencia ni su ausencia.</p>
+    <p>La información de identificación se publica conforme al <a href={`${sources.lssi}#a10`}>artículo 10 de la Ley 34/2002</a>. Esta página no acredita por sí sola la revisión jurídica de toda la actividad.</p>
+  </section>
+  <section aria-labelledby="uso">
+    <h2 id="uso">Uso del sitio y del asistente</h2>
+    <p>El asistente utiliza inteligencia artificial y puede cometer errores. Sus mensajes orientan sobre el estudio y sus servicios; los presupuestos, condiciones y encargos requieren confirmación del equipo.</p>
+    <p>Una propuesta de llamada requiere tu confirmación explícita. La llamada solo queda reservada cuando el servidor devuelve una reserva guardada con sus datos y enlace. Un mensaje del asistente, por sí solo, no confirma una reserva ni el envío de un correo.</p>
+    <p>No envíes contraseñas, documentos de identidad, información sensible ni datos de terceros que no sean necesarios para tu consulta. Puedes contactar directamente con el estudio mediante el correo anterior.</p>
+    <p>Si detectas contenido incorrecto, una incidencia o un problema de accesibilidad, indícalo en <a href={`mailto:${notice.email}`}>{notice.email}</a>.</p>
+  </section>
+  <section aria-labelledby="contenido">
+    <h2 id="contenido">Contenidos y enlaces externos</h2>
+    <p>Los proyectos publicados pueden contener obras y materiales del estudio, de clientes o de terceros. Su publicación no concede una licencia para reutilizarlos. Para solicitar permisos o comunicar una incidencia de derechos, contacta con el titular.</p>
+    <p>Los enlaces a plataformas ajenas al sitio y los vídeos externos tienen sus propias condiciones y políticas. Los vídeos de terceros permanecen bloqueados hasta que permitas contenido externo en la <a href="/cookies">configuración de cookies</a>.</p>
+  </section>
+  <section aria-labelledby="datos">
+    <h2 id="datos">Privacidad y preferencias</h2>
+    <p>Consulta la <a href="/privacidad">información de privacidad</a> para conocer el tratamiento del chat, contactos, reservas, avisos, conservación y derechos. La <a href="/cookies">información de cookies</a> explica qué almacenamiento es técnico y cómo permitir, rechazar o retirar las opciones voluntarias.</p>
+    <button type="button" data-privacy-settings>Configurar cookies</button>
+  </section>
+</LegalPage>

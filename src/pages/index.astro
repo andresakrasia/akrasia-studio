@@ -5,36 +5,27 @@ import LeftPanel from '../components/LeftPanel.astro';
 import CenterPanel from '../components/CenterPanel.astro';
 import RightPanel from '../components/RightPanel.astro';
 import Footer from '../components/Footer.astro';
-import MobileChat from '../components/MobileChat.tsx';
-import VideoModalListener from '../components/VideoModalListener.tsx';
+import MobileNav from '../components/MobileNav.astro';
+import ChatWrapper from '../components/ChatWrapper';
+import VideoModalListener from '../components/VideoModalListener';
+import { getPublicProjects, type PublicProject, PUBLIC_PROJECT_CACHE_HEADERS } from '../lib/public-projects';
+import { pageLang } from '../lib/public-ui';
+const lang = pageLang(Astro.url);
+let projects: PublicProject[] = [];
+let portfolioUnavailable = false;
+try { projects = await getPublicProjects(); } catch { portfolioUnavailable = true; }
+for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
 ---
-
-<Layout>
-  <!-- Full-screen Background -->
-  <div class="fixed inset-0 z-0">
-    <img
-      alt="viewport"
-      class="w-full h-full object-cover brightness-[0.3]"
-      src="/img/out.jpg"
-    />
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background/80"
-    ></div>
-    <div class="hud-scanline absolute inset-0"></div>
-  </div>
-
+<Layout lang={lang} home>
+  <div class="site-background" aria-hidden="true"><img src="/img/out.webp" width="1360" height="768" alt="" decoding="async" /><div id="studio-ambient-root"></div><div class="hud-scanline"></div></div>
   <Header />
-
-  <!-- MAIN GRID -->
-  <main
-    class="flex-1 grid grid-cols-12 gap-4 p-3 lg:p-5 z-10 overflow-hidden lg:overflow-hidden overflow-y-auto scroll-hide"
-  >
-    <LeftPanel />
-    <CenterPanel />
-    <RightPanel />
+  <main id="main-content" tabindex="-1" class="home-grid">
+    <div data-panel="info" id="home-info"><LeftPanel publishedCount={portfolioUnavailable ? null : projects.length} /></div>
+    <div data-panel="viewport" class="home-center"><CenterPanel /></div>
+    <div data-panel="portfolio" id="home-portfolio"><RightPanel projects={projects} portfolioUnavailable={portfolioUnavailable} /></div>
   </main>
-
-  <MobileChat client:only="react" />
-  <VideoModalListener client:only="react" />
+  <MobileNav />
+  <ChatWrapper client:only="react" />
+  <VideoModalListener client:idle />
   <Footer />
 </Layout>

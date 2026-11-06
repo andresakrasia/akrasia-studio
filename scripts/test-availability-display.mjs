@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { createServer } from 'vite';
+const vite = await createServer({ configFile: false, envFile: false, logLevel: 'silent', server: { middlewareMode: true, hmr: false, watch: null }, optimizeDeps: { noDiscovery: true } });
+let checks = 0;
+const eq = (actual, expected) => { checks++; assert.deepEqual(actual, expected); };
+try {
+  const display = await vite.ssrLoadModule('/src/lib/availability-display.ts');
+  const date = '2030-01-07';
+  const weekly = [{ day_of_week: 1, start_time: '10:00:00', end_time: '14:00:00', is_active: true }];
+  const override = (start_time, end_time, is_available = false, override_date = date) => ({ override_date, start_time, end_time, is_available });
+  const result = changes => display.effectiveAvailabilityWindows(date, 1, weekly, changes);
+  eq(result([]), [{ start: 600, end: 840 }]);
+  eq(result([override('11:00', '12:00')]), [{ start: 600, end: 660 }, { start: 720, end: 840 }]);
+  eq(result([override('09:00', '10:00')]), [{ start: 600, end: 840 }]);
+  eq(result([override('14:00', '15:00')]), [{ start: 600, end: 840 }]);
+  eq(result([override('09:00', '11:00')]), [{ start: 660, end: 840 }]);
+  eq(result([override('13:00', '16:00')]), [{ start: 600, end: 780 }]);
+  eq(result([override(null, null)]), []);
+  eq(result([override('15:00', '17:00', true)]), [{ start: 600, end: 840 }, { start: 900, end: 1020 }]);
+  eq(result([override('12:00', '16:00', true)]), [{ start: 600, end: 960 }]);
+  eq(result([override(null, null), override('15:00', '17:00', true)]), []);
+  eq(result([override('09:00', '17:00', true), override('11:00', '12:00'), override('13:00', '15:00')]), [{ start: 540, end: 660 }, { start: 720, end: 780 }, { start: 900, end: 1020 }]);
+  eq(result([override(null, null, false, '2030-01-08')]), [{ start: 600, end: 840 }]);
+  eq(display.effectiveAvailabilityWindows(date, 1, [{ ...weekly[0], is_active: false }], []), []);
+  eq(display.effectiveAvailabilityWindows(date, 0, weekly, []), []);
+  eq(display.effectiveAvailabilityWindows(date, 1, [...weekly, { ...weekly[0] }], []), [{ start: 600, end: 840 }]);
+  eq(display.availabilityWindowLabel({ start: 600, end: 840 }), '10:00–14:00');
+  eq(display.availabilityWindowLabel({ start: 0, end: 1440 }), 'Todo el día');
+  eq(result([override('25:00', '26:00')]), [{ start: 600, end: 840 }]);
+  console.log(`PASS: ${checks} agenda display checks; dated blocks override weekly/extra openings, paused windows and adjacent intervals.`);
+} finally { await vite.close(); }
