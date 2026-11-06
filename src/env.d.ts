@@ -44,6 +44,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_GA4_MEASUREMENT_ID?: string;
   readonly PUBLIC_GA4_REVIEWED?: string;
   readonly PUBLIC_GOOGLE_SITE_VERIFICATION?: string;
+  readonly PUBLIC_SHOWREEL?: string;
   readonly RETENTION_CRON_SECRET?: string;
   readonly CHAT_RETENTION_DAYS?: string;
   readonly CHAT_PROFILE_RETENTION_DAYS?: string;

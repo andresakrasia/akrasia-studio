@@ -48,6 +48,8 @@ const child = spawn(process.execPath, [
   ASTRO_TELEMETRY_DISABLED: '1', AKRASIA_TEST_ENV_DIR: temporary,
   AKRASIA_TEST_ALLOWED_ORIGINS: JSON.stringify([origin, ...fixture.allowedOrigins]),
   AKRASIA_PREVIEW_LIVE_CHAT: liveChat ? '1' : '0',
+  // Fictional DEMO clips stand in for the studio showreel in the local preview only.
+  PUBLIC_SHOWREEL: process.env.PUBLIC_SHOWREEL || ['origen', 'pulse', 'nocturna', 'materia', 'horizonte'].map(name => `/media/demo-${name}.mp4`).join(','),
 } });
 console.log(youtubeDemo
   ? `Chat-first preview: ${origin}/. Six services, one labelled YouTube playback test, four local DEMO projects and local admin.`
