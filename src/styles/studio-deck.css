@@ -180,3 +180,17 @@ html.deck-helix .deck-card h2 { font-size: 1.3rem; }
 html.deck-helix .deck-card__meta { margin-bottom: 8px; }
 html.deck-helix .deck-card__body { font-size: .82rem; -webkit-line-clamp: 3; margin-bottom: 12px; }
 html.deck-helix .deck-act { min-height: 38px; padding: 8px 11px; font-size: .58rem; }
+
+/* Terminal readability: denser glass behind the text, softer scanlines, clean sans body. */
+html.deck-on .home-screen .chat-layer {
+  background: repeating-linear-gradient(0deg, #00f0ff05 0 1px, transparent 1px 4px), linear-gradient(160deg, #031a23f2, #020b11eb) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.1); backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: inset 0 0 0 1px #00f0ff4d, inset 0 0 30px #00f0ff10, 0 0 50px #00f0ff1a !important;
+}
+html.deck-on .home-screen .chat-transcript .chat-message {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important; font-weight: 400; font-size: .92rem; line-height: 1.6;
+  color: #e6f6fb; text-shadow: none; letter-spacing: .005em;
+}
+html.deck-on .home-screen .chat-transcript .chat-bubble-user .chat-message { color: #b9d3dc; }
+html.deck-on.deck-helix .home-screen .chat-transcript .chat-message { font-size: .88rem; line-height: 1.55; }
+html.deck-on .home-screen .chat-hub-starters button { font-size: .66rem !important; letter-spacing: .1em !important; }
