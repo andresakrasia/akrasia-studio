@@ -8,8 +8,9 @@ const analyticsEnabled = Boolean(analyticsDestination(analyticsOptions));
 
 <div id="privacyConsent" data-analytics-enabled={String(analyticsEnabled)} data-gtm-reviewed={String(analyticsOptions.analyticsEnabled)} data-container-id={analyticsOptions.containerId} data-measurement-id={analyticsOptions.measurementId} data-ga4-reviewed={String(analyticsOptions.ga4Reviewed)}>
   <section id="privacyBanner" aria-label={english ? 'Cookie preferences' : 'Preferencias de cookies'} hidden>
+    <p class="privacy-eyebrow" aria-hidden="true"><span></span>{english ? 'PRIVACY // PREFERENCES' : 'PRIVACIDAD // PREFERENCIAS'}</p>
     <h2>{english ? 'Your privacy' : 'Tu privacidad'}</h2>
-    <p>{english ? 'Chat and navigation use necessary storage. Analytics and external videos only load if you allow them. You can change your choice at any time.' : 'El chat y la navegación usan almacenamiento técnico. Solo cargaremos analítica y vídeos externos si eliges permitirlos. Puedes cambiar tu elección en cualquier momento.'} <a href="/cookies">{english ? 'Cookie information (ES)' : 'Información de cookies'}</a> · <a href="/privacidad">{english ? 'Privacy (ES)' : 'Privacidad'}</a>.</p>
+    <p>{english ? 'Chat and navigation use necessary storage. Analytics and external videos only load if you allow them, and you can change this at any time.' : 'El chat y la navegación usan almacenamiento técnico. La analítica y los vídeos externos solo se cargan si los permites, y puedes cambiarlo cuando quieras.'} <a href="/cookies">{english ? 'Cookies (ES)' : 'Cookies'}</a> · <a href="/privacidad">{english ? 'Privacy (ES)' : 'Privacidad'}</a></p>
     <div class="privacy-actions">
       <button type="button" data-privacy-accept>{english ? 'Allow optional cookies' : 'Aceptar opcionales'}</button>
       <button type="button" data-privacy-reject>{english ? 'Reject optional cookies' : 'Rechazar opcionales'}</button>
@@ -47,20 +48,47 @@ const analyticsEnabled = Boolean(analyticsDestination(analyticsOptions));
 </script>
 
 <style is:global>
-  #privacyBanner, #privacyDialog { box-sizing: border-box; color: #e2e8f0; background: #101820; border: 1px solid #00f0ff; padding: 1.2rem; font: 0.85rem/1.55 system-ui, sans-serif; }
-  #privacyBanner { position: fixed; z-index: 10001; inset: auto 1rem 1rem; max-width: 56rem; margin-inline: auto; max-height: 80dvh; overflow-y: auto; box-shadow: 0 10px 40px #000; }
+  #privacyConsent { --pc-cyan: #00f0ff; --pc-line: #00f0ff59; --pc-bg: #071219eb; --pc-text: #d6e2ea; --pc-muted: #93a7b4; --pc-cut: 12px; }
+  #privacyBanner, #privacyDialog { box-sizing: border-box; color: var(--pc-text); font: 0.84rem/1.55 'Space Grotesk', system-ui, sans-serif; }
+  #privacyBanner, #privacyDialog { background: var(--pc-bg); border: 0; padding: 1.1rem 1.2rem 1.15rem;
+    clip-path: polygon(var(--pc-cut) 0, 100% 0, 100% calc(100% - var(--pc-cut)), calc(100% - var(--pc-cut)) 100%, 0 100%, 0 var(--pc-cut));
+    box-shadow: inset 0 0 0 1px var(--pc-line), inset 0 0 28px #00f0ff14; -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); }
+  #privacyBanner { position: fixed; z-index: 10001; right: 1rem; bottom: 1rem; width: min(30rem, calc(100vw - 2rem)); max-height: 70dvh; overflow-y: auto;
+    animation: privacyIn .45s cubic-bezier(.2,.8,.2,1) both; }
+  #privacyBanner::before { content: ''; position: absolute; inset: 0 auto auto 0; width: 38%; height: 2px; background: linear-gradient(90deg, var(--pc-cyan), transparent); box-shadow: 0 0 10px var(--pc-cyan); }
   #privacyBanner[hidden] { display: none; }
-  #privacyBanner h2, #privacyDialog h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .privacy-eyebrow { display: flex; align-items: center; gap: .5rem; margin: 0 0 .35rem; color: var(--pc-cyan); font: 600 .62rem/1 'JetBrains Mono', monospace; letter-spacing: .18em; opacity: .85; }
+  .privacy-eyebrow span { width: 6px; height: 6px; background: var(--pc-cyan); box-shadow: 0 0 8px var(--pc-cyan); animation: privacyPulse 2.4s ease-in-out infinite; }
+  #privacyBanner h2, #privacyDialog h2 { margin: 0 0 .35rem; color: #f1f7fa; font: 700 1.02rem/1.25 'Space Grotesk', system-ui, sans-serif; letter-spacing: .01em; }
+  #privacyBanner p { margin: 0; color: var(--pc-muted); }
   #privacyDialog { width: min(36rem, calc(100vw - 2rem)); max-height: 85dvh; margin: auto; overflow-y: auto; z-index: 10002; }
-  #privacyDialog::backdrop { background: #000a; }
-  #privacyDialog p { margin-block: 0.7rem; }
-  #privacyDialog label { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 0; font-weight: 600; }
-  #privacyDialog input { width: 1.1rem; height: 1.1rem; accent-color: #00f0ff; }
-  .privacy-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
-  .privacy-actions button { flex: 1 1 10rem; padding: 0.7rem 0.8rem; color: #e2e8f0; border: 1px solid #7dd3fc; background: #0e2630; min-height: 44px; font-size: 0.85rem; }
-  #privacyConsent a { text-decoration: underline; }
+  #privacyDialog::backdrop { background: #000c; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+  #privacyDialog p { margin-block: 0.7rem; color: var(--pc-muted); }
+  #privacyDialog label { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 0; font-weight: 600; color: var(--pc-text); border-bottom: 1px solid #00f0ff1f; }
+  #privacyDialog input { width: 1.1rem; height: 1.1rem; accent-color: var(--pc-cyan); }
+  .privacy-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: .9rem; }
+  .privacy-actions button { min-height: 44px; padding: .55rem .7rem; color: #e8f4f8; background: #0b2430cc; border: 0; cursor: pointer;
+    font: 600 .74rem/1.2 'JetBrains Mono', monospace; letter-spacing: .06em; text-transform: uppercase;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); box-shadow: inset 0 0 0 1px #00f0ff80;
+    transition: background-color .2s, box-shadow .2s, color .2s; }
+  .privacy-actions button:hover { background: #0f3442; box-shadow: inset 0 0 0 1px var(--pc-cyan), inset 0 0 16px #00f0ff33; color: #fff; }
+  .privacy-actions button:last-child:nth-child(3) { grid-column: 1 / -1; min-height: 40px; background: transparent; box-shadow: inset 0 0 0 1px #00f0ff33; color: var(--pc-muted); }
+  .privacy-actions button:last-child:nth-child(3):hover { color: #fff; box-shadow: inset 0 0 0 1px #00f0ff99; }
+  #privacyConsent a { color: #9feff7; text-decoration: underline; text-underline-offset: 2px; }
   #privacyConsent :focus-visible { outline: 3px solid #facc15; outline-offset: 3px; }
-  #privacyPersistentControl { position: fixed; z-index: 190; right: 0.5rem; bottom: 0.3rem; border: 1px solid #94a3b8; color: #e2e8f0; background: #101820; padding: 0.45rem 0.7rem; font: 0.75rem system-ui,sans-serif; min-height: 44px; }
+  #privacyPersistentControl { position: fixed; z-index: 190; right: .5rem; bottom: .35rem; min-height: 32px; min-width: 44px; padding: .3rem .6rem; color: var(--pc-muted); background: #071219d9; border: 0;
+    font: 600 .62rem/1 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); box-shadow: inset 0 0 0 1px #00f0ff40; }
+  #privacyPersistentControl:hover { color: #fff; box-shadow: inset 0 0 0 1px #00f0ffa6; }
   .privacy-nojs { padding: 1rem; color: #e2e8f0; background: #101820; font: .9rem/1.5 system-ui, sans-serif; }
-  @media (max-width: 1023px) { #privacyPersistentControl { bottom: 0.15rem; right: 0.25rem; font-size: 0.65rem; padding: 0.3rem; } #privacyBanner { inset-inline: 0.5rem; bottom: 0.5rem; } }
+  @keyframes privacyIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes privacyPulse { 50% { opacity: .35; } }
+  @media (max-width: 640px) {
+    #privacyBanner { right: .5rem; left: .5rem; bottom: .5rem; width: auto; padding: .85rem .9rem .9rem; font-size: .8rem; line-height: 1.45; }
+    #privacyBanner h2 { font-size: .95rem; }
+    .privacy-actions { margin-top: .7rem; gap: .4rem; }
+    .privacy-actions button { font-size: .68rem; padding: .5rem; }
+    .privacy-actions button:last-child:nth-child(3) { min-height: 36px; }
+  }
+  @media (prefers-reduced-motion: reduce) { #privacyBanner, .privacy-eyebrow span { animation: none; } }
 </style>
