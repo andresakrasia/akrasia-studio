@@ -551,10 +551,29 @@ export function createDeck(root, data) {
     termEls.layer ||= document.querySelector('.home-screen .chat-layer');
     termEls.latest = document.querySelector('.home-screen .chat-latest');
     if (termEls.head) quad(termEls.head, 0, 0, TERM.w, TERM.head);
+    quad(minBtn, TERM.w - TERM.head - 2, 0, TERM.head, TERM.head);
     if (termEls.layer) quad(termEls.layer, 0, TERM.head, TERM.w, TERM.body);
     if (termEls.latest) quad(termEls.latest, 0, TERM.head + TERM.body + TERM.gap, termEls.latest.offsetWidth || 160, termEls.latest.offsetHeight || 36);
   }
   if (!HELIX) document.documentElement.classList.add('deck-term3d');
+
+  // Minimize: keep only the channel strip so the room can be seen whole.
+  const EN = document.documentElement.lang === 'en';
+  const minBtn = document.createElement('button');
+  minBtn.type = 'button'; minBtn.className = 'deck-term-min';
+  minBtn.innerHTML = '<span aria-hidden="true"></span>';
+  document.body.append(minBtn);
+  const setMin = (min, remember = true) => {
+    document.documentElement.classList.toggle('deck-term-collapsed', min);
+    minBtn.setAttribute('aria-expanded', String(!min));
+    minBtn.setAttribute('aria-label', min ? (EN ? 'Show the chat' : 'Mostrar el chat') : (EN ? 'Minimize the chat' : 'Minimizar el chat'));
+    minBtn.title = minBtn.getAttribute('aria-label');
+    if (remember) { try { localStorage.setItem('akrasia-term-min', min ? '1' : '0'); } catch { /* ignore */ } }
+  };
+  let startMin = false; try { startMin = localStorage.getItem('akrasia-term-min') === '1'; } catch { /* ignore */ }
+  setMin(startMin, false);
+  on(minBtn, 'click', () => { setMin(!document.documentElement.classList.contains('deck-term-collapsed')); sfx.blip?.(700, .06, .03); });
+  on(window, 'chat-trigger', () => setMin(false));
 
   // TX counter and decoding typewriter for replies that arrive in one piece.
   let tx = 0, lastStreamed = 0, typing = null;
@@ -588,6 +607,7 @@ export function createDeck(root, data) {
     for (const r of records) for (const node of r.addedNodes) {
       if (!(node instanceof HTMLElement) || !node.matches('.chat-bubble-agent, .chat-bubble-user')) continue;
       tx++;
+      if (node.matches('.chat-bubble-user')) setMin(false);
       const status = document.querySelector('.home-screen .chat-live-status'); status?.setAttribute('data-tx', `TX ${String(tx).padStart(2, '0')}`);
       // Streamed replies already arrived piece by piece; only decode the ones that landed whole.
       const isFinal = node.matches('.chat-bubble-agent') && surface?.getAttribute('data-chat-phase') === 'idle';
@@ -734,7 +754,7 @@ export function createDeck(root, data) {
     focusWork, focusService, unfocus,
     dispose() {
       ac.abort(); observer.disconnect(); resize.disconnect(); txObserver.disconnect(); typing?.finish();
-      document.documentElement.classList.remove('deck-term3d'); Object.values(termEls).forEach(el => el && (el.style.transform = '')); renderer.setAnimationLoop(null); sfx.close();
+      document.documentElement.classList.remove('deck-term3d', 'deck-term-collapsed'); minBtn.remove(); Object.values(termEls).forEach(el => el && (el.style.transform = '')); renderer.setAnimationLoop(null); sfx.close();
       screens.forEach(s => { if (s.video) { s.video.pause(); s.video.removeAttribute('src'); s.video.load(); } });
       disposables.forEach(d => d.dispose?.()); composer.dispose?.(); renderer.dispose();
       root.replaceChildren();

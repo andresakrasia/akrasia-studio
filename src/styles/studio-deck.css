@@ -239,3 +239,24 @@ html.deck-on.deck-helix .home-screen .chat-transcript .chat-message { font-size:
   html.deck-on .home-screen :is(.chat-layer, .chat-heading) { animation: none; }
   html.deck-on .home-screen .chat-transcript .formatted-text::after, html.deck-on .home-screen .chat-transcript .formatted-text > *::after { animation: none !important; }
 }
+
+/* ── Minimize the terminal ─────────────────────────────────────────── */
+.deck-term-min { display: none; }
+html.deck-on.deck-ready .deck-term-min {
+  display: grid; place-items: center; position: fixed; z-index: 13; left: 0; top: 0; width: 34px; height: 34px; padding: 0; border: 0; cursor: pointer;
+  transform-origin: 0 0; background: transparent; color: #7fd8e6; transition: color .2s, background-color .2s;
+}
+html.deck-on .deck-term-min:hover, html.deck-on .deck-term-min:focus-visible { color: #fff; background: #00f0ff26; }
+html.deck-on .deck-term-min span { position: relative; width: 12px; height: 12px; }
+html.deck-on .deck-term-min span::before { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: currentColor; box-shadow: 0 0 6px currentColor; }
+html.deck-on.deck-term-collapsed .deck-term-min span::before { inset: 0; height: auto; bottom: 0; background: none; border: 2px solid currentColor; box-shadow: 0 0 6px #00f0ff66; }
+/* Leave room for the button in the strip */
+html.deck-on .home-screen .chat-heading { padding-right: 40px !important; }
+/* Collapsed: only the channel strip stays */
+html.deck-on.deck-term-collapsed .home-screen :is(.chat-layer, .chat-latest) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transition: opacity .25s, visibility 0s .25s; }
+html.deck-on.deck-term-collapsed .home-screen .chat-heading { clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 14px); }
+html.deck-on.deck-focusing .deck-term-min { opacity: 0; visibility: hidden; }
+/* Portrait: the strip lives above the composer, so collapse it down to there */
+html.deck-on.deck-helix .deck-term-min { transform: none !important; left: auto; right: 12px; top: auto; bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + min(34vh, 300px) - 1px); height: 32px; }
+html.deck-on.deck-helix.deck-term-collapsed .home-screen .chat-heading { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px)); transform-origin: 50% 100%; }
+html.deck-on.deck-helix.deck-term-collapsed .deck-term-min { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px)); }
