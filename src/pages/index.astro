@@ -8,6 +8,7 @@ import Footer from '../components/Footer.astro';
 import MobileNav from '../components/MobileNav.astro';
 import ChatWrapper from '../components/ChatWrapper';
 import VideoModalListener from '../components/VideoModalListener';
+import HubFx from '../components/HubFx.astro';
 import { getPublicProjects, type PublicProject, PUBLIC_PROJECT_CACHE_HEADERS } from '../lib/public-projects';
 import { pageLang } from '../lib/public-ui';
 const lang = pageLang(Astro.url);
@@ -17,7 +18,7 @@ try { projects = await getPublicProjects(); } catch { portfolioUnavailable = tru
 for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
 ---
 <Layout lang={lang} home>
-  <div class="site-background" aria-hidden="true"><img src="/img/out.webp" width="1360" height="768" alt="" decoding="async" /><div id="studio-ambient-root"></div><div class="hud-scanline"></div></div>
+  <div class="site-background" aria-hidden="true"><img src="/img/out.webp" width="1360" height="768" alt="" decoding="async" /><div class="hub-beams"></div><div class="hub-grid"></div><div id="studio-ambient-root"></div><div class="hud-scanline"></div></div>
   <Header />
   <main id="main-content" tabindex="-1" class="home-grid">
     <div data-panel="info" id="home-info"><LeftPanel publishedCount={portfolioUnavailable ? null : projects.length} /></div>
@@ -28,4 +29,5 @@ for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.r
   <ChatWrapper client:only="react" />
   <VideoModalListener client:idle />
   <Footer />
+  <HubFx />
 </Layout>

@@ -1,0 +1,99 @@
+---
+// Decorative sci-fi behaviour for the home hub: HUD brackets, title decoding,
+// panel tilt, live clock and a one-per-session boot sequence. Everything here is
+// progressive enhancement: the page works and reads the same without it.
+import { pageLang } from '../lib/public-ui';
+const english = pageLang(Astro.url) === 'en';
+const boot = english
+  ? ['DIRECTION CORE ............ INIT', 'HUD CALIBRATION ........... <b>OK</b>', 'AKRASIA AI LINK ........... <b>OK</b>', 'SYSTEM ONLINE']
+  : ['NÚCLEO DE DIRECCIÓN ....... INIT', 'CALIBRACIÓN HUD ........... <b>OK</b>', 'ENLACE AKRASIA AI ......... <b>OK</b>', 'SISTEMA EN LÍNEA'];
+---
+<template id="hub-boot-template">
+  <div class="hub-boot" aria-hidden="true">
+    <div class="hub-boot__frame">
+      <img class="hub-boot__logo" src="/img/akrasia-logo-neon.svg" width="260" height="159" alt="" decoding="async" />
+      <ol class="hub-boot__log">{boot.map(line => <li set:html={line} />)}</ol>
+      <div class="hub-boot__bar"><i></i></div>
+    </div>
+  </div>
+</template>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // 1. Boot sequence, once per browser session. Never intercepts input.
+  try {
+    if (!reduced && !sessionStorage.getItem('akrasia-hub-boot')) {
+      sessionStorage.setItem('akrasia-hub-boot', '1');
+      const template = document.getElementById('hub-boot-template') as HTMLTemplateElement | null;
+      const node = template?.content.firstElementChild?.cloneNode(true) as HTMLElement | undefined;
+      if (node) {
+        document.body.append(node);
+        window.setTimeout(() => node.remove(), 2600);
+      }
+    }
+  } catch { /* storage unavailable: skip the boot sequence */ }
+
+  // 2. HUD corner brackets on instruments.
+  for (const panel of document.querySelectorAll<HTMLElement>('.home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-header)')) {
+    if (panel.querySelector(':scope > .hud-corners')) continue;
+    const corners = document.createElement('span');
+    corners.className = 'hud-corners';
+    corners.setAttribute('aria-hidden', 'true');
+    panel.append(corners);
+  }
+
+  // 3. Titles decode from glyph noise (server-rendered labels only).
+  const GLYPHS = 'ΛΔ0123456789<>/\\|#%*+=_';
+  const decode = (element: HTMLElement) => {
+    const textNode = [...element.childNodes].find((child): child is Text => child.nodeType === Node.TEXT_NODE && (child.textContent || '').trim().length > 2);
+    if (!textNode || element.dataset.decoding) return;
+    const finalText = textNode.data;
+    element.dataset.decoding = '1';
+    element.setAttribute('aria-label', element.textContent?.replace(/\s+/g, ' ').trim() || finalText.trim());
+    const start = performance.now();
+    const duration = 520 + finalText.length * 18;
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const settled = Math.floor(finalText.length * progress);
+      let output = finalText.slice(0, settled);
+      for (let index = settled; index < finalText.length; index++) {
+        output += /\s/.test(finalText[index]) ? finalText[index] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      textNode.data = output;
+      if (progress < 1) requestAnimationFrame(step);
+      else { textNode.data = finalText; element.removeAttribute('aria-label'); delete element.dataset.decoding; }
+    };
+    requestAnimationFrame(step);
+  };
+  if (!reduced) {
+    const titles = document.querySelectorAll<HTMLElement>('.home-screen .studio-sidebar .hud-section-title a');
+    titles.forEach((title, index) => window.setTimeout(() => decode(title), 300 + index * 140));
+    if (finePointer) titles.forEach(title => title.closest('.hud-section')?.addEventListener('pointerenter', () => decode(title)));
+  }
+
+  // 4. Gentle 3D tilt of sidebar instruments under a fine pointer.
+  if (!reduced && finePointer) {
+    for (const panel of document.querySelectorAll<HTMLElement>('.home-screen .studio-sidebar .hud-section')) {
+      panel.dataset.tilt = '';
+      panel.addEventListener('pointermove', event => {
+        if (document.documentElement.dataset.hudPaused === 'true') return;
+        const box = panel.getBoundingClientRect();
+        const x = (event.clientX - box.left) / box.width - 0.5;
+        const y = (event.clientY - box.top) / box.height - 0.5;
+        panel.style.transform = `perspective(900px) rotateX(${(-y * 3.2).toFixed(2)}deg) rotateY(${(x * 4).toFixed(2)}deg) translateZ(0)`;
+      });
+      panel.addEventListener('pointerleave', () => { panel.style.transform = ''; });
+    }
+  }
+
+  // 5. Live Barcelona clock in the header telemetry.
+  const clock = document.querySelector<HTMLElement>('[data-hub-clock]');
+  if (clock) {
+    const format = new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    const tick = () => { clock.textContent = format.format(new Date()); };
+    tick();
+    window.setInterval(tick, 1000);
+  }
+</script>

@@ -14,7 +14,7 @@ const english = lang === 'en';
     </span>
     <span class="hud-brand-subtitle neon-sub" aria-hidden="true">STUDIO</span>
   </a>
-  <p class="studio-header-discipline"><span aria-hidden="true">◈</span>{english ? 'Human direction · AI production' : 'Dirección humana · Producción con IA'}</p>
+  <p class="studio-header-discipline"><span aria-hidden="true">◈</span>{english ? 'Human direction · AI production' : 'Dirección humana · Producción con IA'}<span class="hub-telemetry" aria-hidden="true"><i></i>BCN <b data-hub-clock>--:--:--</b> · {english ? 'ONLINE' : 'EN LÍNEA'}</span></p>
   <nav aria-label={english ? 'Main navigation' : 'Navegación principal'} class="hud-header-navigation">
     <a href={chatIntentPath('services', lang)} data-chat-intent="services" data-chat-message={chatIntentMessage('services', lang)}>{english ? 'Services' : 'Servicios'}</a>
     <a href={chatIntentPath('portfolio', lang)} data-chat-intent="portfolio" data-chat-message={textFor('footer.proyectosMsg', lang)}>{english ? 'Work' : 'Proyectos'}</a>
