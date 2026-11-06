@@ -27,7 +27,7 @@ for (const name of suites) {
   console.log(`\nRunning ${name}`);
   const start = Date.now();
   await record('running',name);
-  const child = spawn(process.execPath,[`scripts/${name}.mjs`],{cwd:root,windowsHide:true,stdio:'inherit',env:{...process.env,ASTRO_TELEMETRY_DISABLED:'1'}});
+  const child = spawn(process.execPath,[`scripts/${name}.mjs`],{cwd:root,windowsHide:true,stdio:'inherit',env:{...process.env,ASTRO_TELEMETRY_DISABLED:'1',ASTRO_DEV_BACKGROUND:'0'}});
   const code = await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',value=>resolve(value ?? 1));});
   results.push({suite:name,passed:code===0,durationMs:Date.now()-start});
   await record(code===0?'running':'failed');
