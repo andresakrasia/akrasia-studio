@@ -3,6 +3,7 @@ import { useState, useRef, useCallback, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 import FormattedText from './FormattedText';
 import ChatProjectCards from './ChatProjectCards';
+import ShowreelBackdrop from './ShowreelBackdrop';
 import StudioCore from './StudioCore';
 import MeetingGuide from './MeetingGuide';
 import { formatCivilDateES } from '../lib/civil-time';
@@ -239,6 +240,7 @@ export function ChatDesktop({ onClose, autoFocus = false, immersive = false }: {
     {immersive && <div className="studio-hologram-stage" aria-hidden="true">
       <span className="studio-hologram-projector" />
     </div>}
+    {immersive && <ShowreelBackdrop active={messages.length === 1 && !isTyping && !meetingGuideOpen} paused={visualPaused} />}
     <div ref={chatRef} className="chat-layer" role="log" aria-label={english ? 'Conversation' : 'Conversación'} aria-live="off" tabIndex={0}
       onScroll={event => {
         const area = event.currentTarget;
@@ -254,6 +256,12 @@ export function ChatDesktop({ onClose, autoFocus = false, immersive = false }: {
           <details className="chat-project-context"><summary>{english ? 'Read the project information' : 'Leer la información del proyecto'}</summary><div className="chat-message"><FormattedText text={message.text} /></div></details>
         </> : <div className="chat-message">{message.role === 'agent' ? <FormattedText text={message.text} /> : readableUserMessage(index)}</div>}
       </div>)}
+      {immersive && messages.length === 1 && !isTyping && !meetingGuideOpen && <nav className="chat-starter-actions chat-hub-starters" aria-label={english ? 'Start the conversation' : 'Empezar la conversación'}>
+        <button type="button" disabled={isDeleting} onClick={() => sendIntent('start')}><span aria-hidden="true">◇</span>{english ? 'I have an idea' : 'Tengo una idea'}</button>
+        <button type="button" disabled={isDeleting} onClick={() => sendIntent('portfolio')}><span aria-hidden="true">▧</span>{english ? 'See our work' : 'Ver trabajos'}</button>
+        <button type="button" disabled={isDeleting} onClick={() => sendIntent('services')}><span aria-hidden="true">◈</span>{english ? 'Services' : 'Servicios'}</button>
+        <button type="button" disabled={isDeleting} onClick={() => { openMeetingGuide(); latestMessages(); }}><span aria-hidden="true">◎</span>{english ? 'Book a call' : 'Reservar llamada'}</button>
+      </nav>}
       {meetingGuideOpen && <MeetingGuide key={bookingContextKey} language={lang} onClose={dismissMeetingGuide} />}
       <BookingResult />
       {isTyping && <div className="chat-bubble-agent">
@@ -292,7 +300,7 @@ export function ChatDesktop({ onClose, autoFocus = false, immersive = false }: {
         <a href="mailto:info@akrasia.studio" className="chat-tool">info@akrasia.studio</a>
         <ChatPrivacyControl />
       </div>
-      <p className="chat-data-notice">{english ? 'AI chat: we store messages and contact details to respond and follow up. OpenRouter processes them; Supabase stores them. Avoid sensitive data.' : 'Chat IA: guardamos mensajes y contacto para responder y dar seguimiento. OpenRouter los procesa; Supabase los almacena. Evita datos sensibles.'} <a href="/privacidad#chat">{english ? 'Privacy (ES)' : 'Privacidad'}</a></p>
+      <p className="chat-data-notice">{english ? 'We store the chat to reply to you. Avoid sensitive data.' : 'Guardamos el chat para responderte. Evita datos sensibles.'} <a href="/privacidad#chat">{english ? 'Privacy (ES)' : 'Privacidad'}</a></p>
       <p className="sr-only">{english ? 'Enter to send. Shift + Enter for a new line.' : 'Intro para enviar. Mayús + Intro para saltar de línea.'}</p>
     </form>
   </section></>;
