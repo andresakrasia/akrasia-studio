@@ -181,16 +181,61 @@ html.deck-helix .deck-card__meta { margin-bottom: 8px; }
 html.deck-helix .deck-card__body { font-size: .82rem; -webkit-line-clamp: 3; margin-bottom: 12px; }
 html.deck-helix .deck-act { min-height: 38px; padding: 8px 11px; font-size: .58rem; }
 
-/* Terminal readability: denser glass behind the text, softer scanlines, clean sans body. */
+/* ── Holographic terminal (as in the prototype) ─────────────────────── */
 html.deck-on .home-screen .chat-layer {
-  background: repeating-linear-gradient(0deg, #00f0ff05 0 1px, transparent 1px 4px), linear-gradient(160deg, #031a23f2, #020b11eb) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(1.1); backdrop-filter: blur(14px) saturate(1.1);
-  box-shadow: inset 0 0 0 1px #00f0ff4d, inset 0 0 30px #00f0ff10, 0 0 50px #00f0ff1a !important;
+  background: repeating-linear-gradient(0deg, #00f0ff0a 0 1px, transparent 1px 3px), linear-gradient(160deg, #03202bc4, #010d14b3) !important;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px #00f0ff59, inset 0 0 40px #00f0ff14, 0 0 60px #00f0ff1f !important;
+  animation: deckTermFlicker 6s steps(1) infinite;
 }
 html.deck-on .home-screen .chat-transcript .chat-message {
-  font-family: 'Space Grotesk', system-ui, sans-serif !important; font-weight: 400; font-size: .92rem; line-height: 1.6;
-  color: #e6f6fb; text-shadow: none; letter-spacing: .005em;
+  font-family: 'Oxanium', 'Space Grotesk', system-ui, sans-serif !important; font-weight: 400; font-size: .95rem; line-height: 1.5;
+  color: #dff8ff; text-shadow: 0 0 10px #00f0ff40; letter-spacing: 0;
 }
-html.deck-on .home-screen .chat-transcript .chat-bubble-user .chat-message { color: #b9d3dc; }
-html.deck-on.deck-helix .home-screen .chat-transcript .chat-message { font-size: .88rem; line-height: 1.55; }
-html.deck-on .home-screen .chat-hub-starters button { font-size: .66rem !important; letter-spacing: .1em !important; }
+html.deck-on .home-screen .chat-transcript .chat-bubble-user .chat-message { color: #fff; }
+html.deck-on .home-screen .chat-transcript .chat-bubble-user { opacity: .82; }
+/* Older lines fade so the latest exchange reads first. */
+html.deck-on .home-screen .chat-transcript > :is(.chat-bubble-agent, .chat-bubble-user) { transition: opacity .5s; }
+html.deck-on .home-screen .chat-transcript > :is(.chat-bubble-agent, .chat-bubble-user):has(~ .chat-bubble-agent ~ .chat-bubble-user, ~ .chat-bubble-user ~ .chat-bubble-agent) { opacity: .4; }
+html.deck-on .home-screen .chat-transcript > :is(.chat-bubble-agent, .chat-bubble-user):hover { opacity: 1; }
+/* Live cursor at the end of the latest reply */
+html.deck-on .home-screen .chat-transcript > .chat-bubble-agent:not(:has(~ .chat-bubble-agent)) .formatted-text:not(:has(> *))::after,
+html.deck-on .home-screen .chat-transcript > .chat-bubble-agent:not(:has(~ .chat-bubble-agent)) .formatted-text > :last-child::after {
+  content: ''; display: inline-block; width: 8px; height: 15px; margin-left: 4px; vertical-align: -2px;
+  background: #00f0ff; box-shadow: 0 0 8px #00f0ff; animation: deckCaret 1s steps(1) infinite;
+}
+@keyframes deckCaret { 50% { opacity: 0; } }
+@keyframes deckTermFlicker { 0%, 47%, 49%, 100% { opacity: 1; } 48% { opacity: .84; } }
+
+/* Channel header: its own strip above the log, never over the text. */
+html.deck-on .home-screen .chat-heading {
+  background: linear-gradient(160deg, #03202bd6, #021620c4); box-shadow: inset 0 0 0 1px #00f0ff59;
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%, 0 14px); animation: deckTermFlicker 6s steps(1) infinite;
+}
+html.deck-on .home-screen .chat-heading h2 { font-size: 0 !important; letter-spacing: 0; }
+html.deck-on .home-screen .chat-heading h2::after { content: 'CANAL · AKRASIA AI'; font: 600 10px/1 'JetBrains Mono', monospace; letter-spacing: .24em; }
+html[lang='en'].deck-on .home-screen .chat-heading h2::after { content: 'CHANNEL · AKRASIA AI'; }
+html.deck-on .home-screen .chat-heading .chat-live-status { font-size: 0 !important; }
+html.deck-on .home-screen .chat-heading .chat-live-status::after { content: attr(data-tx); font: 500 9px/1 'JetBrains Mono', monospace; letter-spacing: .16em; color: #7fa3b2; }
+html.deck-on .home-screen .chat-surface:is([data-chat-phase='thinking'], [data-chat-phase='responding']) .chat-live-status::after { content: 'RX ···'; color: #00f0ff; }
+html.deck-on .home-screen .chat-layer { padding-top: 12px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14px); mask-image: linear-gradient(180deg, transparent 0, #000 14px);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
+
+/* Desktop: the three pieces are projected by the scene (command-deck.js sets transform). */
+html.deck-on.deck-term3d .home-screen :is(.chat-heading, .chat-layer, .chat-latest) {
+  position: fixed; left: 0 !important; top: 0 !important; right: auto !important; bottom: auto !important; margin: 0;
+  transform-origin: 0 0; width: 420px; will-change: transform;
+}
+html.deck-on.deck-term3d .home-screen .chat-heading { height: 34px; }
+html.deck-on.deck-term3d .home-screen .chat-layer { height: 300px; }
+html.deck-on.deck-term3d .home-screen .chat-latest { width: auto; }
+
+/* Portrait: header strip sits right above the log. */
+html.deck-on.deck-helix .home-screen .chat-heading { height: 32px; transform-origin: 50% calc(100% + min(34vh, 300px)); bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + min(34vh, 300px)); }
+html.deck-on.deck-helix .home-screen .chat-layer { padding-top: 10px; }
+html.deck-on.deck-helix .home-screen .chat-transcript .chat-message { font-size: .9rem; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.deck-on .home-screen :is(.chat-layer, .chat-heading) { animation: none; }
+  html.deck-on .home-screen .chat-transcript .formatted-text::after, html.deck-on .home-screen .chat-transcript .formatted-text > *::after { animation: none !important; }
+}

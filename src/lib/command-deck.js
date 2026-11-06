@@ -525,6 +525,85 @@ export function createDeck(root, data) {
   setTimeout(showGreetingTop, 600); setTimeout(showGreetingTop, 2000);
   observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['data-chat-phase', 'data-welcome-only'] });
 
+  // ── Terminal anchored in the room ────────────────────────────────────
+  // The real chat (React DOM, fully interactive) is projected onto a plane in the
+  // scene each frame with a homography, so it sways and keeps perspective with the camera.
+  const TERM = { w: 420, head: 34, body: 300, gap: 8 };
+  const termPlane = new THREE.Object3D();
+  termPlane.position.set(-4.7, 3.85, 1.0); termPlane.rotation.set(-.06, .5, .035); termPlane.scale.setScalar(.0074);
+  termPlane.updateMatrixWorld(true);
+  const termEls = { head: null, layer: null, latest: null };
+  const pv = new THREE.Vector3();
+  const proj = (x, y) => { pv.set(x, -y, 0).applyMatrix4(termPlane.matrixWorld).project(camera); return [(pv.x + 1) * .5 * innerWidth, (1 - pv.y) * .5 * innerHeight, pv.z]; };
+  function quad(el, x, y, w, h) {
+    const q0 = proj(x, y), q1 = proj(x + w, y), q2 = proj(x + w, y + h), q3 = proj(x, y + h);
+    if ([q0, q1, q2, q3].some(q => q[2] > 1)) return;
+    const [x0, y0] = q0, [x1, y1] = q1, [x2, y2] = q2, [x3, y3] = q3;
+    const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3;
+    const det = dx1 * dy2 - dx2 * dy1 || 1e-6;
+    const g = (dx3 * dy2 - dx2 * dy3) / det, k = (dx1 * dy3 - dx3 * dy1) / det;
+    const a = x1 - x0 + g * x1, b = x3 - x0 + k * x3, d = y1 - y0 + g * y1, e = y3 - y0 + k * y3;
+    el.style.transform = `matrix3d(${a / w},${d / w},0,${g / w},${b / h},${e / h},0,${k / h},0,0,1,0,${x0},${y0},0,1)`;
+  }
+  function placeTerminal() {
+    if (HELIX) return;
+    termEls.head ||= document.querySelector('.home-screen .chat-heading');
+    termEls.layer ||= document.querySelector('.home-screen .chat-layer');
+    termEls.latest = document.querySelector('.home-screen .chat-latest');
+    if (termEls.head) quad(termEls.head, 0, 0, TERM.w, TERM.head);
+    if (termEls.layer) quad(termEls.layer, 0, TERM.head, TERM.w, TERM.body);
+    if (termEls.latest) quad(termEls.latest, 0, TERM.head + TERM.body + TERM.gap, termEls.latest.offsetWidth || 160, termEls.latest.offsetHeight || 36);
+  }
+  if (!HELIX) document.documentElement.classList.add('deck-term3d');
+
+  // TX counter and decoding typewriter for replies that arrive in one piece.
+  let tx = 0, lastStreamed = 0, typing = null;
+  const GLYPHS = 'ΛΔ01<>/#*+=_';
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function typewrite(bubble) {
+    const msg = bubble.querySelector('.chat-message'); if (!msg || REDUCE) return;
+    const nodes = []; const walk = document.createTreeWalker(msg, NodeFilter.SHOW_TEXT);
+    while (walk.nextNode()) if (walk.currentNode.nodeValue.trim()) nodes.push({ n: walk.currentNode, text: walk.currentNode.nodeValue });
+    const total = nodes.reduce((sum, item) => sum + item.text.length, 0); if (!total) return;
+    typing?.finish();
+    const start = performance.now(), dur = Math.min(2600, 280 + total * 13);
+    let raf = 0;
+    const finish = () => { cancelAnimationFrame(raf); nodes.forEach(item => { if (item.n.nodeValue !== item.text) item.n.nodeValue = item.text; }); bubble.classList.remove('deck-decoding'); typing = null; };
+    bubble.classList.add('deck-decoding');
+    const step = now => {
+      const shown = Math.floor(total * Math.min(1, (now - start) / dur)); let left = shown;
+      for (const item of nodes) {
+        const n = Math.max(0, Math.min(item.text.length, left)); left -= item.text.length;
+        let out = item.text.slice(0, n);
+        if (n < item.text.length && left < 0 && left > -item.text.length - 1) for (let i = n; i < Math.min(item.text.length, n + 5); i++) out += /\s/.test(item.text[i]) ? item.text[i] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        item.n.nodeValue = out;
+      }
+      if (shown < total) raf = requestAnimationFrame(step); else finish();
+    };
+    typing = { finish }; raf = requestAnimationFrame(step);
+  }
+  const txObserver = new MutationObserver(records => {
+    const surface = chatSurface();
+    if (surface?.getAttribute('data-chat-phase') === 'responding') lastStreamed = performance.now();
+    for (const r of records) for (const node of r.addedNodes) {
+      if (!(node instanceof HTMLElement) || !node.matches('.chat-bubble-agent, .chat-bubble-user')) continue;
+      tx++;
+      const status = document.querySelector('.home-screen .chat-live-status'); status?.setAttribute('data-tx', `TX ${String(tx).padStart(2, '0')}`);
+      // Streamed replies already arrived piece by piece; only decode the ones that landed whole.
+      const isFinal = node.matches('.chat-bubble-agent') && surface?.getAttribute('data-chat-phase') === 'idle';
+      if (isFinal && performance.now() - lastStreamed > 400) typewrite(node);
+    }
+  });
+  const watchTranscript = () => {
+    const transcript = document.querySelector('.home-screen .chat-transcript');
+    if (!transcript) return setTimeout(watchTranscript, 300);
+    txObserver.observe(transcript, { childList: true });
+    tx = transcript.querySelectorAll('.chat-bubble-agent, .chat-bubble-user').length || 1;
+    document.querySelector('.home-screen .chat-live-status')?.setAttribute('data-tx', `TX ${String(tx).padStart(2, '0')}`);
+    const greeting = transcript.querySelector('.chat-bubble-agent'); if (greeting) setTimeout(() => typewrite(greeting), 700);
+  };
+  watchTranscript();
+
   // Videos: offset their start so fade-to-black endings never coincide.
   screens.forEach((s, i) => {
     if (!s.video) return;
@@ -633,6 +712,7 @@ export function createDeck(root, data) {
       if (cardSnap) { cardObj.position.copy(cardTarget); cardSnap = false; } else cardObj.position.lerp(cardTarget, Math.min(1, dt * 5));
       cardObj.lookAt(camera.position);
     }
+    placeTerminal();
     composer.render();
     cssRenderer.render(cssScene, camera);
   }
@@ -653,7 +733,8 @@ export function createDeck(root, data) {
   return {
     focusWork, focusService, unfocus,
     dispose() {
-      ac.abort(); observer.disconnect(); resize.disconnect(); renderer.setAnimationLoop(null); sfx.close();
+      ac.abort(); observer.disconnect(); resize.disconnect(); txObserver.disconnect(); typing?.finish();
+      document.documentElement.classList.remove('deck-term3d'); Object.values(termEls).forEach(el => el && (el.style.transform = '')); renderer.setAnimationLoop(null); sfx.close();
       screens.forEach(s => { if (s.video) { s.video.pause(); s.video.removeAttribute('src'); s.video.load(); } });
       disposables.forEach(d => d.dispose?.()); composer.dispose?.(); renderer.dispose();
       root.replaceChildren();
