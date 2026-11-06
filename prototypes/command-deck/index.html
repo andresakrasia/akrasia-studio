@@ -46,15 +46,24 @@
   .hint { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font: 500 .62rem/1 var(--mono); letter-spacing: .22em; color: #7fa3b2b3; white-space: nowrap; transition: opacity .6s; }
   .reticle { position: absolute; left: 0; top: 45%; display: grid; gap: 8px; font: 500 .6rem/1 var(--mono); letter-spacing: .16em; color: #7fa3b2a6; }
   .reticle span b { color: var(--cyan); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .focus { position: absolute; right: 0; top: 50%; width: min(340px, 100%); transform: translate(30px, -50%); opacity: 0; pointer-events: none;
+  #focusWrap { pointer-events: none; }
+  .focus { width: 380px; opacity: 0; pointer-events: none; transform: scale(.92) translateY(14px); transform-origin: 50% 100%;
     background: var(--panel); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px 20px 18px; box-shadow: inset 0 0 0 1px #00f0ff4d, 0 0 40px #00f0ff14;
     transition: opacity .45s, transform .45s cubic-bezier(.2,.8,.2,1); }
-  .focus.on { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
+  .focus.on { opacity: 1; transform: none; pointer-events: auto; }
+  .focus { background: repeating-linear-gradient(0deg, #00f0ff0a 0 1px, transparent 1px 3px), linear-gradient(160deg, #03202bf0, #010d14e6);
+    box-shadow: inset 0 0 0 1px #00f0ff80, inset 0 0 40px #00f0ff1f, 0 0 70px #00f0ff2e; }
+  .focus::before { content: ''; position: absolute; left: 0; top: 0; width: 40%; height: 2px; background: linear-gradient(90deg, var(--cyan), transparent); box-shadow: 0 0 12px var(--cyan); }
   .focus .eyebrow { font: 600 .62rem/1 var(--mono); letter-spacing: .22em; color: var(--cyan); margin: 0 0 10px; }
   .focus h2 { margin: 0 0 6px; font: 800 1.7rem/1 var(--display); letter-spacing: .01em; text-transform: uppercase; text-wrap: balance; }
   .focus .meta { margin: 0 0 12px; font: 500 .68rem/1.4 var(--mono); color: var(--muted); letter-spacing: .08em; }
   .focus p.body { margin: 0 0 16px; font: 400 .92rem/1.55 var(--display); color: #c6dde6; }
-  .focus .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .focus .row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .act { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; }
+  .act.primary { background: var(--cyan); color: #00202a; box-shadow: 0 0 22px #00f0ff66; }
+  .act.primary:hover, .act.primary:focus-visible { background: #7ff8ff; color: #00141c; box-shadow: 0 0 30px #00f0ffaa; }
+  .act:active, .chip:active, nav button:active, .send:active { transform: scale(.96); }
+  .act .k { font-size: .9em; }
 
   /* Bottom: headline + console */
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -63,7 +72,9 @@
   .console { width: min(680px, 100%); pointer-events: auto; display: grid; gap: 10px; }
   .chips { display: flex; justify-content: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; padding: 8px 12px; font-size: .6rem; background: #00141c99; box-shadow: inset 0 0 0 1px #00f0ff30; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 14px 8px 12px; font-size: .62rem; background: #021a24d9; box-shadow: inset 0 0 0 1px #00f0ff8c, 0 0 14px #00f0ff1a; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: box-shadow .2s, background-color .2s, transform .12s; }
+  .chip .i { color: var(--cyan); font-size: .85rem; line-height: 0; text-shadow: 0 0 8px var(--cyan); }
+  .chip:hover, .chip:focus-visible { background: #00f0ff26; box-shadow: inset 0 0 0 1px var(--cyan), 0 0 20px #00f0ff40; }
   form { position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px;
     background: linear-gradient(90deg, transparent, #00f0ff12 18% 82%, transparent); }
   form::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan) 20% 80%, transparent); box-shadow: 0 0 12px var(--cyan); }
@@ -82,6 +93,7 @@
   nav .short { display: none; }
   @media (max-width: 760px) { nav .short { display: inline; } }
   .helix .now { display: inline-flex; }
+  .helix.focusing :is(.now, .chips) { display: none; }
   /* Holographic terminal living in the 3D scene (CSS3D) */
   #css3d { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
   .term { width: 400px; padding: 16px 18px 14px; color: #dff8ff; font: 400 15px/1.5 var(--display);
@@ -118,11 +130,9 @@
     nav .sound { padding: 11px 10px; }
     nav .long { display: none; }
     nav .sound::before { content: '♪ '; }
-    .focus { left: 0; right: 0; }
+
     .hint { top: 4px; font-size: .56rem; }
-    .focus { top: auto; bottom: 0; transform: translateY(20px); width: 100%; }
-    .focus.on { transform: none; }
-    .focus h2 { font-size: 1.35rem; }
+
     .chips { justify-content: flex-start; }
   }
   @media (prefers-reduced-motion: reduce) { .telemetry .live::before, .term, .caret { animation: none; } .focus { transition: none; } }
@@ -165,16 +175,6 @@
       <span>MODO <b id="mode">EXPLORAR</b></span>
       <span>SECTOR <b>BCN-01</b></span>
     </div>
-    <aside class="focus bevel" id="focus" aria-live="polite">
-      <p class="eyebrow" id="fEyebrow">PANTALLA 01</p>
-      <h2 id="fTitle">—</h2>
-      <p class="meta" id="fMeta"></p>
-      <p class="body" id="fBody"></p>
-      <div class="row">
-        <button type="button" class="act bevel" id="fAsk">Quiero algo así ↗</button>
-        <button type="button" class="act bevel" id="fBack">Volver al núcleo</button>
-      </div>
-    </aside>
   </div>
 
   <div class="bottom">
@@ -183,10 +183,10 @@
     <section class="console" aria-label="Chat con Akrasia AI">
       <div class="sr-only" id="log" role="log" aria-live="polite"></div>
       <div class="chips" id="chips">
-        <button type="button" class="chip bevel" data-go="start">Tengo una idea</button>
-        <button type="button" class="chip bevel" data-go="work">Ver trabajos</button>
-        <button type="button" class="chip bevel" data-go="services">Servicios</button>
-        <button type="button" class="chip bevel" data-go="call">Reservar llamada</button>
+        <button type="button" class="chip bevel" data-go="start"><span class="i" aria-hidden="true">◇</span>Tengo una idea</button>
+        <button type="button" class="chip bevel" data-go="work"><span class="i" aria-hidden="true">▶</span>Ver trabajos</button>
+        <button type="button" class="chip bevel" data-go="services"><span class="i" aria-hidden="true">◈</span>Servicios</button>
+        <button type="button" class="chip bevel" data-go="call"><span class="i" aria-hidden="true">◎</span>Reservar llamada</button>
       </div>
       <form id="form" autocomplete="off">
         <span class="prompt" aria-hidden="true">›_</span>
@@ -196,6 +196,18 @@
       <p class="note">Prototipo · los cinco trabajos son DEMO ficticios y el chat no está conectado a la IA.</p>
     </section>
   </div>
+</div>
+<div id="focusWrap">
+  <aside class="focus bevel" id="focus" aria-live="polite">
+    <p class="eyebrow" id="fEyebrow">PANTALLA 01</p>
+    <h2 id="fTitle">—</h2>
+    <p class="meta" id="fMeta"></p>
+    <p class="body" id="fBody"></p>
+    <div class="row">
+      <button type="button" class="act primary bevel" id="fAsk">Quiero algo así <span class="k" aria-hidden="true">↗</span></button>
+      <button type="button" class="act bevel" id="fBack"><span class="k" aria-hidden="true">←</span> Volver</button>
+    </div>
+  </aside>
 </div>
 <div class="term" id="term" aria-hidden="true">
   <p class="term-head"><i></i>CANAL · AKRASIA AI<span id="termClock">TX 00</span></p>
@@ -461,6 +473,37 @@ function labelTexture(lines, { width = 512, height = 128, size = 40, sub = 22, a
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
 }
 
+// Button-like tags for the 3D objects: bevelled frame, action glyph, label.
+function bevelPath(g, x, y, w, h, cut) {
+  g.beginPath(); g.moveTo(x + cut, y); g.lineTo(x + w, y); g.lineTo(x + w, y + h - cut); g.lineTo(x + w - cut, y + h); g.lineTo(x, y + h); g.lineTo(x, y + cut); g.closePath();
+}
+function buttonTagTexture(text, glyph = '+') {
+  const c = document.createElement('canvas'); c.width = 768; c.height = 112; const g = c.getContext('2d');
+  g.font = '700 40px Oxanium, sans-serif';
+  const tw = Math.min(g.measureText(text.toUpperCase()).width, 600);
+  const w = tw + 120, x = (768 - w) / 2, y = 14, h = 84;
+  bevelPath(g, x, y, w, h, 14); g.fillStyle = '#02161fd9'; g.fill();
+  g.lineWidth = 3; g.strokeStyle = '#00f0ff'; g.shadowColor = '#00f0ff'; g.shadowBlur = 12; g.stroke();
+  g.shadowBlur = 0; g.fillStyle = '#00f0ff'; g.fillRect(x + 14, y + 14, 56, 56);
+  g.fillStyle = '#00202a'; g.font = '800 46px Oxanium, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(glyph, x + 42, y + 44);
+  g.textAlign = 'left'; g.fillStyle = '#eafcff'; g.font = '700 40px Oxanium, sans-serif'; g.shadowColor = '#00f0ff'; g.shadowBlur = 8;
+  g.fillText(text.toUpperCase(), x + 88, y + 44, 600);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+function screenLabelTexture(work, i) {
+  const c = document.createElement('canvas'); c.width = 768; c.height = 220; const g = c.getContext('2d');
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.shadowColor = '#00f0ff'; g.shadowBlur = 14; g.fillStyle = '#eafcff'; g.font = '800 54px Oxanium, sans-serif'; g.fillText(work.title.toUpperCase(), 384, 44);
+  g.shadowBlur = 0; g.fillStyle = '#7fe9f2'; g.font = '600 26px "JetBrains Mono", monospace'; g.fillText(`${String(i + 1).padStart(2, '0')} · ${work.meta}`.toUpperCase(), 384, 98);
+  const w = 300, x = 234, y = 134, h = 66;
+  bevelPath(g, x, y, w, h, 12); g.fillStyle = '#00f0ff'; g.shadowColor = '#00f0ff'; g.shadowBlur = 18; g.fill();
+  g.shadowBlur = 0; g.fillStyle = '#00202a'; g.font = '800 30px Oxanium, sans-serif'; g.fillText('▶  VER PIEZA', 384, y + 34);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+const pulseTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  g.strokeStyle = '#00f0ff'; g.lineWidth = 5; g.shadowColor = '#00f0ff'; g.shadowBlur = 10; g.beginPath(); g.arc(64, 64, 52, 0, Math.PI * 2); g.stroke();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+
 // ── Curved video screens on an arc ──────────────────────────────────────
 const pickables = [];
 const screens = [];
@@ -506,8 +549,10 @@ WORKS.forEach((work, i) => {
   const lineMat = new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: .9, toneMapped: false });
   frame.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(rail(H / 2 + .05)), lineMat));
   frame.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(rail(-H / 2 - .05)), lineMat));
-  const label = new THREE.Mesh(new THREE.PlaneGeometry(2.4, .6), new THREE.MeshBasicMaterial({ map: labelTexture([work.title, `${String(i + 1).padStart(2, '0')} · ${work.meta}`]), transparent: true, toneMapped: false, depthWrite: false }));
-  label.position.set(0, -H / 2 - .42, .2);
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(2.4, .69), new THREE.MeshBasicMaterial({ map: screenLabelTexture(work, i), transparent: true, toneMapped: false, depthWrite: false }));
+  label.position.set(0, -H / 2 - .5, .2);
+  label.userData = { kind: 'work', index: i };
+  pickables.push(label);
   const group = new THREE.Group();
   group.add(mesh, frame, label);
   let theta, baseY;
@@ -585,13 +630,18 @@ const nodes = SERVICES.map((name, i) => {
   const solid = new THREE.Mesh(new THREE.OctahedronGeometry(.13), new THREE.MeshBasicMaterial({ color: '#7ff6ff', toneMapped: false }));
   const shell = new THREE.Mesh(new THREE.OctahedronGeometry(.24), new THREE.MeshBasicMaterial({ color: CYAN, wireframe: true, transparent: true, opacity: .55, toneMapped: false }));
   const hit = new THREE.Mesh(new THREE.SphereGeometry(.45, 8, 8), new THREE.MeshBasicMaterial({ visible: false }));
-  const tag = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTexture([name], { width: 768, height: 96, size: 38 }), transparent: true, depthWrite: false, toneMapped: false }));
-  tag.scale.set(1.8, .225, 1); tag.position.y = .38;
-  g.add(solid, shell, hit, tag);
+  const tag = new THREE.Sprite(new THREE.SpriteMaterial({ map: buttonTagTexture(name), transparent: true, depthWrite: false, toneMapped: false }));
+  tag.scale.set(1.55, .226, 1); tag.position.y = .44;
+  const pulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: pulseTex, transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }));
+  const tagHit = new THREE.Mesh(new THREE.PlaneGeometry(1.55, .3), new THREE.MeshBasicMaterial({ visible: false }));
+  tagHit.position.y = .44;
+  g.add(solid, shell, hit, tag, pulse, tagHit);
+  tagHit.userData = { kind: 'service', index: i };
+  pickables.push(tagHit);
   hit.userData = { kind: 'service', index: i };
   pickables.push(hit);
   orbit.add(g);
-  return { g, solid, shell, tag, base: (i / SERVICES.length) * Math.PI * 2, hover: 0 };
+  return { g, solid, shell, tag, pulse, tagHit, base: (i / SERVICES.length) * Math.PI * 2, hover: 0 };
 });
 const orbitPath = new THREE.Mesh(new THREE.TorusGeometry(2.6, .004, 6, 256), new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .35, toneMapped: false }));
 orbitPath.rotation.x = Math.PI / 2;
@@ -629,6 +679,11 @@ term.scale.setScalar(TERM_SCALE);
 cssScene.add(term);
 const termAnchor = HELIX ? null : new THREE.Vector3(-3.05, 2.55, 1.55);
 if (termAnchor) { term.position.copy(termAnchor); term.rotation.y = .5; }
+const focusObj = new CSS3DObject($('focusWrap'));
+focusObj.scale.setScalar(HELIX ? .0064 : .0062);
+cssScene.add(focusObj);
+const cardTarget = new THREE.Vector3(), camRight = new THREE.Vector3();
+let cardSnap = true;
 
 // ── Camera rig: orbit by drag, parallax by pointer, fly-to on focus ─────
 const rig = { az: 0, azTarget: 0, el: HELIX ? .1 : .2, dist: HELIX ? 12.6 : 8.6, look: new THREE.Vector3(0, CORE_Y, 0) };
@@ -706,7 +761,8 @@ let thinkUntil = 0;
 const card = { root: $('focus'), eyebrow: $('fEyebrow'), title: $('fTitle'), meta: $('fMeta'), body: $('fBody') };
 function showCard(eyebrow, title, meta, body) {
   card.eyebrow.textContent = eyebrow; card.title.textContent = title; card.meta.textContent = meta; card.body.textContent = body;
-  card.root.classList.add('on'); $('mode').textContent = 'FOCO'; termEl.classList.add('dim');
+  if (!card.root.classList.contains('on')) cardSnap = true;
+  card.root.classList.add('on'); $('mode').textContent = 'FOCO'; termEl.classList.add('dim'); document.documentElement.classList.add('focusing');
 }
 function focusWork(i) {
   sfx.sweep();
@@ -719,9 +775,9 @@ function focusWork(i) {
     desired.look.copy(s.group.position).setY(s.baseY - 1.1);
     desired.pos.copy(s.group.position).addScaledVector(dir, 6.4).setY(s.baseY + .2);
   } else {
-    const shift = MOBILE ? 0 : 1.15;
+    const shift = MOBILE ? 0 : 1.55;
     desired.look.copy(s.group.position).addScaledVector(right, shift).setY(s.group.position.y - (MOBILE ? .6 : 0));
-    desired.pos.copy(s.group.position).addScaledVector(dir, MOBILE ? -6.2 : -5).addScaledVector(right, shift).setY(s.group.position.y + .1);
+    desired.pos.copy(s.group.position).addScaledVector(dir, MOBILE ? -6.2 : -5.6).addScaledVector(right, shift).setY(s.group.position.y + .1);
   }
   const w = WORKS[i];
   showCard(`PANTALLA ${String(i + 1).padStart(2, '0')} · DEMO`, w.title.replace('DEMO · ', ''), w.meta, w.body);
@@ -733,7 +789,7 @@ function focusService(i) {
 }
 function unfocus() {
   if (focused?.kind === 'work' && HELIX) rig.azTarget = rig.az = Math.atan2(camera.position.x, camera.position.z);
-  focused = null; card.root.classList.remove('on'); $('mode').textContent = 'EXPLORAR'; termEl.classList.remove('dim');
+  focused = null; card.root.classList.remove('on'); $('mode').textContent = 'EXPLORAR'; termEl.classList.remove('dim'); document.documentElement.classList.remove('focusing');
 }
 $('fBack').addEventListener('click', unfocus);
 $('fAsk').addEventListener('click', () => {
@@ -810,6 +866,7 @@ startVideos();
 addEventListener('pointerdown', startVideos, { once: true });
 
 const tmpPos = new THREE.Vector3(), tmpLook = new THREE.Vector3();
+let orbitClock = 0;
 function frame() {
   const dt = Math.min(clock.getDelta(), .05);
   const t = clock.elapsedTime;
@@ -839,7 +896,7 @@ function frame() {
   cursorRing.visible = !!overFloor;
   if (overFloor) { cursorRing.position.x += (floorHit.x - cursorRing.position.x) * Math.min(1, dt * 14); cursorRing.position.z += (floorHit.z - cursorRing.position.z) * Math.min(1, dt * 14); cursorRing.rotation.z = -t * .8; }
   screens.forEach((s, i) => {
-    const target = (hovered === s.mesh || (focused?.kind === 'work' && focused.index === i) || (HELIX && !focused && i === frontIndex)) ? 1 : 0;
+    const target = (hovered === s.mesh || hovered === s.group.children[2] || (focused?.kind === 'work' && focused.index === i) || (HELIX && !focused && i === frontIndex)) ? 1 : 0;
     s.hover += (target - s.hover) * Math.min(1, dt * 6);
     s.mat.uniforms.uHover.value = s.hover;
     s.mat.uniforms.uOn.value = THREE.MathUtils.clamp((boot - .35) * 1.8, 0, 1);
@@ -856,14 +913,18 @@ function frame() {
     s.mirror.rotation.y = s.group.rotation.y;
     s.mirror.scale.set(s.group.scale.x, -s.group.scale.y, s.group.scale.z);
   });
+  if (!(focused?.kind === 'service')) orbitClock += dt * speed;
   nodes.forEach((n, i) => {
     const target = (hovered?.parent === n.g || (focused?.kind === 'service' && focused.index === i)) ? 1 : 0;
     n.hover += (target - n.hover) * Math.min(1, dt * 6);
-    const a = n.base + t * .16 * speed;
+    const a = n.base + orbitClock * .16;
     n.g.position.set(Math.cos(a) * 2.6, Math.sin(t * .9 + i) * .08 * speed, Math.sin(a) * 2.6);
     n.g.scale.setScalar((1 + n.hover * .6) * THREE.MathUtils.smoothstep(boot, .45, .85));
     n.shell.rotation.y = t * .8 * speed; n.solid.rotation.y = -t * 1.2 * speed;
-    n.tag.material.opacity = (servicesMode ? .95 : .4) + n.hover * .55;
+    n.tag.material.opacity = (servicesMode ? 1 : .72) + n.hover * .28;
+    n.tag.scale.set(1.55 * (1 + n.hover * .12), .226 * (1 + n.hover * .12), 1);
+    const k = (t * .55 + i * .17) % 1;
+    n.pulse.scale.setScalar(.35 + k * .9); n.pulse.material.opacity = (1 - k) * (.55 + n.hover * .4) * speed;
   });
   orbit.rotation.y = 0;
 
@@ -883,7 +944,7 @@ function frame() {
     term.lookAt(camera.position.x, term.position.y, camera.position.z);
   }
   uSign.value += ((focused ? .25 : talked ? .7 : 1) - uSign.value) * Math.min(1, dt * 2);
-  if (!focused) {
+  if (!focused || focused.kind === 'service') {
     rigPosition(desired.pos);
     desired.pos.x += parallax.x * .6; desired.pos.y += parallax.y * .35;
     if (HELIX) desired.look.set(parallax.x * .3, CORE_Y - .7 + parallax.y * .2, 0);
@@ -895,6 +956,22 @@ function frame() {
   camera.lookAt(rig.look);
   $('az').textContent = (((THREE.MathUtils.radToDeg(Math.atan2(camera.position.x, camera.position.z)) % 360) + 360) % 360).toFixed(1).padStart(5, '0') + '°';
 
+  if (focused) {
+    if (focused.kind === 'work') {
+      const s = screens[focused.index];
+      const dir = tmpPos.set(Math.sin(s.theta), 0, -Math.cos(s.theta));
+      if (HELIX) cardTarget.copy(s.group.position).addScaledVector(dir, 1.9).setY(s.baseY - .95);
+      else cardTarget.copy(s.group.position).addScaledVector(tmpLook.set(Math.cos(s.theta), 0, Math.sin(s.theta)), 2.75).addScaledVector(dir, -.55);
+    } else {
+      nodes[focused.index].g.getWorldPosition(cardTarget);
+      camRight.setFromMatrixColumn(camera.matrixWorld, 0);
+      if (HELIX) { cardTarget.addScaledVector(tmpPos.subVectors(camera.position, cardTarget).normalize(), 3.4); cardTarget.y -= 1.05; }
+      else cardTarget.addScaledVector(camRight, 1.75).y += .1;
+    }
+    if (cardSnap) { focusObj.position.copy(cardTarget); cardSnap = false; }
+    else focusObj.position.lerp(cardTarget, Math.min(1, dt * 5));
+    focusObj.lookAt(camera.position);
+  }
   composer.render();
   cssRenderer.render(cssScene, camera);
 }
@@ -908,8 +985,8 @@ addEventListener('resize', () => {
 });
 document.fonts?.ready.then(() => {
   // Re-draw labels once the brand fonts are available.
+  nodes.forEach((n, i) => { n.tag.material.map.dispose(); n.tag.material.map = buttonTagTexture(SERVICES[i]); });
   signMat.uniforms.map.value.dispose(); signMat.uniforms.map.value = headlineTexture();
-  screens.forEach((s, i) => { const lbl = s.group.children[2]; lbl.material.map.dispose(); lbl.material.map = labelTexture([WORKS[i].title, `${String(i + 1).padStart(2, '0')} · ${WORKS[i].meta}`]); });
-  nodes.forEach((n, i) => { n.tag.material.map.dispose(); n.tag.material.map = labelTexture([SERVICES[i]], { width: 768, height: 96, size: 38 }); n.tag.material.needsUpdate = true; });
+  screens.forEach((s, i) => { const lbl = s.group.children[2]; lbl.material.map.dispose(); lbl.material.map = screenLabelTexture(WORKS[i], i); });
 });
 </script>
