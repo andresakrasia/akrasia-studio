@@ -183,14 +183,15 @@ try {
       const res = await fetch(`${origin}${route}`); equal(res.status, 200); noCache(res);
       noPrivate(await res.text());
     }
-    for (const project of [visible,unpublished]) {
-      const before = fixture.requests.length;
-      const res = await fetch(`${origin}/proyectos/${project.slug}`, { redirect:'manual' });
-      equal(res.status,302); noCache(res);
-      const location = new URL(res.headers.get('Location'),origin);
-      equal(location.pathname,'/'); equal(location.searchParams.get('chat'),'project:' + project.slug);
-      equal(await res.text(),'','Legacy links disclose neither title nor publication status');
-      equal(fixture.requests.length,before,'Legacy links do not read storage');
+    {
+      const res = await fetch(`${origin}/proyectos/${visible.slug}`, { redirect:'manual' });
+      equal(res.status,200,'Published project has a public SEO page'); noCache(res);
+      const body = await res.text(); ok(body.includes(visible.title)); noPrivate(body);
+    }
+    {
+      const res = await fetch(`${origin}/proyectos/${unpublished.slug}`, { redirect:'manual' });
+      equal(res.status,404,'Unpublished project is not found'); noCache(res);
+      const body = await res.text(); ok(!body.includes(unpublished.title),'Unpublished title is not disclosed'); noPrivate(body);
     }
     fixture.tables.projects.find(p => p.id === visible.id).is_published = false;
     for (const route of ['/', '/sitemap.xml']) {
@@ -200,12 +201,11 @@ try {
     const withdrawnApi = await fetch(`${origin}/api/projects?slug=${visible.slug}`);
     equal(withdrawnApi.status,404); noCache(withdrawnApi); noPrivate(await withdrawnApi.text());
     fixture.state.missingProjectPublication = true;
-    equal((await fetch(`${origin}/proyectos/${visible.slug}`,{redirect:'manual'})).status, 302);
-    const beforeSitemap = fixture.requests.length;
-    const sitemap = await fetch(`${origin}/sitemap.xml`); equal(sitemap.status,200); noCache(sitemap);
+    { const res = await fetch(`${origin}/proyectos/${visible.slug}`,{redirect:'manual'}); equal(res.status, 503,'Storage failure is reported as temporarily unavailable'); noCache(res); const body = await res.text(); ok(!body.includes(visible.title)); noPrivate(body); }
+    const sitemap = await fetch(`${origin}/sitemap.xml`); equal(sitemap.status,503,'Sitemap fails closed while the catalogue is unavailable'); noCache(sitemap);
+    equal(sitemap.headers.get('x-robots-tag'),'noindex');
     const xml = await sitemap.text(); noPrivate(xml);
-    ok(!xml.includes('/proyectos/') && !xml.includes(visible.title),'Sitemap indexes only home/legal documents');
-    equal(fixture.requests.length,beforeSitemap,'Sitemap remains independent of failed publication storage');
+    ok(!xml.includes('/proyectos/') && !xml.includes(visible.title),'Failed sitemap discloses no project');
     const homeError = await fetch(`${origin}/`); noCache(homeError); noPrivate(await homeError.text());
     fixture.state.missingProjectPublication = false;
     const stored = fixture.tables.projects; fixture.tables.projects = [];

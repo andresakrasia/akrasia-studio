@@ -322,7 +322,7 @@ try {
     ok(!fixture.requests.slice(before).some(row => row.method !== 'GET' && !row.table.startsWith('rpc/') && row.table !== 'visitors'), 'Failed first mutation stops subsequent business effects');
   });
 
-  await group('Returned booking rows preserve owner references and never invent a meeting URL', async () => {
+  await group('Returned booking rows preserve owner references and get a unique Jitsi room by default', async () => {
     fixture.reset(); const a=session(), b=session(); const own=fixture.seed(a.id,'A'), foreign=fixture.seed(b.id,'B');
     const base={visitorId:a.id,contextVersion:0,sessionExpiresAt:a.expiresAt,conversationId:own.conversation.id,leadId:own.lead.id,
       bookedDate:'2030-01-07',bookedTime:'10:00',visitorEmail:'a@synthetic.invalid'};
@@ -336,7 +336,7 @@ try {
     }
     fixture.state.bookingRepresentation=null;
     const result=await booking.createBooking(base);ok(result);equal(result.visitor_id,a.id);
-    equal(result.meet_url,'','Without an explicitly configured meeting URL, the result is honest about its absence');
+    ok(/^https:\/\/meet\.jit\.si\/Akrasia-[0-9a-f-]{36}$/.test(result.meet_url),'Without an explicit meeting URL, each booking gets its own Jitsi room');
   });
 
   await group('Tests contacted only the local fixture and never logged visitor secrets', async () => {
