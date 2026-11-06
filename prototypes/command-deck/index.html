@@ -57,28 +57,51 @@
   .focus .row { display: flex; flex-wrap: wrap; gap: 8px; }
 
   /* Bottom: headline + console */
-  .bottom { display: grid; justify-items: center; gap: 14px; }
-  .thesis { margin: 0; text-align: center; font: 800 clamp(1.5rem, 3.4vw, 3.1rem)/.95 var(--display); text-transform: uppercase; letter-spacing: .01em; text-shadow: 0 2px 24px #000; transition: opacity .6s, transform .6s; }
-  .thesis span { display: block; color: var(--cyan); font-size: 1.3em; text-shadow: 0 0 10px #00f0ffaa, 0 0 34px #00f0ff55, 0 2px 24px #000; }
-  .thesis.away { opacity: 0; transform: translateY(8px); }
-  .console { width: min(760px, 100%); pointer-events: auto; background: var(--panel); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    box-shadow: inset 0 0 0 1px #00f0ff40, 0 0 50px #00f0ff10; padding: 12px; display: grid; gap: 10px; }
-  .log { display: grid; gap: 8px; max-height: 19vh; overflow-y: auto; scrollbar-width: thin; }
-  .log:empty { display: none; }
-  .msg { font: 400 .92rem/1.5 var(--display); color: #d6eef5; text-wrap: pretty; }
-  .msg .who { display: block; font: 600 .6rem/1 var(--mono); letter-spacing: .2em; color: var(--cyan); margin-bottom: 4px; }
-  .msg.user { color: #fff; text-align: right; }
-  .msg.user .who { color: var(--muted); }
-  .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .bottom { display: grid; justify-items: center; gap: 10px; }
+  /* Command line: the chat input docked like a projector rail, not a box */
+  .console { width: min(680px, 100%); pointer-events: auto; display: grid; gap: 10px; }
+  .chips { display: flex; justify-content: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; padding: 9px 12px; font-size: .62rem; }
-  form { display: flex; gap: 8px; }
-  input { flex: 1; min-width: 0; font: 400 1rem/1 var(--display); color: var(--ink); background: #00131c; border: 0; padding: 13px 14px; box-shadow: inset 0 0 0 1px #00f0ff26; }
-  input::placeholder { color: #7fa3b2; }
-  input:focus-visible { outline: none; box-shadow: inset 0 0 0 1px var(--cyan); }
-  .send { flex: none; width: 48px; border: 0; cursor: pointer; background: var(--cyan); color: #00202a; font: 800 1.1rem/1 var(--display); }
+  .chip { flex: none; padding: 8px 12px; font-size: .6rem; background: #00141c99; box-shadow: inset 0 0 0 1px #00f0ff30; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  form { position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px;
+    background: linear-gradient(90deg, transparent, #00f0ff12 18% 82%, transparent); }
+  form::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan) 20% 80%, transparent); box-shadow: 0 0 12px var(--cyan); }
+  form::after { content: ''; position: absolute; left: 50%; bottom: -1px; width: 90px; height: 3px; transform: translateX(-50%); background: var(--cyan); box-shadow: 0 0 16px var(--cyan); }
+  .prompt { font: 600 .9rem/1 var(--mono); color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+  input { flex: 1; min-width: 0; font: 400 1.02rem/1 var(--display); color: var(--ink); background: transparent; border: 0; padding: 12px 0; caret-color: var(--cyan); }
+  input::placeholder { color: #8fb6c3; }
+  input:focus-visible { outline: none; }
+  form:focus-within::before { height: 2px; }
+  .send { flex: none; width: 44px; height: 40px; border: 0; cursor: pointer; background: var(--cyan); color: #00202a; font: 800 1.05rem/1 var(--display); box-shadow: 0 0 20px #00f0ff66; }
   .send:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  .note { margin: 0; font: 400 .62rem/1.4 var(--mono); color: #7fa3b2; letter-spacing: .06em; }
+  .note { margin: 0; text-align: center; font: 400 .58rem/1.4 var(--mono); color: #7fa3b2b3; letter-spacing: .08em; }
+  .now { pointer-events: auto; display: none; align-items: center; gap: 8px; max-width: 100%; padding: 7px 12px; border: 0; cursor: pointer; background: #00141ccc; color: var(--ink);
+    font: 600 .62rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; box-shadow: inset 0 0 0 1px #00f0ff4d; }
+  .now b { color: var(--cyan); font-weight: 600; }
+  nav .short { display: none; }
+  @media (max-width: 760px) { nav .short { display: inline; } }
+  .helix .now { display: inline-flex; }
+  /* Holographic terminal living in the 3D scene (CSS3D) */
+  #css3d { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+  .term { width: 400px; padding: 16px 18px 14px; color: #dff8ff; font: 400 15px/1.5 var(--display);
+    background: repeating-linear-gradient(0deg, #00f0ff0a 0 1px, transparent 1px 3px), linear-gradient(160deg, #03202bd9, #010d14cc);
+    box-shadow: inset 0 0 0 1px #00f0ff66, inset 0 0 40px #00f0ff1a, 0 0 60px #00f0ff22;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    transition: opacity .5s; animation: termFlicker 6s steps(1) infinite; }
+  .term.dim { opacity: .12; }
+  .term-head { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font: 600 10px/1 var(--mono); letter-spacing: .24em; color: var(--cyan); text-shadow: 0 0 8px #00f0ffaa; }
+  .term-head i { width: 7px; height: 7px; border-radius: 50%; background: var(--live); box-shadow: 0 0 10px var(--live); }
+  .term-head span { margin-left: auto; color: #7fa3b2; letter-spacing: .14em; }
+  .term-log { display: grid; gap: 10px; }
+  .tmsg { margin: 0; text-wrap: pretty; text-shadow: 0 0 10px #00f0ff40; }
+  .tmsg .who { display: block; margin-bottom: 3px; font: 600 9px/1 var(--mono); letter-spacing: .22em; color: var(--cyan); }
+  .tmsg.user { text-align: right; color: #ffffff; opacity: .82; }
+  .tmsg.user .who { color: #8fb6c3; }
+  .tmsg.old { opacity: .38; }
+  .caret { display: inline-block; width: 8px; height: 15px; margin-left: 3px; vertical-align: -2px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation: blink 1s steps(1) infinite; }
+  @keyframes termFlicker { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 48% { opacity: .82; } 49% { opacity: 1; } }
+  .term.dim { animation: none; }
 
   /* Boot veil */
   .boot { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; background: var(--void); pointer-events: none; transition: opacity .8s .2s; }
@@ -93,13 +116,16 @@
     .brand img { height: 36px; }
     .telemetry, .reticle, nav button:not(.cta):not(.sound) { display: none; }
     nav .sound { padding: 11px 10px; }
+    nav .long { display: none; }
+    nav .sound::before { content: '♪ '; }
+    .focus { left: 0; right: 0; }
     .hint { top: 4px; font-size: .56rem; }
     .focus { top: auto; bottom: 0; transform: translateY(20px); width: 100%; }
     .focus.on { transform: none; }
     .focus h2 { font-size: 1.35rem; }
-    .thesis { font-size: 1.25rem; }
+    .chips { justify-content: flex-start; }
   }
-  @media (prefers-reduced-motion: reduce) { .telemetry .live::before { animation: none; } .focus, .thesis { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .telemetry .live::before, .term, .caret { animation: none; } .focus { transition: none; } }
 </style>
 
 <canvas id="deck" aria-label="Sala de mando 3D de Akrasia Studio: núcleo holográfico, pantallas con trabajos y servicios en órbita" role="img"></canvas>
@@ -127,8 +153,8 @@
       <button type="button" data-go="services">Servicios</button>
       <button type="button" data-go="work">Proyectos</button>
       <button type="button" data-go="contact">Contacto</button>
-      <button type="button" id="sound" class="sound" aria-pressed="false">Sonido · off</button>
-      <button type="button" class="cta bevel" data-go="start">Iniciar proyecto ↗</button>
+      <button type="button" id="sound" class="sound" aria-pressed="false" aria-label="Sonido"><span class="long">Sonido · </span><span id="soundState">off</span></button>
+      <button type="button" class="cta bevel" data-go="start"><span class="long">Iniciar proyecto </span><span class="short">Empezar </span>↗</button>
     </nav>
   </header>
 
@@ -152,9 +178,10 @@
   </div>
 
   <div class="bottom">
-    <h1 class="thesis" id="thesis">No escribimos prompts.<span>Dirigimos la IA.</span></h1>
-    <section class="console bevel" aria-label="Chat con Akrasia AI">
-      <div class="log" id="log" role="log" aria-live="polite"></div>
+    <h1 class="sr-only">Akrasia Studio. No escribimos prompts: dirigimos la IA.</h1>
+    <button type="button" class="now bevel" id="now" aria-live="polite">▶ <b id="nowTitle">—</b> · abrir</button>
+    <section class="console" aria-label="Chat con Akrasia AI">
+      <div class="sr-only" id="log" role="log" aria-live="polite"></div>
       <div class="chips" id="chips">
         <button type="button" class="chip bevel" data-go="start">Tengo una idea</button>
         <button type="button" class="chip bevel" data-go="work">Ver trabajos</button>
@@ -162,12 +189,17 @@
         <button type="button" class="chip bevel" data-go="call">Reservar llamada</button>
       </div>
       <form id="form" autocomplete="off">
+        <span class="prompt" aria-hidden="true">›_</span>
         <input id="say" name="say" aria-label="Tu mensaje" placeholder="Cuéntanos qué quieres contar…" maxlength="400">
         <button class="send bevel" type="submit" aria-label="Enviar">↗</button>
       </form>
       <p class="note">Prototipo · los cinco trabajos son DEMO ficticios y el chat no está conectado a la IA.</p>
     </section>
   </div>
+</div>
+<div class="term" id="term" aria-hidden="true">
+  <p class="term-head"><i></i>CANAL · AKRASIA AI<span id="termClock">TX 00</span></p>
+  <div class="term-log" id="termLog"></div>
 </div>
 <div class="fallback"><p>Este navegador no puede mostrar la sala 3D. La web normal sigue funcionando con el chat.</p></div>
 
@@ -184,9 +216,14 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MOBILE = matchMedia('(max-width: 760px)').matches;
+// Portrait phones and tablets get the helix composition; landscape keeps the arc wall.
+const HELIX = innerHeight > innerWidth * 1.05;
+if (HELIX) document.documentElement.classList.add('helix');
+const CORE_Y = HELIX ? 3.35 : 2.05;
 const CYAN = new THREE.Color('#00f0ff');
 const $ = id => document.getElementById(id);
 
@@ -218,7 +255,7 @@ renderer.toneMappingExposure = 1.05;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#01060c');
 scene.fog = new THREE.FogExp2('#01060c', 0.045);
-const camera = new THREE.PerspectiveCamera(MOBILE ? 68 : 50, innerWidth / innerHeight, 0.1, 200);
+const camera = new THREE.PerspectiveCamera(HELIX ? 62 : 50, innerWidth / innerHeight, 0.1, 200);
 
 const clock = new THREE.Clock();
 const uTime = { value: 0 };
@@ -260,7 +297,7 @@ scene.add(dais);
 
 // ── Core: extruded Λ, lattice, rings, beam, particles ───────────────────
 const core = new THREE.Group();
-core.position.y = 2.05;
+core.position.y = CORE_Y;
 scene.add(core);
 const lambda = new THREE.Shape();
 [[0, 1], [.66, -1], [.4, -1], [0, .32], [-.4, -1], [-.66, -1]].forEach(([x, y], i) => i ? lambda.lineTo(x, y) : lambda.moveTo(x, y));
@@ -409,7 +446,7 @@ scene.add(bars);
 
 scene.add(new THREE.AmbientLight('#0b2a36', 1.2));
 const coreLight = new THREE.PointLight('#00f0ff', 30, 14, 1.6);
-coreLight.position.set(0, 2.2, 0);
+coreLight.position.set(0, CORE_Y + .15, 0);
 scene.add(coreLight);
 
 // ── Labels drawn to canvas ──────────────────────────────────────────────
@@ -444,7 +481,7 @@ WORKS.forEach((work, i) => {
     transparent: true, side: THREE.DoubleSide, toneMapped: false,
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
     fragmentShader: `uniform sampler2D map; uniform float uTime, uHover, uOn, uDim, uSeed; varying vec2 vUv;
-      void main(){ vec2 uv = vUv; float glitch = step(.985, fract(sin(floor(uTime * 9. + uSeed) * 91.3) * 43758.5)) * (1. - uHover);
+      void main(){ float facing = gl_FrontFacing ? 1. : .16; vec2 uv = vUv; if (!gl_FrontFacing) uv.x = 1. - uv.x; float glitch = step(.985, fract(sin(floor(uTime * 9. + uSeed) * 91.3) * 43758.5)) * (1. - uHover);
         uv.x += glitch * (fract(sin(uv.y * 80. + uTime) * 999.) - .5) * .04;
         vec3 c = texture2D(map, uv).rgb;
         float scan = .9 + .1 * sin(uv.y * 420. - uTime * 6.);
@@ -452,7 +489,7 @@ WORKS.forEach((work, i) => {
         float edge = smoothstep(0., .02, uv.x) * smoothstep(1., .98, uv.x) * smoothstep(0., .03, uv.y) * smoothstep(1., .97, uv.y);
         float on = smoothstep(uSeed * .1, uSeed * .1 + .35, uOn);
         float flick = on < .99 ? step(.4, fract(sin(uTime * 40.) * 43.)) : 1.;
-        gl_FragColor = vec4(tint * scan * (.78 + uHover * .14) * uDim, (.88 + uHover * .12) * edge * on * flick * (.45 + .55 * uDim)); }`,
+        gl_FragColor = vec4(tint * scan * (.78 + uHover * .14) * uDim * facing, (.88 + uHover * .12) * edge * on * flick * (.45 + .55 * uDim) * mix(.5, 1., facing)); }`,
   });
   const mesh = new THREE.Mesh(geo, mat);
   const reflection = new THREE.Mesh(geo, new THREE.ShaderMaterial({
@@ -473,18 +510,74 @@ WORKS.forEach((work, i) => {
   label.position.set(0, -H / 2 - .42, .2);
   const group = new THREE.Group();
   group.add(mesh, frame, label);
-  const theta = (i - (WORKS.length - 1) / 2) * SPREAD;
-  group.position.set(Math.sin(theta) * ARC, 2.35 + Math.cos(i * 1.3) * .12, -Math.cos(theta) * ARC);
-  group.rotation.y = -theta;
+  let theta, baseY;
+  if (HELIX) {
+    // Double-helix: each screen a step higher and 72° further round, facing outwards.
+    theta = Math.PI + i * (Math.PI * 2 / WORKS.length);
+    baseY = .95 + i * 1.18;
+    group.position.set(Math.sin(theta) * 4.3, baseY, -Math.cos(theta) * 4.3);
+    group.rotation.y = -theta + Math.PI;
+    mirror.visible = false;
+  } else {
+    theta = (i - (WORKS.length - 1) / 2) * SPREAD;
+    baseY = 2.35 + Math.cos(i * 1.3) * .12;
+    group.position.set(Math.sin(theta) * ARC, baseY, -Math.cos(theta) * ARC);
+    group.rotation.y = -theta;
+  }
   scene.add(group);
   mesh.userData = { kind: 'work', index: i };
   pickables.push(mesh);
-  screens.push({ group, mesh, mat, lineMat, video, theta, hover: 0, mirror });
+  screens.push({ group, mesh, mat, lineMat, video, theta, baseY, hover: 0, mirror });
 });
+
+// ── Holographic headline: a curved band over the wall (arc) or a rotating ring (helix)
+function headlineTexture() {
+  const c = document.createElement('canvas'); const g = c.getContext('2d');
+  if (HELIX) {
+    // Canvas aspect matches the band (circumference 20.7 : height .62), two repetitions round the ring.
+    c.width = 4096; c.height = 124; g.textBaseline = 'middle';
+    const parts = [['NO ESCRIBIMOS PROMPTS.', '#f2fbff'], ['  DIRIGIMOS LA IA.', '#00f0ff'], ['   ◆   ', '#00f0ff']];
+    g.font = '800 100px Oxanium, sans-serif';
+    const measured = parts.reduce((w, [txt]) => w + g.measureText(txt).width, 0);
+    const size = Math.min(84, 100 * (c.width / 2 * .97) / measured);
+    g.font = `800 ${size}px Oxanium, sans-serif`;
+    const unit = parts.reduce((w, [txt]) => w + g.measureText(txt).width, 0);
+    let x = (c.width / 2 - unit) / 2;
+    for (let k = 0; k < 2; k++) { for (const [txt, col] of parts) { g.shadowColor = col; g.shadowBlur = col === '#00f0ff' ? 16 : 6; g.fillStyle = col; g.fillText(txt, x, 64); x += g.measureText(txt).width; } x += c.width / 2 - unit; }
+  } else {
+    c.width = 2048; c.height = 560; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = '800 150px Oxanium, sans-serif'; g.fillStyle = '#f2fbff'; g.shadowColor = '#7ff6ff'; g.shadowBlur = 10; g.fillText('NO ESCRIBIMOS PROMPTS.', 1024, 150);
+    g.font = '800 196px Oxanium, sans-serif'; g.fillStyle = '#00f0ff'; g.shadowColor = '#00f0ff'; g.shadowBlur = 30; g.fillText('DIRIGIMOS LA IA.', 1024, 370);
+    g.shadowBlur = 0; g.fillStyle = '#00f0ff'; g.fillRect(824, 512, 400, 6);
+  }
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; tx.wrapS = THREE.RepeatWrapping; return tx;
+}
+const uSign = { value: 1 };
+const signGeo = HELIX
+  ? new THREE.CylinderGeometry(3.3, 3.3, .62, 160, 1, true)
+  : new THREE.CylinderGeometry(ARC + .35, ARC + .35, 2.15, 120, 1, true, Math.PI - .82, 1.64);
+const signMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
+  uniforms: { map: { value: headlineTexture() }, uTime, uBoot, uSign, uInside: { value: HELIX ? 0 : 1 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+  fragmentShader: `uniform sampler2D map; uniform float uTime, uBoot, uSign, uInside; varying vec2 vUv;
+    void main(){ vec2 uv = vUv; if (uInside > .5) uv.x = 1. - uv.x;
+      float facing = gl_FrontFacing ? 1. : 0.; if (uInside > .5) facing = gl_FrontFacing ? .22 : 1.;
+      float reveal = smoothstep(.55, .95, uBoot);
+      float row = floor(uv.y * 24.);
+      float jitter = (fract(sin(row * 91.7 + floor(uTime * 14.)) * 4375.) - .5) * (1. - reveal) * .25;
+      jitter += step(.993, fract(sin(floor(uTime * 6.) * 13.1) * 917.)) * (fract(sin(row * 7.) * 99.) - .5) * .03;
+      vec4 c = texture2D(map, vec2(uv.x + jitter, uv.y));
+      float scan = .78 + .22 * sin(uv.y * 900. - uTime * 8.);
+      gl_FragColor = vec4(c.rgb * (uInside > .5 ? 1.35 : 1.05) * scan, c.a * reveal * uSign * facing); }`,
+});
+const sign = new THREE.Mesh(signGeo, signMat);
+sign.position.y = HELIX ? CORE_Y + 2.25 : 4.85;
+scene.add(sign);
 
 // ── Service nodes orbiting the core ─────────────────────────────────────
 const orbit = new THREE.Group();
-orbit.position.y = 2.05;
+orbit.position.y = CORE_Y;
 orbit.rotation.x = .28;
 scene.add(orbit);
 const nodes = SERVICES.map((name, i) => {
@@ -523,23 +616,38 @@ const lens = new ShaderPass({
 composer.addPass(lens);
 composer.addPass(new OutputPass());
 
+// ── Holographic terminal in the scene (real DOM text via CSS3D) ─────────
+const cssRenderer = new CSS3DRenderer();
+cssRenderer.setSize(innerWidth, innerHeight);
+cssRenderer.domElement.id = 'css3d';
+document.body.append(cssRenderer.domElement);
+const cssScene = new THREE.Scene();
+const termEl = $('term');
+const term = new CSS3DObject(termEl);
+const TERM_SCALE = HELIX ? .0066 : .0063;
+term.scale.setScalar(TERM_SCALE);
+cssScene.add(term);
+const termAnchor = HELIX ? null : new THREE.Vector3(-3.05, 2.55, 1.55);
+if (termAnchor) { term.position.copy(termAnchor); term.rotation.y = .5; }
+
 // ── Camera rig: orbit by drag, parallax by pointer, fly-to on focus ─────
-const rig = { az: 0, azTarget: 0, el: .2, dist: MOBILE ? 11 : 8.6, look: new THREE.Vector3(0, 2.2, 0) };
+const rig = { az: 0, azTarget: 0, el: HELIX ? .1 : .2, dist: HELIX ? 12.6 : 8.6, look: new THREE.Vector3(0, CORE_Y, 0) };
+let lastInput = 0;
 const desired = { pos: new THREE.Vector3(), look: new THREE.Vector3(0, 2, 0) };
 const mouse = new THREE.Vector2(), parallax = new THREE.Vector2();
 let focused = null, dragging = false, dragX = 0, moved = 0, focusFade = 0;
 
 function rigPosition(out) {
   const r = rig.dist;
-  return out.set(Math.sin(rig.az) * r * Math.cos(rig.el), 2 + Math.sin(rig.el) * r, Math.cos(rig.az) * r * Math.cos(rig.el));
+  return out.set(Math.sin(rig.az) * r * Math.cos(rig.el), (HELIX ? CORE_Y : 2) + Math.sin(rig.el) * r, Math.cos(rig.az) * r * Math.cos(rig.el));
 }
-camera.position.copy(rigPosition(new THREE.Vector3()).multiplyScalar(REDUCED ? 1 : 1.8)).setY(REDUCED ? 3.4 : 7);
+camera.position.copy(rigPosition(new THREE.Vector3()).multiplyScalar(REDUCED ? 1 : 1.8)).setY(REDUCED ? 3.4 : (HELIX ? 11 : 7));
 
 const raycaster = new THREE.Raycaster();
 let hovered = null;
 canvas.addEventListener('pointermove', e => {
   mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  if (dragging) { const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); rig.azTarget -= dx * .005; }
+  if (dragging) { const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); rig.azTarget -= dx * (HELIX ? .009 : .005); lastInput = performance.now(); }
 });
 canvas.addEventListener('pointerdown', e => { dragging = true; dragX = e.clientX; moved = 0; canvas.setPointerCapture(e.pointerId); });
 canvas.addEventListener('pointerup', e => {
@@ -551,7 +659,7 @@ canvas.addEventListener('pointerup', e => {
   if (hit) hit.object.userData.kind === 'work' ? focusWork(hit.object.userData.index) : focusService(hit.object.userData.index);
   else if (raycaster.ray.intersectPlane(floorPlane, floorHit)) { uRippleC.value.set(floorHit.x, floorHit.z); uRippleT.value = uTime.value; sfx.blip(420, .18, .05); }
 });
-canvas.addEventListener('wheel', e => { rig.dist = THREE.MathUtils.clamp(rig.dist + e.deltaY * .004, 6.5, 13); }, { passive: true });
+canvas.addEventListener('wheel', e => { rig.dist = THREE.MathUtils.clamp(rig.dist + e.deltaY * .004, 6.5, 15); }, { passive: true });
 
 // ── Optional interface sound (Web Audio, off by default) ────────────────
 const sfx = {
@@ -570,7 +678,7 @@ const sfx = {
   toggle() {
     this.init(); this.on = !this.on; this.ctx.resume();
     this.master.gain.setTargetAtTime(this.on ? .55 : 0, this.ctx.currentTime, .5);
-    const b = $('sound'); b.setAttribute('aria-pressed', String(this.on)); b.textContent = this.on ? 'Sonido · on' : 'Sonido · off';
+    $('sound').setAttribute('aria-pressed', String(this.on)); $('soundState').textContent = this.on ? 'on' : 'off';
     if (this.on) this.blip(880, .12, .06);
   },
   blip(freq = 1500, dur = .05, vol = .035) {
@@ -598,7 +706,7 @@ let thinkUntil = 0;
 const card = { root: $('focus'), eyebrow: $('fEyebrow'), title: $('fTitle'), meta: $('fMeta'), body: $('fBody') };
 function showCard(eyebrow, title, meta, body) {
   card.eyebrow.textContent = eyebrow; card.title.textContent = title; card.meta.textContent = meta; card.body.textContent = body;
-  card.root.classList.add('on'); $('thesis').classList.add('away'); $('mode').textContent = 'FOCO';
+  card.root.classList.add('on'); $('mode').textContent = 'FOCO'; termEl.classList.add('dim');
 }
 function focusWork(i) {
   sfx.sweep();
@@ -606,9 +714,15 @@ function focusWork(i) {
   focused = { kind: 'work', index: i };
   const dir = new THREE.Vector3(Math.sin(s.theta), 0, -Math.cos(s.theta));
   const right = new THREE.Vector3(Math.cos(s.theta), 0, Math.sin(s.theta));
-  const shift = MOBILE ? 0 : 1.15;
-  desired.look.copy(s.group.position).addScaledVector(right, shift).setY(s.group.position.y - (MOBILE ? .6 : 0));
-  desired.pos.copy(s.group.position).addScaledVector(dir, MOBILE ? -6.2 : -5).addScaledVector(right, shift).setY(s.group.position.y + .1);
+  if (HELIX) {
+    // Stand outside the helix in front of the screen; keep it in the upper half above the card.
+    desired.look.copy(s.group.position).setY(s.baseY - 1.1);
+    desired.pos.copy(s.group.position).addScaledVector(dir, 6.4).setY(s.baseY + .2);
+  } else {
+    const shift = MOBILE ? 0 : 1.15;
+    desired.look.copy(s.group.position).addScaledVector(right, shift).setY(s.group.position.y - (MOBILE ? .6 : 0));
+    desired.pos.copy(s.group.position).addScaledVector(dir, MOBILE ? -6.2 : -5).addScaledVector(right, shift).setY(s.group.position.y + .1);
+  }
   const w = WORKS[i];
   showCard(`PANTALLA ${String(i + 1).padStart(2, '0')} · DEMO`, w.title.replace('DEMO · ', ''), w.meta, w.body);
 }
@@ -617,25 +731,37 @@ function focusService(i) {
   focused = { kind: 'service', index: i };
   showCard('SERVICIO EN ÓRBITA', SERVICES[i], `NODO ${String(i + 1).padStart(2, '0')} / 06`, 'Pulsa «Quiero algo así» y el agente te explicará cómo lo abordaríamos para tu proyecto.');
 }
-function unfocus() { focused = null; card.root.classList.remove('on'); $('mode').textContent = 'EXPLORAR'; }
+function unfocus() {
+  if (focused?.kind === 'work' && HELIX) rig.azTarget = rig.az = Math.atan2(camera.position.x, camera.position.z);
+  focused = null; card.root.classList.remove('on'); $('mode').textContent = 'EXPLORAR'; termEl.classList.remove('dim');
+}
 $('fBack').addEventListener('click', unfocus);
 $('fAsk').addEventListener('click', () => {
   const subject = focused?.kind === 'work' ? WORKS[focused.index].title : SERVICES[focused?.index ?? 0];
   say(`Quiero algo como «${subject}».`);
 });
 
-const log = $('log');
+const log = $('log'), termLog = $('termLog');
+let tx = 0;
 function push(who, text, user = false) {
   if (!user) { thinkUntil = uTime.value + 1.4; sfx.blip(1200, .08, .03); }
-  const p = document.createElement('p'); p.className = 'msg' + (user ? ' user' : '');
+  // Screen readers get the plain transcript.
+  const plain = document.createElement('p'); plain.textContent = `${who}: ${text}`; log.append(plain);
+  while (log.children.length > 6) log.firstElementChild.remove();
+  // The hologram keeps the last three lines; older ones fade.
+  [...termLog.children].forEach(el => el.classList.add('old'));
+  termLog.querySelector('.caret')?.remove();
+  const p = document.createElement('p'); p.className = 'tmsg' + (user ? ' user' : '');
   const w = document.createElement('span'); w.className = 'who'; w.textContent = who; p.append(w);
-  const t = document.createElement('span'); p.append(t); log.append(p);
-  while (log.children.length > 4) log.firstElementChild.remove();
-  if (user || REDUCED) { t.textContent = text; log.scrollTop = log.scrollHeight; return; }
-  const G = 'ΛΔ01<>/#*+=_'; const start = performance.now(), dur = 300 + text.length * 9;
+  const t = document.createElement('span'); p.append(t); termLog.append(p);
+  while (termLog.children.length > 3) termLog.firstElementChild.remove();
+  $('termClock').textContent = 'TX ' + String(++tx).padStart(2, '0');
+  const caret = () => { const c = document.createElement('i'); c.className = 'caret'; p.append(c); };
+  if (user || REDUCED) { t.textContent = text; if (!user) caret(); return; }
+  const G = 'ΛΔ01<>/#*+=_'; const start = performance.now(), dur = 300 + text.length * 14;
   (function step(now) { const k = Math.min(1, (now - start) / dur), n = Math.floor(text.length * k);
-    let out = text.slice(0, n); for (let i = n; i < Math.min(text.length, n + 8); i++) out += /\s/.test(text[i]) ? ' ' : G[(Math.random() * G.length) | 0];
-    t.textContent = out; log.scrollTop = log.scrollHeight; if (k < 1) requestAnimationFrame(step); else t.textContent = text; })(start);
+    let out = text.slice(0, n); for (let i = n; i < Math.min(text.length, n + 6); i++) out += /\s/.test(text[i]) ? ' ' : G[(Math.random() * G.length) | 0];
+    t.textContent = out; if (k < 1) requestAnimationFrame(step); else { t.textContent = text; caret(); } })(start);
 }
 const REPLIES = {
   start: 'Perfecto. Cuéntame qué quieres contar, para quién y dónde se va a ver. Con eso te propongo cómo lo produciríamos.',
@@ -645,17 +771,18 @@ const REPLIES = {
   call: 'En la web real abro aquí la agenda para elegir día y hora de la videollamada.',
   free: 'En la web real te responde Akrasia AI. Este prototipo solo enseña la sala de mando.',
 };
-function say(text) { push('TÚ', text, true); setTimeout(() => push('AKRASIA AI', REPLIES.free), 450); $('thesis').classList.add('away'); }
+function say(text) { push('TÚ', text, true); setTimeout(() => push('AKRASIA AI', REPLIES.free), 450); talked = true; }
 let tour = null;
+let talked = false;
 let servicesMode = false;
 function act(key) {
-  $('thesis').classList.add('away');
+  talked = true;
   const labels = { start: 'Tengo una idea', work: 'Ver trabajos', services: 'Servicios', contact: 'Contacto', call: 'Reservar llamada' };
   push('TÚ', labels[key], true);
   setTimeout(() => push('AKRASIA AI', REPLIES[key]), 400);
   clearInterval(tour);
-  if (key === 'work') { let i = 0; focusWork(0); tour = setInterval(() => { i++; if (i >= WORKS.length || !focused) { clearInterval(tour); return; } focusWork(i); }, 5200); }
-  else if (key === 'services') { unfocus(); servicesMode = true; rig.dist = MOBILE ? 9 : 7; }
+  if (key === 'work') { let i = 0; focusWork(HELIX ? frontIndex : 0); if (HELIX) { clearInterval(tour); return; } tour = setInterval(() => { i++; if (i >= WORKS.length || !focused) { clearInterval(tour); return; } focusWork(i); }, 5200); }
+  else if (key === 'services') { unfocus(); servicesMode = true; rig.dist = HELIX ? 10.5 : 7; }
   else unfocus();
 }
 document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => act(b.dataset.go)));
@@ -670,6 +797,9 @@ $('clock').textContent = clockFmt.format(new Date());
 const bootStart = performance.now();
 setTimeout(() => $('boot').classList.add('done'), REDUCED ? 0 : 900);
 setTimeout(() => { $('hint').style.opacity = 0; }, 9000);
+setTimeout(() => push('AKRASIA AI', 'Sistema en línea. Cuéntame qué quieres contar —un spot, un videoclip, contenido para redes— y te explico cómo lo produciríamos.'), REDUCED ? 0 : 3000);
+let frontIndex = 0;
+$('now').addEventListener('click', () => focusWork(frontIndex));
 let started = false;
 function startVideos() {
   if (started) return; started = true;
@@ -693,7 +823,7 @@ function frame() {
   uThink.value += ((t < thinkUntil ? 1 : 0) - uThink.value) * Math.min(1, dt * 5);
   lattice.rotation.y = -t * .12 * speed; lattice.rotation.x = t * .05 * speed;
   rings.forEach((r, i) => { r.rotation.z += dt * (.25 + i * .18) * (i % 2 ? -1 : 1) * speed * (1 + uThink.value * 3); });
-  core.position.y = 2.05 + Math.sin(t * 1.1) * .06 * speed;
+  core.position.y = CORE_Y + Math.sin(t * 1.1) * .06 * speed;
   focusFade += ((focused?.kind === 'work' ? 1 : 0) - focusFade) * Math.min(1, dt * 3);
   const recede = 1 - focusFade * .92;
   core.scale.setScalar(THREE.MathUtils.lerp(.001, 1, THREE.MathUtils.smoothstep(boot, .1, .7)) * recede);
@@ -709,14 +839,19 @@ function frame() {
   cursorRing.visible = !!overFloor;
   if (overFloor) { cursorRing.position.x += (floorHit.x - cursorRing.position.x) * Math.min(1, dt * 14); cursorRing.position.z += (floorHit.z - cursorRing.position.z) * Math.min(1, dt * 14); cursorRing.rotation.z = -t * .8; }
   screens.forEach((s, i) => {
-    const target = (hovered === s.mesh || (focused?.kind === 'work' && focused.index === i)) ? 1 : 0;
+    const target = (hovered === s.mesh || (focused?.kind === 'work' && focused.index === i) || (HELIX && !focused && i === frontIndex)) ? 1 : 0;
     s.hover += (target - s.hover) * Math.min(1, dt * 6);
     s.mat.uniforms.uHover.value = s.hover;
     s.mat.uniforms.uOn.value = THREE.MathUtils.clamp((boot - .35) * 1.8, 0, 1);
-    s.group.position.y = 2.35 + Math.cos(i * 1.3) * .12 + Math.sin(t * .7 + i) * .05 * speed;
+    s.group.position.y = s.baseY + Math.sin(t * .7 + i) * .05 * speed;
     s.group.scale.setScalar(1 + s.hover * .04);
     const dimTarget = focused?.kind === 'work' && focused.index !== i ? .28 : 1;
     s.mat.uniforms.uDim.value += (dimTarget - s.mat.uniforms.uDim.value) * Math.min(1, dt * 4);
+    if (HELIX) {
+      const gx = s.group.position.x, gz = s.group.position.z;
+      s.group.rotation.y = Math.atan2(camera.position.x - gx, camera.position.z - gz);
+      if (!focused) s.mat.uniforms.uDim.value += (((gx * camera.position.x + gz * camera.position.z) < 0 ? .42 : 1) - s.mat.uniforms.uDim.value) * Math.min(1, dt * 4);
+    }
     s.mirror.position.set(s.group.position.x, -s.group.position.y, s.group.position.z);
     s.mirror.rotation.y = s.group.rotation.y;
     s.mirror.scale.set(s.group.scale.x, -s.group.scale.y, s.group.scale.z);
@@ -734,11 +869,25 @@ function frame() {
 
   // camera
   parallax.lerp(mouse, Math.min(1, dt * 2.5));
+  if (HELIX && !focused && !dragging && performance.now() - lastInput > 2500 && !REDUCED) rig.azTarget += dt * .12;
   rig.az += (rig.azTarget - rig.az) * Math.min(1, dt * 4);
+  if (HELIX) {
+    // Which screen is facing the viewer right now?
+    let best = 1e9;
+    screens.forEach((s, i) => { const d = Math.abs(Math.atan2(Math.sin(s.theta - Math.PI - (-rig.az) ), Math.cos(s.theta - Math.PI - (-rig.az)))); if (d < best) { best = d; frontIndex = i; } });
+    $('nowTitle').textContent = WORKS[frontIndex].title;
+    sign.rotation.y -= dt * .05 * speed;
+    // Terminal floats between viewer and core, low, always facing the viewer.
+    const ax = Math.sin(rig.az), az = Math.cos(rig.az);
+    term.position.set(ax * 5.2, 1.05, az * 5.2);
+    term.lookAt(camera.position.x, term.position.y, camera.position.z);
+  }
+  uSign.value += ((focused ? .25 : talked ? .7 : 1) - uSign.value) * Math.min(1, dt * 2);
   if (!focused) {
     rigPosition(desired.pos);
     desired.pos.x += parallax.x * .6; desired.pos.y += parallax.y * .35;
-    desired.look.set(parallax.x * .4, 2.25 + parallax.y * .2, -1.2);
+    if (HELIX) desired.look.set(parallax.x * .3, CORE_Y - .7 + parallax.y * .2, 0);
+    else desired.look.set(parallax.x * .4, 2.25 + parallax.y * .2, -1.2);
   }
   const ease = Math.min(1, dt * (focused ? 3 : 1.6));
   camera.position.lerp(desired.pos, ease);
@@ -747,17 +896,19 @@ function frame() {
   $('az').textContent = (((THREE.MathUtils.radToDeg(Math.atan2(camera.position.x, camera.position.z)) % 360) + 360) % 360).toFixed(1).padStart(5, '0') + '°';
 
   composer.render();
+  cssRenderer.render(cssScene, camera);
 }
 renderer.setAnimationLoop(frame);
 document.addEventListener('visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : frame));
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); cssRenderer.setSize(innerWidth, innerHeight);
   lens.uniforms.uRes.value.set(innerWidth, innerHeight);
 });
 document.fonts?.ready.then(() => {
   // Re-draw labels once the brand fonts are available.
+  signMat.uniforms.map.value.dispose(); signMat.uniforms.map.value = headlineTexture();
   screens.forEach((s, i) => { const lbl = s.group.children[2]; lbl.material.map.dispose(); lbl.material.map = labelTexture([WORKS[i].title, `${String(i + 1).padStart(2, '0')} · ${WORKS[i].meta}`]); });
   nodes.forEach((n, i) => { n.tag.material.map.dispose(); n.tag.material.map = labelTexture([SERVICES[i]], { width: 768, height: 96, size: 38 }); n.tag.material.needsUpdate = true; });
 });
