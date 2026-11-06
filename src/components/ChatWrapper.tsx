@@ -249,6 +249,13 @@ export function ChatDesktop({ onClose, autoFocus = false, immersive = false }: {
       }}>
       <div ref={contentRef} className="chat-transcript" data-welcome-only={immersive && messages.length === 1 && !isTyping}>
       {!immersive && intro}
+      {immersive && messages.length === 1 && !isTyping && !meetingGuideOpen && <div className="hub-hero" lang={lang}>
+        <p className="hub-hero__eyebrow"><span>AKRASIA STUDIO</span><i aria-hidden="true" /></p>
+        <p className="hub-hero__title">
+          <span className="hub-hero__line">{english ? 'We don\'t prompt.' : 'No escribimos prompts.'}</span>
+          <span className="hub-hero__line hub-hero__line--accent">{english ? 'We direct AI.' : 'Dirigimos la IA.'}</span>
+        </p>
+      </div>}
       {messages.map((message, index) => message.id === 0 && !message.excludeFromContext && !message.operationId && (!immersive || messages.length > 1) ? null : <div key={message.id} className={message.role === 'agent' ? 'chat-bubble-agent' : 'chat-bubble-user'}>
         <p className="chat-role">{message.role === 'agent' ? (immersive ? 'AKRASIA AI' : t('chat.agent')) : t('chat.you')}</p>
         {index === galleryReply ? <>
