@@ -109,7 +109,8 @@ try {
       equal(data.visitorName, `${label}-name-private`);
       equal(data.visitorCompany, `${label}-company-private`);
       ok(JSON.stringify(data).includes(`${label}-history-private`));
-      ok(!JSON.stringify(data).includes(`${foreign}-`), 'Other visitor data never crosses the response');
+      // csrfToken is random base64url and may contain e.g. "B-" by chance; it carries no visitor data.
+      ok(!JSON.stringify({ ...data, csrfToken: undefined }).includes(`${foreign}-`), 'Other visitor data never crosses the response');
       ok(!JSON.stringify(data).includes('synthetic.invalid'), 'History excludes contact address');
       ok(!JSON.stringify(data).includes('internal-'), 'History excludes database metadata and notes');
       for (const conversation of data.conversations) {
