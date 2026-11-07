@@ -1,5 +1,6 @@
 ---
 import PublicPage from '../../components/PublicPage.astro';
+import VideoModalListener from '../../components/VideoModalListener';
 import { getPublicProjects, type PublicProject, isProjectSlug, localProjectImage, PUBLIC_PROJECT_CACHE_HEADERS } from '../../lib/public-projects';
 import { pageLang, languagePath, publicCanonical } from '../../lib/public-ui';
 import { chatIntentPath, chatIntentMessage } from '../../lib/chat-navigation';
@@ -36,17 +37,28 @@ const structuredData = project && projectIsIndexable(project) ? {
   <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'CASE STUDY' : 'CASO DE ESTUDIO'}</p>
   <h1>{name}</h1>
   {project && study ? <>
-    {(project.type || project.duration) && <p class="page-eyebrow" lang="es">{[project.type, project.duration].filter(Boolean).join(' · ')}</p>}
-    {thumbnail && <img class="editorial-image" src={thumbnail} width="960" height="540" alt={english ? `Still from ${project.title}` : `Fotograma de ${project.title}`} decoding="async" />}
-    {!english && project.public_description && <p class="page-intro editorial-intro editorial-copy">{project.public_description}</p>}
-    {study.brief && <section class="content-card glass-panel"><h2>{english ? 'The brief' : 'El encargo'}</h2><p>{study.brief}</p></section>}
-    {study.process && <section class="content-card glass-panel"><h2>{english ? 'The process' : 'El proceso'}</h2><p>{study.process}</p></section>}
-    {study.result && <section class="content-card glass-panel"><h2>{english ? 'The result' : 'El resultado'}</h2><p>{study.result}</p></section>}
-    {study.services.length > 0 && <section class="content-card glass-panel"><h2>{english ? 'Services involved' : 'Servicios del proyecto'}</h2><ul class="editorial-list">{study.services.map(service => <li>{service}</li>)}</ul><a class="editorial-text-link" href={languagePath('/servicios', lang)}>{english ? 'Explore the services' : 'Conocer los servicios'}</a></section>}
-    <div class="editorial-actions">
-      <a class="primary-action" href={chatIntentPath(`project:${project.slug}`, lang)} data-chat-message={chatIntentMessage(`project:${project.slug}`, lang)}>{english ? 'Discuss this project in the chat' : 'Hablar de este proyecto en el chat'}</a>
-      {project.video_url && <a class="secondary-action" href={project.video_url} target="_blank" rel="noopener noreferrer">{english ? 'Open the published video' : 'Abrir el vídeo publicado'} <span aria-hidden="true">↗</span></a>}
+    {(project.type || project.duration || project.category) && <ul class="hud-chips" lang="es">{[project.category, project.type, project.duration].filter(Boolean).map(item => <li>{item}</li>)}</ul>}
+    <div class="case-hero">
+      {thumbnail && <figure class="case-media">
+        <img src={thumbnail} width="960" height="540" alt={english ? `Still from ${project.title}` : `Fotograma de ${project.title}`} decoding="async" />
+        {project.video_url && <a class="case-media__play" href={project.video_url} target="_blank" rel="noopener noreferrer" data-video-open data-project-id={project.id} data-project-video={project.video_url} data-project-title={project.title}><span aria-hidden="true">▶</span> {english ? 'Play' : 'Ver vídeo'}</a>}
+      </figure>}
+      <div class="case-summary">
+        {!english && project.public_description && <p class="case-lead editorial-copy">{project.public_description}</p>}
+        {english && study.brief && <p class="case-lead">{study.brief}</p>}
+        {study.services.length > 0 && <div class="case-services"><p class="hud-label">{english ? 'Services' : 'Servicios'}</p><ul class="hud-chips">{study.services.map(service => <li>{service}</li>)}</ul></div>}
+        <div class="editorial-actions">
+          <a class="primary-action" href={chatIntentPath(`project:${project.slug}`, lang)} data-chat-message={chatIntentMessage(`project:${project.slug}`, lang)}>{english ? 'Discuss it in the chat' : 'Hablar de este proyecto'} <span aria-hidden="true">↗</span></a>
+          <a class="secondary-action" href={languagePath('/servicios', lang)}>{english ? 'Services' : 'Ver servicios'}</a>
+        </div>
+      </div>
     </div>
+    <div class="case-grid">
+      {study.brief && <section class="content-card"><p class="hud-label">01 // {english ? 'Brief' : 'Encargo'}</p><p>{study.brief}</p></section>}
+      {study.process && <section class="content-card"><p class="hud-label">02 // {english ? 'Process' : 'Proceso'}</p><p>{study.process}</p></section>}
+      {study.result && <section class="content-card"><p class="hud-label">03 // {english ? 'Result' : 'Resultado'}</p><p>{study.result}</p></section>}
+    </div>
+    <VideoModalListener client:idle />
   </> : <section class="content-card glass-panel" role="status"><p>{unavailable ? (english ? 'Project information is temporarily unavailable. Please try again later or contact the studio.' : 'La información de este proyecto no está disponible temporalmente. Puedes intentarlo más tarde o contactar con el estudio.') : (english ? 'There is no published project at this address.' : 'No hay un proyecto publicado en esta dirección.')}</p><a class="secondary-action" href={languagePath('/contacto', lang)}>{english ? 'Contact the studio' : 'Contactar con el estudio'}</a></section>}
   <a class="editorial-text-link" href={languagePath('/proyectos', lang)}>{english ? 'All published projects' : 'Todos los proyectos publicados'}</a>
 </PublicPage>

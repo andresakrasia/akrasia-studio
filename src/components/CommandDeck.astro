@@ -1,0 +1,71 @@
+---
+// 3D home hub. Server-side it only emits the data and a tiny capability check;
+// Three.js is downloaded on demand when the device can run it. Without it the
+// classic home (already rendered below) stays exactly as it is.
+import { loadPublicServices, type PublicService } from '../lib/public-content';
+import type { PublicProject } from '../lib/public-projects';
+import { pageLang } from '../lib/public-ui';
+import '../styles/studio-deck.css';
+interface Props { projects: PublicProject[] }
+const { projects } = Astro.props;
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+let services: PublicService[] = [];
+try { services = await loadPublicServices(); } catch { services = []; }
+const deckData = {
+  lang,
+  projects: projects.map(p => ({
+    id: p.id, slug: p.slug, title: p.title, category: p.category, duration: p.duration,
+    description: p.public_description, thumbnail: p.thumbnail, video_url: p.video_url,
+  })),
+  services: services.map(s => ({ slug: s.slug, title: english ? (s.title_en || s.title) : s.title, summary: english ? (s.description_en || s.description) : s.description })),
+};
+---
+<script is:inline>
+  // Decide before first paint so the page doesn't flash the classic layout.
+  (function () {
+    try {
+      var d = document.documentElement, n = navigator;
+      if (/[?&]deck=0\b/.test(location.search)) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (n.connection && n.connection.saveData) return;
+      if (n.deviceMemory && n.deviceMemory < 3) return;
+      var gl = document.createElement('canvas').getContext('webgl2');
+      if (!gl) return;
+      d.classList.add('deck-on');
+    } catch (e) { /* classic home */ }
+  })();
+</script>
+<div id="deck-root" aria-hidden="false"></div>
+<script type="application/json" id="deck-data" set:html={JSON.stringify(deckData).replace(/</g, '\\u003c')} />
+<script>
+  const html = document.documentElement;
+  if (html.classList.contains('deck-on')) {
+    const root = document.getElementById('deck-root');
+    const data = JSON.parse(document.getElementById('deck-data')?.textContent || '{}');
+    let deck: { dispose(): void } | null = null;
+    let portrait = innerHeight > innerWidth * 1.05;
+    const start = async () => {
+      try {
+        const { createDeck } = await import('../lib/command-deck.js');
+        if (root) deck = createDeck(root, data);
+        html.classList.add('deck-ready');
+      } catch (error) {
+        // Any failure falls back to the classic home.
+        html.classList.remove('deck-on', 'deck-ready');
+        console.warn('Command deck unavailable', error);
+      }
+    };
+    start();
+    // Rebuild the scene when the device turns between portrait and landscape.
+    let timer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const next = innerHeight > innerWidth * 1.05;
+        if (next === portrait || !deck) return;
+        portrait = next; deck.dispose(); deck = null; start();
+      }, 350);
+    });
+  }
+</script>

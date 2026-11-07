@@ -4,24 +4,31 @@ import Header from './Header.astro';
 import Footer from './Footer.astro';
 import ChatWrapper from './ChatWrapper';
 import { pageLang, languagePath, type PublicLang } from '../lib/public-ui';
+import '../styles/studio-subpage.css';
 interface Props { title: string; description: string; noindex?: boolean; bilingual?: boolean; lang?: PublicLang; structuredData?: Record<string, unknown> | Record<string, unknown>[] }
 const { title, description, noindex = false, bilingual = true, lang = pageLang(Astro.url), structuredData } = Astro.props;
 const english = lang === 'en';
+const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const section = ['servicios', 'proyectos', 'contacto'].find(name => path.startsWith(`/${name}`));
+const tabs = [
+  { key: 'servicios', href: '/servicios', label: english ? 'Services' : 'Servicios' },
+  { key: 'proyectos', href: '/proyectos', label: english ? 'Projects' : 'Proyectos' },
+  { key: 'contacto', href: '/contacto', label: english ? 'Contact' : 'Contacto' },
+];
 ---
 <Layout title={title} description={description} lang={lang} noindex={noindex} bilingual={bilingual} structuredData={structuredData}>
   <div class="site-background" aria-hidden="true"><img src="/img/out.webp" width="1360" height="768" alt="" decoding="async" /><div class="hud-scanline"></div></div>
   <Header bilingual={bilingual} />
   <main id="main-content" tabindex="-1" class="public-page">
     <div class="editorial-page">
-      <nav class="editorial-navigation" aria-label={english ? 'Read about the studio' : 'Información del estudio'}>
-        <a href={languagePath('/', lang)}>{english ? 'Studio and chat' : 'Estudio y chat'}</a>
-        <a href={languagePath('/servicios', lang)}>{english ? 'Services' : 'Servicios'}</a>
-        <a href={languagePath('/proyectos', lang)}>{english ? 'Projects' : 'Proyectos'}</a>
-        <a href={languagePath('/contacto', lang)}>{english ? 'Contact' : 'Contacto'}</a>
+      <nav class="editorial-navigation hud-tabs" aria-label={english ? 'Read about the studio' : 'Información del estudio'}>
+        <a class="hud-tabs__back" href={languagePath('/', lang)}><span aria-hidden="true">◂</span> {english ? 'Hub' : 'Hub'}</a>
+        {tabs.map(tab => <a href={languagePath(tab.href, lang)} aria-current={section === tab.key ? 'page' : undefined}>{tab.label}</a>)}
       </nav>
       <slot />
     </div>
   </main>
+  <a class="hub-return" href={languagePath('/', lang)} aria-label={english ? 'Back to the studio hub' : 'Volver al hub del estudio'}><span aria-hidden="true">◂</span><span>{english ? 'Back to hub' : 'Volver al hub'}</span></a>
   <ChatWrapper client:only="react" />
   <Footer />
 </Layout>

@@ -225,6 +225,8 @@ try {
 
   await group('Session/IP windows expire and successful release never refunds request reservations', async () => {
     fixture.reset();
+    // Windows align to the clock; at midday the hourly window can never end with the daily one.
+    fixture.state.now = Math.floor(fixture.state.now / 86400000) * 86400000 + 12 * 3600000;
     const test = setup(app, { CHAT_SESSION_REQUESTS: '1', CHAT_IP_REQUESTS: '1' });
     const cookie = cookieFrom(await success(test));
     equal((await dispatch(test, { cookie })).status, 429);
