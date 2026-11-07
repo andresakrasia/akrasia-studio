@@ -551,7 +551,7 @@ export function createDeck(root, data) {
     termEls.layer ||= document.querySelector('.home-screen .chat-layer');
     termEls.latest = document.querySelector('.home-screen .chat-latest');
     if (termEls.head) quad(termEls.head, 0, 0, TERM.w, TERM.head);
-    quad(minBtn, TERM.w - TERM.head - 2, 0, TERM.head, TERM.head);
+    quad(minBtn, 0, 0, TERM.w, TERM.head);
     if (termEls.layer) quad(termEls.layer, 0, TERM.head, TERM.w, TERM.body);
     if (termEls.latest) quad(termEls.latest, 0, TERM.head + TERM.body + TERM.gap, termEls.latest.offsetWidth || 160, termEls.latest.offsetHeight || 36);
   }
