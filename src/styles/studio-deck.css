@@ -139,7 +139,11 @@ html.deck-on.deck-helix .deck-now { display: inline-flex; position: absolute; le
   font: 600 .62rem/1.2 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 html.deck-on.deck-helix .deck-now b { color: #00f0ff; }
-html.deck-on.deck-helix .deck-hint, html.deck-on.deck-helix .deck-reticle { display: none; }
+html.deck-on.deck-helix .deck-reticle { display: none; }
+/* Portrait: a shorter hint floating just above the terminal strip. */
+html.deck-on.deck-helix .deck-hint { top: auto; bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + min(34vh, 300px) + 46px); padding: 6px 11px; gap: 8px; font-size: .56rem; letter-spacing: .12em; }
+html.deck-on.deck-helix.deck-term-collapsed .deck-hint { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + 46px); }
+html.deck-on.deck-focusing .deck-hint { opacity: 0; }
 html.deck-on.deck-helix .deck-sound { bottom: auto; top: calc(118px + env(safe-area-inset-top, 0px)); left: auto; right: 12px; }
 html.deck-on.deck-helix .deck-sound .deck-long { display: none; }
 html.deck-on.deck-focusing .home-screen :is(.chat-layer, .chat-heading) { opacity: .1; pointer-events: none; transition: opacity .4s; }
@@ -290,3 +294,7 @@ html.deck-on.deck-helix.deck-term-collapsed :is(.home-screen .chat-heading, .dec
   color: #00202a; background: #00f0ff; box-shadow: 0 0 22px #00f0ff80; outline: 2px solid #e8fbff; outline-offset: 3px; }
 .deck-keys button small { font: inherit; opacity: .7; }
 .deck-hud:has(.deck-keys :focus-visible) .deck-hint { opacity: 0; }
+
+/* Portrait: the privacy notice sits under the top strip, so the terminal and the
+   command line stay free while it waits for an answer. */
+html.deck-on.deck-helix #privacyBanner { top: calc(140px + env(safe-area-inset-top, 0px)); bottom: auto; max-height: 46dvh; }

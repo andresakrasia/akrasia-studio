@@ -20,7 +20,7 @@ const COPY = {
     view: 'VER PIEZA', talkProject: 'Hablar de este proyecto', watch: 'Ver vídeo', sheet: 'Ficha',
     wantService: 'Quiero este servicio', serviceSheet: 'Ver servicio', back: 'Volver',
     sound: 'Sonido', on: 'on', off: 'off', open: 'abrir', soon: 'EN PRODUCCIÓN',
-    hint: 'ARRASTRA PARA GIRAR · PULSA UNA PANTALLA O UN SERVICIO', mode: ['EXPLORAR', 'FOCO'],
+    hint: 'ARRASTRA PARA GIRAR · PULSA UNA PANTALLA O UN SERVICIO', hintTouch: 'DESLIZA PARA GIRAR · TOCA UNA PANTALLA', mode: ['EXPLORAR', 'FOCO'],
     deckLabel: 'Sala 3D de Akrasia Studio: núcleo holográfico, pantallas con trabajos y servicios en órbita',
     keysLabel: 'Proyectos y servicios de la sala', project: 'Proyecto', serviceWord: 'Servicio', enter: 'Intro para abrir',
   },
@@ -30,7 +30,7 @@ const COPY = {
     view: 'VIEW PIECE', talkProject: 'Talk about this project', watch: 'Watch video', sheet: 'Case study',
     wantService: 'I want this service', serviceSheet: 'Service page', back: 'Back',
     sound: 'Sound', on: 'on', off: 'off', open: 'open', soon: 'IN PRODUCTION',
-    hint: 'DRAG TO ROTATE · TAP A SCREEN OR A SERVICE', mode: ['EXPLORE', 'FOCUS'],
+    hint: 'DRAG TO ROTATE · TAP A SCREEN OR A SERVICE', hintTouch: 'SWIPE TO ROTATE · TAP A SCREEN', mode: ['EXPLORE', 'FOCUS'],
     deckLabel: 'Akrasia Studio 3D hub: holographic core, screens with work and orbiting services',
     keysLabel: 'Projects and services in the room', project: 'Project', serviceWord: 'Service', enter: 'Enter to open',
   },
@@ -49,6 +49,10 @@ export function createDeck(root, data) {
   const MOBILE = matchMedia('(max-width: 760px)').matches;
   const HELIX = innerHeight > innerWidth * 1.05;
   const CORE_Y = HELIX ? 3.35 : 2.05;
+  // Portrait keeps two bands so touch targets never overlap: the screens ride high and the
+  // services orbit low, just above the chat strip. The camera sits level with the gap between
+  // them, so perspective can't fold one band over the other.
+  const PORTRAIT = { screensY: 4.5, stagger: .22, servicesY: 1.05, gapY: 2.05, signY: 6.5, tagScale: 1.35 };
   document.documentElement.classList.toggle('deck-helix', HELIX);
 
   // ── DOM scaffolding ───────────────────────────────────────────────────
@@ -60,7 +64,7 @@ export function createDeck(root, data) {
   const hud = document.createElement('div');
   hud.className = 'deck-hud';
   hud.innerHTML = `
-    <p class="deck-hint" aria-hidden="true"><span class="deck-hint__ico">⟷</span>${T.hint}</p>
+    <p class="deck-hint" aria-hidden="true"><span class="deck-hint__ico">⟷</span>${HELIX ? T.hintTouch : T.hint}</p>
     <div class="deck-reticle" aria-hidden="true"><span>AZ <b data-az>000.0°</b></span><span>MODO <b data-mode>${T.mode[0]}</b></span><span>SECTOR <b>BCN-01</b></span></div>
     <button type="button" class="deck-sound" aria-pressed="false">♪ <span class="deck-long">${T.sound} · </span><span data-sound>${T.off}</span></button>
     <button type="button" class="deck-now"><span aria-hidden="true">▶</span> <b data-now>—</b> · ${T.open}</button>`;
@@ -311,7 +315,7 @@ export function createDeck(root, data) {
     const group = new THREE.Group(); group.add(mesh, frame, label);
     let theta, baseY;
     if (HELIX) {
-      theta = Math.PI + i * (Math.PI * 2 / count); baseY = .95 + i * (5.9 / Math.max(1, count));
+      theta = Math.PI + i * (Math.PI * 2 / count); baseY = PORTRAIT.screensY + (i % 2 ? PORTRAIT.stagger : -PORTRAIT.stagger);
       group.position.set(Math.sin(theta) * 4.3, baseY, -Math.cos(theta) * 4.3); mirror.visible = false;
     } else {
       theta = (i - (count - 1) / 2) * SPREAD; baseY = 2.35 + Math.cos(i * 1.3) * .12;
@@ -340,28 +344,32 @@ export function createDeck(root, data) {
       }`,
   }));
   const sign = new THREE.Mesh(keep(HELIX ? new THREE.CylinderGeometry(3.3, 3.3, .62, 160, 1, true) : new THREE.CylinderGeometry(ARC + .35, ARC + .35, 2.15, 120, 1, true, Math.PI - .82, 1.64)), signMat);
-  sign.position.y = HELIX ? CORE_Y + 2.25 : 4.85;
-  // The wide headline is drawn after the post-processing so bloom, grain and
-  // lens fringing don't smear the studio's main message.
-  const SIGN_LAYER = 1;
-  if (!HELIX) sign.layers.set(SIGN_LAYER);
+  sign.position.y = HELIX ? PORTRAIT.signY : 4.85;
+  // The headline is drawn after the post-processing so bloom, grain and lens fringing
+  // don't smear the studio's main message. The screens are redrawn depth-only first,
+  // so they still hide the part of the sign that passes behind them.
+  const SIGN_LAYER = 1, OCCLUDER_LAYER = 2;
+  sign.layers.set(SIGN_LAYER);
+  screens.forEach(sc => sc.mesh.layers.enable(OCCLUDER_LAYER));
+  const occluderMat = keep(new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }));
   scene.add(sign);
 
   // ── Services in orbit ─────────────────────────────────────────────────
-  const orbit = new THREE.Group(); orbit.position.y = CORE_Y; orbit.rotation.x = .28; scene.add(orbit);
+  const orbit = new THREE.Group(); orbit.position.y = HELIX ? PORTRAIT.servicesY : CORE_Y; orbit.rotation.x = HELIX ? .06 : .28; scene.add(orbit);
+  const TAG_K = HELIX ? PORTRAIT.tagScale : 1;
   const nodes = services.map((service, i) => {
     const g = new THREE.Group();
     const solid = new THREE.Mesh(keep(new THREE.OctahedronGeometry(.13)), keep(new THREE.MeshBasicMaterial({ color: '#7ff6ff', toneMapped: false })));
     const shell = new THREE.Mesh(keep(new THREE.OctahedronGeometry(.24)), keep(new THREE.MeshBasicMaterial({ color: CYAN, wireframe: true, transparent: true, opacity: .55, toneMapped: false })));
-    const hit = new THREE.Mesh(keep(new THREE.SphereGeometry(.45, 8, 8)), keep(new THREE.MeshBasicMaterial({ visible: false })));
+    const hit = new THREE.Mesh(keep(new THREE.SphereGeometry(HELIX ? .62 : .45, 8, 8)), keep(new THREE.MeshBasicMaterial({ visible: false })));
     const tag = new THREE.Sprite(keep(new THREE.SpriteMaterial({ map: buttonTag(service.title), transparent: true, depthWrite: false, toneMapped: false })));
-    tag.scale.set(1.55, .226, 1); tag.position.y = .44;
+    tag.scale.set(1.55 * TAG_K, .226 * TAG_K, 1); tag.position.y = HELIX ? .52 : .44;
     const pulse = new THREE.Sprite(keep(new THREE.SpriteMaterial({ map: pulseTex, transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending })));
-    const tagHit = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.55, .3)), keep(new THREE.MeshBasicMaterial({ visible: false }))); tagHit.position.y = .44;
+    const tagHit = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.55 * TAG_K, HELIX ? .62 : .3)), keep(new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }))); tagHit.position.y = HELIX ? .5 : .44;
     g.add(solid, shell, hit, tag, pulse, tagHit);
     hit.userData = tagHit.userData = { kind: 'service', index: i }; pickables.push(hit, tagHit);
     orbit.add(g);
-    return { g, solid, shell, tag, pulse, base: (i / Math.max(1, services.length)) * Math.PI * 2, hover: 0, service };
+    return { g, solid, shell, tag, pulse, tagHit, base: (i / Math.max(1, services.length)) * Math.PI * 2, hover: 0, service };
   });
   const orbitPath = new THREE.Mesh(keep(new THREE.TorusGeometry(2.6, .004, 6, 256)), keep(new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .35, toneMapped: false })));
   orbitPath.rotation.x = Math.PI / 2; orbit.add(orbitPath);
@@ -399,11 +407,12 @@ export function createDeck(root, data) {
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 
   // ── Interaction state ─────────────────────────────────────────────────
-  const rig = { az: 0, azTarget: 0, el: HELIX ? .1 : .2, dist: HELIX ? 12.6 : 8.6, look: new THREE.Vector3(0, CORE_Y, 0) };
+  const rig = { az: 0, azTarget: 0, el: HELIX ? 0 : .2, dist: HELIX ? 12.6 : 8.6, look: new THREE.Vector3(0, CORE_Y, 0) };
+  let termCollapsed = false;
   const desired = { pos: new THREE.Vector3(), look: new THREE.Vector3(0, 2, 0) };
   const mouse = new THREE.Vector2(), parallax = new THREE.Vector2();
   let focused = null, dragging = false, dragX = 0, moved = 0, focusFade = 0, lastInput = 0, servicesMode = false, frontIndex = 0, orbitClock = 0, thinking = false, talked = false;
-  const rigPosition = out => out.set(Math.sin(rig.az) * rig.dist * Math.cos(rig.el), (HELIX ? CORE_Y : 2) + Math.sin(rig.el) * rig.dist, Math.cos(rig.az) * rig.dist * Math.cos(rig.el));
+  const rigPosition = out => out.set(Math.sin(rig.az) * rig.dist * Math.cos(rig.el), (HELIX ? PORTRAIT.gapY : 2) + Math.sin(rig.el) * rig.dist, Math.cos(rig.az) * rig.dist * Math.cos(rig.el));
   camera.position.copy(rigPosition(new THREE.Vector3()).multiplyScalar(1.8)).setY(HELIX ? 11 : 7);
   // Conversation view: on arrival the camera sits closer to the chat terminal so its
   // text can be read; exploring the room (drag, zoom, focus) pulls back to the wide view,
@@ -620,6 +629,7 @@ export function createDeck(root, data) {
   minBtn.innerHTML = '<span aria-hidden="true"></span>';
   document.body.append(minBtn);
   const setMin = (min, remember = true) => {
+    termCollapsed = min;
     document.documentElement.classList.toggle('deck-term-collapsed', min);
     minBtn.setAttribute('aria-expanded', String(!min));
     minBtn.setAttribute('aria-label', min ? (EN ? 'Show the chat' : 'Mostrar el chat') : (EN ? 'Minimize the chat' : 'Minimizar el chat'));
@@ -820,7 +830,8 @@ export function createDeck(root, data) {
       n.g.scale.setScalar((1 + n.hover * .6) * THREE.MathUtils.smoothstep(boot, .45, .85));
       n.shell.rotation.y = t * .8; n.solid.rotation.y = -t * 1.2;
       n.tag.material.opacity = (servicesMode ? 1 : .72) + n.hover * .28;
-      n.tag.scale.set(1.55 * (1 + n.hover * .12), .226 * (1 + n.hover * .12), 1);
+      n.tagHit.quaternion.copy(camera.quaternion); // the invisible touch plate always faces the visitor
+      n.tag.scale.set(1.55 * TAG_K * (1 + n.hover * .12), .226 * TAG_K * (1 + n.hover * .12), 1);
       const k = (t * .55 + i * .17) % 1;
       n.pulse.scale.setScalar(.35 + k * .9); n.pulse.material.opacity = (1 - k) * (.55 + n.hover * .4);
     });
@@ -830,7 +841,8 @@ export function createDeck(root, data) {
     if (!focused || focused.kind === 'service') {
       rigPosition(desired.pos);
       desired.pos.x += parallax.x * .6; desired.pos.y += parallax.y * .35;
-      if (HELIX) desired.look.set(parallax.x * .3, CORE_Y - .7 + parallax.y * .2, 0);
+      // Aim so both bands sit in the free area above the chat: lower when the terminal is open.
+      if (HELIX) desired.look.set(parallax.x * .3, (termCollapsed ? 3.05 : .25) + parallax.y * .2, 0);
       else desired.look.set(parallax.x * .4, 2.25 + parallax.y * .2, -1.2);
       chatMix += ((focused ? 0 : chatView) - chatMix) * Math.min(1, dt * 2.2);
       if (chatMix > .001) {
@@ -865,11 +877,12 @@ export function createDeck(root, data) {
     }
     placeTerminal();
     composer.render();
-    if (!HELIX) {
+    {
       // A colour background would force a clear and wipe the composed frame.
       const bg = scene.background; scene.background = null;
-      renderer.autoClear = false; renderer.clearDepth(); camera.layers.set(SIGN_LAYER);
-      renderer.render(scene, camera);
+      renderer.autoClear = false; renderer.clearDepth();
+      camera.layers.set(OCCLUDER_LAYER); scene.overrideMaterial = occluderMat; renderer.render(scene, camera);
+      camera.layers.set(SIGN_LAYER); scene.overrideMaterial = null; renderer.render(scene, camera);
       camera.layers.set(0); renderer.autoClear = true; scene.background = bg;
     }
     cssRenderer.render(cssScene, camera);
