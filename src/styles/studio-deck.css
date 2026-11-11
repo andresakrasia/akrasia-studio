@@ -88,7 +88,10 @@ html.deck-on .home-screen .chat-data-notice { text-align: center; font-size: .6r
 
 /* ── Deck HUD (built by the module) ───────────────────────────────────── */
 .deck-hud { position: absolute; inset: 0; z-index: 4; pointer-events: none; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-.deck-hint { position: absolute; top: calc(78px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); margin: 0; font-size: .6rem; letter-spacing: .22em; color: #7fa3b2b3; white-space: nowrap; transition: opacity .8s; }
+.deck-hint { position: absolute; top: calc(84px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); margin: 0; display: flex; align-items: center; gap: 10px;
+  padding: 7px 14px; font-size: .66rem; font-weight: 600; letter-spacing: .18em; color: #c9f6ff; white-space: nowrap; background: #021a24cc; box-shadow: inset 0 0 0 1px #00f0ff59, 0 0 18px #00f0ff1f; transition: opacity .8s; }
+.deck-hint__ico { color: #00f0ff; font-size: .95rem; line-height: 1; letter-spacing: 0; animation: deckHintDrag 1.8s ease-in-out infinite; }
+@keyframes deckHintDrag { 0%, 100% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
 .deck-hint.gone { opacity: 0; }
 .deck-reticle { position: absolute; right: max(20px, 2vw); top: 44%; display: grid; gap: 8px; font-size: .58rem; letter-spacing: .16em; color: #7fa3b2a6; text-align: right; }
 .deck-reticle b { color: #00f0ff; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -99,23 +102,26 @@ html.deck-on .home-screen .chat-data-notice { text-align: center; font-size: .6r
 .deck-now { display: none; }
 .deck-card-wrap { pointer-events: none; }
 .deck-card { position: relative; width: 390px; padding: 22px 22px 18px; color: #e8fbff; font-family: 'Oxanium', 'Space Grotesk', system-ui, sans-serif; pointer-events: auto;
-  background: repeating-linear-gradient(0deg, #00f0ff0a 0 1px, transparent 1px 3px), linear-gradient(160deg, #03202bf0, #010d14e6);
-  box-shadow: inset 0 0 0 1px #00f0ff80, inset 0 0 40px #00f0ff1f, 0 0 70px #00f0ff2e;
+  /* Same holographic sheet as the chat terminal: translucent, scanlined, with a channel strip on top. */
+  background: repeating-linear-gradient(0deg, #00f0ff0a 0 1px, transparent 1px 3px), linear-gradient(160deg, #03202bd6, #010d14c4);
+  box-shadow: inset 0 0 0 1px #00f0ff59, inset 0 0 40px #00f0ff14, 0 0 60px #00f0ff1f;
   clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  animation: deckTermFlicker 6s steps(1) infinite;
   opacity: 0; transform: scale(.92) translateY(14px); transition: opacity .45s, transform .45s cubic-bezier(.2,.8,.2,1); }
 .deck-card.on { opacity: 1; transform: none; }
-.deck-card::before { content: ''; position: absolute; left: 0; top: 0; width: 40%; height: 2px; background: linear-gradient(90deg, #00f0ff, transparent); box-shadow: 0 0 12px #00f0ff; }
-.deck-card__eyebrow { margin: 0 0 10px; font: 600 .62rem/1 'JetBrains Mono', monospace; letter-spacing: .22em; color: #00f0ff; }
-.deck-card h2 { margin: 0 0 6px; font: 800 1.65rem/1.02 'Oxanium', 'Space Grotesk', sans-serif; text-transform: uppercase; text-wrap: balance; }
-.deck-card__meta { margin: 0 0 10px; font: 500 .68rem/1.4 'JetBrains Mono', monospace; letter-spacing: .08em; color: #8fb6c3; }
-.deck-card__body { margin: 0 0 16px; font-size: .92rem; line-height: 1.55; color: #c6dde6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.deck-card__eyebrow { display: flex; align-items: center; height: 34px; margin: -22px -22px 16px; padding: 0 16px; font: 600 10px/1 'JetBrains Mono', monospace; letter-spacing: .24em; color: #00f0ff; text-shadow: 0 0 8px #00f0ffaa;
+  background: linear-gradient(160deg, #03202bd6, #021620c4); box-shadow: inset 0 0 0 1px #00f0ff59; }
+.deck-card__eyebrow::before { content: ''; flex: none; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #3dffa8; box-shadow: 0 0 10px #3dffa8; }
+.deck-card h2 { margin: 0 0 6px; font: 600 1.25rem/1.15 'Oxanium', 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: .02em; color: #fff; text-shadow: 0 0 12px #00f0ff59; text-wrap: balance; }
+.deck-card__meta { margin: 0 0 10px; font: 600 9px/1.4 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase; color: #8fb6c3; }
+.deck-card__body { margin: 0 0 16px; font-size: .95rem; font-weight: 400; line-height: 1.5; color: #dff8ff; text-shadow: 0 0 10px #00f0ff40; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .deck-card__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .deck-act { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 14px; border: 0; cursor: pointer; text-decoration: none;
-  font: 600 .64rem/1 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #e8fbff; background: #021a24; box-shadow: inset 0 0 0 1px #00f0ff8c;
+  font: 600 .64rem/1 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #e8fbff; background: #021a24; box-shadow: inset 0 0 0 1px #00f0ff8c, 0 0 14px #00f0ff1a;
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); transition: background-color .2s, box-shadow .2s, transform .12s; }
 .deck-act:hover, .deck-act:focus-visible { background: #00f0ff26; box-shadow: inset 0 0 0 1px #00f0ff; outline: none; }
-.deck-act.primary { flex: 1 1 100%; background: #00f0ff; color: #00202a; box-shadow: 0 0 22px #00f0ff66; }
-.deck-act.primary:hover, .deck-act.primary:focus-visible { background: #7ff8ff; }
+.deck-act.primary { flex: 1 1 100%; background: #00f0ff1f; color: #00f0ff; box-shadow: inset 0 0 0 1px #00f0ff, 0 0 18px #00f0ff33; text-shadow: 0 0 8px #00f0ff80; }
+.deck-act.primary:hover, .deck-act.primary:focus-visible { background: #00f0ff38; color: #e8fbff; }
 .deck-act.ghost { margin-left: auto; background: transparent; box-shadow: inset 0 0 0 1px #00f0ff40; }
 .deck-act:active { transform: scale(.96); }
 
@@ -176,7 +182,8 @@ html.deck-on.deck-helix .home-screen .chat-latest { bottom: calc(var(--deck-comp
 
 /* Compact cards on portrait screens */
 html.deck-helix .deck-card { width: 360px; padding: 16px 16px 14px; }
-html.deck-helix .deck-card h2 { font-size: 1.3rem; }
+html.deck-helix .deck-card__eyebrow { height: 32px; margin: -16px -16px 12px; padding: 0 12px; }
+html.deck-helix .deck-card h2 { font-size: 1.1rem; }
 html.deck-helix .deck-card__meta { margin-bottom: 8px; }
 html.deck-helix .deck-card__body { font-size: .82rem; -webkit-line-clamp: 3; margin-bottom: 12px; }
 html.deck-helix .deck-act { min-height: 38px; padding: 8px 11px; font-size: .58rem; }
@@ -262,3 +269,24 @@ html.deck-on.deck-focusing .deck-term-min { opacity: 0; visibility: hidden; }
 html.deck-on.deck-helix .deck-term-min { left: 10px; right: 10px; top: auto; width: auto; height: 32px; transform: perspective(900px) rotateX(9deg); transform-origin: 50% calc(100% + min(34vh, 300px));
   bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px) + min(34vh, 300px)); }
 html.deck-on.deck-helix.deck-term-collapsed :is(.home-screen .chat-heading, .deck-term-min) { bottom: calc(var(--deck-composer, 140px) + 34px + env(safe-area-inset-bottom, 0px)); transform-origin: 50% 100%; }
+
+/* Privacy notice beside the command line: it must never cover the input or its send button.
+   The composer is min(700px, 100% - 32px) wide and centred, so the free corner is 50vw - 350px. */
+@media (min-width: 761px) {
+  html.deck-on:not(.deck-helix) #privacyBanner { width: min(30rem, calc(50vw - 350px - 2.25rem)); padding: .9rem 1rem .95rem; font-size: .78rem; line-height: 1.45; }
+  html.deck-on:not(.deck-helix) #privacyBanner h2 { font-size: .95rem; }
+  html.deck-on:not(.deck-helix) #privacyBanner .privacy-actions { margin-top: .7rem; gap: .4rem; }
+  html.deck-on:not(.deck-helix) #privacyBanner .privacy-actions button { font-size: .66rem; padding: .5rem .4rem; }
+}
+/* Not enough room in the corner: lift the notice above the command line instead. */
+@media (min-width: 761px) and (max-width: 1339px) {
+  html.deck-on:not(.deck-helix) #privacyBanner { width: min(24rem, calc(100vw - 2rem)); bottom: calc(var(--deck-composer, 130px) + 52px); }
+}
+
+/* Keyboard access: one real button per screen and service, shown only while focused. */
+.deck-keys { position: absolute; top: calc(84px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); pointer-events: none; }
+.deck-keys button { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; background: none; }
+.deck-keys button:focus-visible { width: auto; height: auto; overflow: visible; clip-path: none; pointer-events: auto; padding: 9px 16px; font: 600 .7rem/1 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase;
+  color: #00202a; background: #00f0ff; box-shadow: 0 0 22px #00f0ff80; outline: 2px solid #e8fbff; outline-offset: 3px; }
+.deck-keys button small { font: inherit; opacity: .7; }
+.deck-hud:has(.deck-keys :focus-visible) .deck-hint { opacity: 0; }

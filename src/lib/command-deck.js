@@ -22,6 +22,7 @@ const COPY = {
     sound: 'Sonido', on: 'on', off: 'off', open: 'abrir', soon: 'EN PRODUCCIÓN',
     hint: 'ARRASTRA PARA GIRAR · PULSA UNA PANTALLA O UN SERVICIO', mode: ['EXPLORAR', 'FOCO'],
     deckLabel: 'Sala 3D de Akrasia Studio: núcleo holográfico, pantallas con trabajos y servicios en órbita',
+    keysLabel: 'Proyectos y servicios de la sala', project: 'Proyecto', serviceWord: 'Servicio', enter: 'Intro para abrir',
   },
   en: {
     line1: "WE DON'T PROMPT.", line2: 'WE DIRECT AI.',
@@ -31,6 +32,7 @@ const COPY = {
     sound: 'Sound', on: 'on', off: 'off', open: 'open', soon: 'IN PRODUCTION',
     hint: 'DRAG TO ROTATE · TAP A SCREEN OR A SERVICE', mode: ['EXPLORE', 'FOCUS'],
     deckLabel: 'Akrasia Studio 3D hub: holographic core, screens with work and orbiting services',
+    keysLabel: 'Projects and services in the room', project: 'Project', serviceWord: 'Service', enter: 'Enter to open',
   },
 };
 
@@ -58,7 +60,7 @@ export function createDeck(root, data) {
   const hud = document.createElement('div');
   hud.className = 'deck-hud';
   hud.innerHTML = `
-    <p class="deck-hint" aria-hidden="true">${T.hint}</p>
+    <p class="deck-hint" aria-hidden="true"><span class="deck-hint__ico">⟷</span>${T.hint}</p>
     <div class="deck-reticle" aria-hidden="true"><span>AZ <b data-az>000.0°</b></span><span>MODO <b data-mode>${T.mode[0]}</b></span><span>SECTOR <b>BCN-01</b></span></div>
     <button type="button" class="deck-sound" aria-pressed="false">♪ <span class="deck-long">${T.sound} · </span><span data-sound>${T.off}</span></button>
     <button type="button" class="deck-now"><span aria-hidden="true">▶</span> <b data-now>—</b> · ${T.open}</button>`;
@@ -76,7 +78,8 @@ export function createDeck(root, data) {
 
   // ── Renderer ──────────────────────────────────────────────────────────
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 1.75));
+  const FULL_RATIO = Math.min(devicePixelRatio, MOBILE ? 1.5 : 1.75);
+  renderer.setPixelRatio(FULL_RATIO);
   renderer.setSize(innerWidth, innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -85,7 +88,7 @@ export function createDeck(root, data) {
   scene.fog = new THREE.FogExp2('#01060c', 0.045);
   const camera = new THREE.PerspectiveCamera(HELIX ? 62 : 50, innerWidth / innerHeight, 0.1, 200);
   const clock = new THREE.Clock();
-  const uTime = { value: 0 }, uBoot = { value: 0 }, uThink = { value: 0 };
+  const uTime = { value: 0 }, uBoot = { value: 0 }, uThink = { value: 0 }, uPx = { value: FULL_RATIO };
   const uRippleC = { value: new THREE.Vector2(999, 999) }, uRippleT = { value: -10 };
   const disposables = [];
   const keep = x => (disposables.push(x), x);
@@ -149,7 +152,7 @@ export function createDeck(root, data) {
   const uAssemble = { value: 0 };
   lambdaGroup.add(new THREE.Points(swarmGeo, keep(new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: { uTime, uThink, uAssemble, uPx: { value: renderer.getPixelRatio() } },
+    uniforms: { uTime, uThink, uAssemble, uPx },
     vertexShader: `attribute vec3 start; attribute float seed; uniform float uTime, uThink, uAssemble, uPx; varying float vA;
       void main(){ float k = clamp(uAssemble * 1.4 - seed * .4, 0., 1.); k = k * k * (3. - 2. * k);
         vec3 p = mix(start, position, k); float j = .015 + uThink * .09;
@@ -180,7 +183,7 @@ export function createDeck(root, data) {
   const dustGeo = keep(new THREE.BufferGeometry());
   dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3)); dustGeo.setAttribute('seed', new THREE.BufferAttribute(dustSeed, 1));
   scene.add(new THREE.Points(dustGeo, keep(new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime, uBoot, uPx: { value: renderer.getPixelRatio() } },
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime, uBoot, uPx },
     vertexShader: `attribute float seed; uniform float uTime, uPx; varying float vA;
       void main(){ vec3 p = position; float t = uTime * (.05 + seed * .08); float c = cos(t), s = sin(t); p.xz = mat2(c, -s, s, c) * p.xz; p.y += sin(uTime * .6 + seed * 20.) * .15;
         vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv; gl_PointSize = (1.2 + seed * 2.2) * uPx * (9. / -mv.z); vA = .35 + seed * .65; }`,
@@ -246,11 +249,11 @@ export function createDeck(root, data) {
       for (let k = 0; k < 2; k++) { for (const [s, col] of parts) { g.shadowColor = col; g.shadowBlur = col === '#00f0ff' ? 16 : 6; g.fillStyle = col; g.fillText(s, x, 64); x += g.measureText(s).width; } x += c.width / 2 - unit; }
     } else {
       c.width = 2048; c.height = 560; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.font = '800 150px Oxanium, sans-serif'; g.fillStyle = '#f2fbff'; g.shadowColor = '#7ff6ff'; g.shadowBlur = 10; g.fillText(T.line1, 1024, 150, 1980);
-      g.font = '800 196px Oxanium, sans-serif'; g.fillStyle = '#00f0ff'; g.shadowColor = '#00f0ff'; g.shadowBlur = 30; g.fillText(T.line2, 1024, 370, 1980);
+      g.font = '800 150px Oxanium, sans-serif'; g.fillStyle = '#f2fbff'; g.shadowColor = '#7ff6ff'; g.shadowBlur = 5; g.fillText(T.line1, 1024, 150, 1980);
+      g.font = '800 196px Oxanium, sans-serif'; g.fillStyle = '#00f0ff'; g.shadowColor = '#00f0ff'; g.shadowBlur = 12; g.fillText(T.line2, 1024, 370, 1980);
       g.shadowBlur = 0; g.fillRect(824, 512, 400, 6);
     }
-    const t = tex(c); t.wrapS = THREE.RepeatWrapping; return t;
+    const t = tex(c); t.wrapS = THREE.RepeatWrapping; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); return t;
   }
   function noiseTexture() {
     const c = document.createElement('canvas'); c.width = 256; c.height = 144; const g = c.getContext('2d');
@@ -267,15 +270,8 @@ export function createDeck(root, data) {
   const SPREAD = Math.min(.56, 2.4 / Math.max(1, count - 1));
   const loader = new THREE.TextureLoader(); loader.setCrossOrigin('anonymous');
   screenItems.forEach((item, i) => {
-    let map, video = null;
-    if (item.video) {
-      video = document.createElement('video');
-      Object.assign(video, { src: item.video, muted: true, loop: true, playsInline: true, preload: 'auto', poster: item.thumb || '' });
-      video.setAttribute('playsinline', ''); video.setAttribute('aria-hidden', 'true');
-      map = keep(new THREE.VideoTexture(video));
-    } else if (item.thumb) {
-      map = keep(loader.load(item.thumb));
-    } else map = noiseTexture();
+    // The wall starts with still covers; clips are fetched later, on demand (see "Video on demand").
+    const map = item.thumb ? keep(loader.load(item.thumb)) : noiseTexture();
     map.colorSpace = THREE.SRGBColorSpace;
     const W = 3.9, H = 2.2, R = 5;
     const geo = keep(new THREE.PlaneGeometry(W, H, 40, 1));
@@ -304,6 +300,7 @@ export function createDeck(root, data) {
       fragmentShader: `uniform sampler2D map; uniform float uOn, uDim; varying vec2 vUv; void main(){ gl_FragColor = vec4(texture2D(map, vUv).rgb * vec3(.55, .88, 1.), pow(1. - vUv.y, 2.6) * .3 * uOn * uDim); }`,
     }))));
     scene.add(mirror);
+    const mirrorMat = mirror.children[0].material;
     const frame = new THREE.Group();
     const rail = y => { const pts = []; for (let s = 0; s <= 40; s++) { const x = -W / 2 + (W * s) / 40, a = x / R; pts.push(new THREE.Vector3(Math.sin(a) * R, y, (1 - Math.cos(a)) * R + .01)); } return pts; };
     const lineMat = keep(new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: .9, toneMapped: false }));
@@ -322,7 +319,7 @@ export function createDeck(root, data) {
     }
     scene.add(group);
     if (!item.placeholder) { mesh.userData = label.userData = { kind: 'work', index: i }; pickables.push(mesh, label); }
-    screens.push({ group, mesh, label, mat, video, theta, baseY, hover: 0, mirror, item });
+    screens.push({ group, mesh, label, mat, mirrorMat, still: map, video: null, vtex: null, theta, baseY, hover: 0, mirror, item });
   });
 
   // ── Headline sign ─────────────────────────────────────────────────────
@@ -337,11 +334,17 @@ export function createDeck(root, data) {
         float reveal = smoothstep(.55, .95, uBoot); float row = floor(uv.y * 24.);
         float jitter = (fract(sin(row * 91.7 + floor(uTime * 14.)) * 4375.) - .5) * (1. - reveal) * .25;
         jitter += step(.993, fract(sin(floor(uTime * 6.) * 13.1) * 917.)) * (fract(sin(row * 7.) * 99.) - .5) * .03;
-        vec4 c = texture2D(map, vec2(uv.x + jitter, uv.y)); float scan = .78 + .22 * sin(uv.y * 900. - uTime * 8.);
-        gl_FragColor = vec4(c.rgb * (uInside > .5 ? 1.35 : 1.05) * scan, c.a * reveal * uSign * facing); }`,
+        vec4 c = texture2D(map, vec2(uv.x + jitter, uv.y)); float scan = uInside > .5 ? .9 + .1 * sin(uv.y * 240. - uTime * 8.) : .78 + .22 * sin(uv.y * 900. - uTime * 8.);
+        gl_FragColor = vec4(c.rgb * (uInside > .5 ? 1.15 : 1.05) * scan, c.a * reveal * uSign * facing);
+        #include <colorspace_fragment>
+      }`,
   }));
   const sign = new THREE.Mesh(keep(HELIX ? new THREE.CylinderGeometry(3.3, 3.3, .62, 160, 1, true) : new THREE.CylinderGeometry(ARC + .35, ARC + .35, 2.15, 120, 1, true, Math.PI - .82, 1.64)), signMat);
   sign.position.y = HELIX ? CORE_Y + 2.25 : 4.85;
+  // The wide headline is drawn after the post-processing so bloom, grain and
+  // lens fringing don't smear the studio's main message.
+  const SIGN_LAYER = 1;
+  if (!HELIX) sign.layers.set(SIGN_LAYER);
   scene.add(sign);
 
   // ── Services in orbit ─────────────────────────────────────────────────
@@ -366,7 +369,8 @@ export function createDeck(root, data) {
   // ── Post-processing ───────────────────────────────────────────────────
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), MOBILE ? .7 : .85, .45, .6));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), MOBILE ? .7 : .85, .45, .6);
+  composer.addPass(bloom);
   const lens = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, uTime, uRes: { value: new THREE.Vector2(innerWidth, innerHeight) } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
@@ -401,6 +405,12 @@ export function createDeck(root, data) {
   let focused = null, dragging = false, dragX = 0, moved = 0, focusFade = 0, lastInput = 0, servicesMode = false, frontIndex = 0, orbitClock = 0, thinking = false, talked = false;
   const rigPosition = out => out.set(Math.sin(rig.az) * rig.dist * Math.cos(rig.el), (HELIX ? CORE_Y : 2) + Math.sin(rig.el) * rig.dist, Math.cos(rig.az) * rig.dist * Math.cos(rig.el));
   camera.position.copy(rigPosition(new THREE.Vector3()).multiplyScalar(1.8)).setY(HELIX ? 11 : 7);
+  // Conversation view: on arrival the camera sits closer to the chat terminal so its
+  // text can be read; exploring the room (drag, zoom, focus) pulls back to the wide view,
+  // and talking to the chat brings it near again.
+  const CHAT_POSE = { pos: new THREE.Vector3(-1.1, 3.55, 7.5), look: new THREE.Vector3(-.75, 2.35, -1.2) };
+  let chatView = HELIX ? 0 : 1, chatMix = chatView;
+  const setChatView = near => { chatView = near && !HELIX ? 1 : 0; };
   const raycaster = new THREE.Raycaster();
   let hovered = null;
 
@@ -478,24 +488,66 @@ export function createDeck(root, data) {
   function unfocus() {
     if (!focused) return;
     if (focused.kind === 'work' && HELIX) rig.azTarget = rig.az = Math.atan2(camera.position.x, camera.position.z);
+    const back = kbReturn && card.contains(document.activeElement) ? kbReturn : null; kbReturn = null;
     focused = null; card.classList.remove('on'); setTimeout(() => { if (!focused) card.hidden = true; }, 400);
+    back?.focus({ preventScroll: true });
     $h('[data-mode]').textContent = T.mode[0];
     document.documentElement.classList.remove('deck-focusing');
   }
   on(card, 'click', e => { if (e.target.closest('[data-deck-back]')) unfocus(); });
+
+  // ── Keyboard access ───────────────────────────────────────────────────
+  // Real buttons (hidden until focused) mirror every screen and service, so the room can be
+  // walked with Tab and opened with Enter; the arrows turn the room or step between pieces.
+  const keys = document.createElement('div');
+  keys.className = 'deck-keys'; keys.setAttribute('role', 'group'); keys.setAttribute('aria-label', T.keysLabel);
+  keys.innerHTML = screens.map((sc, i) => sc.item.placeholder ? '' : `<button type="button" data-key-kind="work" data-key-index="${i}">${T.project}: ${esc(sc.item.title)}<small aria-hidden="true"> · ${T.enter}</small></button>`).join('')
+    + nodes.map((n, i) => `<button type="button" data-key-kind="service" data-key-index="${i}">${T.serviceWord}: ${esc(n.service.title)}<small aria-hidden="true"> · ${T.enter}</small></button>`).join('');
+  hud.append(keys);
+  let kbTarget = null, kbReturn = null;
+  const faceScreen = i => { if (!HELIX) return; const goal = Math.PI - screens[i].theta; rig.azTarget = rig.az + Math.atan2(Math.sin(goal - rig.az), Math.cos(goal - rig.az)); lastInput = performance.now(); };
+  on(keys, 'focusin', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    kbTarget = { kind: b.dataset.keyKind, index: Number(b.dataset.keyIndex) };
+    setChatView(false); dismissHint();
+    if (kbTarget.kind === 'work') faceScreen(kbTarget.index);
+  });
+  on(keys, 'focusout', () => { kbTarget = null; });
+  on(keys, 'click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const i = Number(b.dataset.keyIndex);
+    b.dataset.keyKind === 'work' ? focusWork(i) : focusService(i);
+    kbReturn = b; card.querySelector('button, a')?.focus({ preventScroll: true });
+  });
+  on(document, 'keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const el = document.activeElement;
+    if (el && el !== document.body && !keys.contains(el) && !card.contains(el)) return;
+    const step = e.key === 'ArrowRight' ? 1 : -1;
+    if (focused?.kind === 'work') {
+      const open = screens.map((sc, i) => sc.item.placeholder ? -1 : i).filter(i => i >= 0);
+      const nextIndex = open[(open.indexOf(focused.index) + step + open.length) % open.length];
+      focusWork(nextIndex); card.querySelector('button, a')?.focus({ preventScroll: true });
+    } else if (!focused) {
+      rig.azTarget += step * (HELIX ? .5 : .3); lastInput = performance.now(); setChatView(false); dismissHint();
+    } else return;
+    e.preventDefault();
+  });
   on(document, 'keydown', e => { if (e.key === 'Escape' && focused) unfocus(); });
   // Anything sent to the chat (cards, header, starters) returns the view to the conversation.
   on(document, 'chat-trigger', e => {
     const msg = String(e.detail?.message || '');
     unfocus();
-    if (/servicios|services/i.test(msg) && !/servicio:|service:/.test(msg)) { servicesMode = true; rig.dist = HELIX ? 10.5 : 7; }
+    if (/servicios|services/i.test(msg) && !/servicio:|service:/.test(msg)) { servicesMode = true; rig.dist = HELIX ? 10.5 : 7; setChatView(false); }
+    else setChatView(true);
   });
   on($h('.deck-now'), 'click', () => focusWork(frontIndex));
 
   // Pointer
   on(canvas, 'pointermove', e => {
     mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-    if (dragging) { const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); rig.azTarget -= dx * (HELIX ? .009 : .005); lastInput = performance.now(); }
+    if (dragging) { const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); rig.azTarget -= dx * (HELIX ? .009 : .005); lastInput = performance.now(); if (moved > 6) setChatView(false); }
   });
   on(canvas, 'pointerdown', e => { dragging = true; dragX = e.clientX; moved = 0; canvas.setPointerCapture(e.pointerId); sfx.ctx?.resume(); });
   on(canvas, 'pointerup', e => {
@@ -506,13 +558,15 @@ export function createDeck(root, data) {
     if (hit) hit.object.userData.kind === 'work' ? focusWork(hit.object.userData.index) : focusService(hit.object.userData.index);
     else { if (focused) unfocus(); if (raycaster.ray.intersectPlane(floorPlane, floorHit)) { uRippleC.value.set(floorHit.x, floorHit.z); uRippleT.value = uTime.value; sfx.blip(420, .18, .05); } }
   });
-  on(canvas, 'wheel', e => { rig.dist = THREE.MathUtils.clamp(rig.dist + e.deltaY * .004, 6.5, 15); }, { passive: true });
+  on(canvas, 'wheel', e => { setChatView(false); rig.dist = THREE.MathUtils.clamp(rig.dist + e.deltaY * .004, 6.5, 15); }, { passive: true });
 
   // The chat drives the core: thinking makes it tremble; first message dims the sign.
   const chatSurface = () => document.querySelector('.chat-surface');
   const observer = new MutationObserver(() => {
     const phase = chatSurface()?.getAttribute('data-chat-phase') || 'idle';
+    const was = thinking;
     thinking = phase !== 'idle' && phase !== 'ready';
+    if (thinking && !was && !servicesMode) setChatView(true);
     if (document.querySelector('.chat-transcript[data-welcome-only="false"]')) talked = true;
     else showGreetingTop();
   });
@@ -520,6 +574,8 @@ export function createDeck(root, data) {
   const composerEl = document.querySelector('.chat-composer');
   const resize = new ResizeObserver(() => { if (composerEl) document.documentElement.style.setProperty('--deck-composer', `${Math.ceil(composerEl.getBoundingClientRect().height)}px`); });
   if (composerEl) resize.observe(composerEl);
+  // Writing in the command line is talking to the chat: bring the terminal near.
+  if (composerEl) on(composerEl, 'focusin', () => { if (!focused && !document.documentElement.classList.contains('deck-term-collapsed')) setChatView(true); });
   // While only the greeting is present, show the terminal from its first line.
   function showGreetingTop() { const layer = document.querySelector('.chat-layer'); if (layer && document.querySelector('.chat-transcript[data-welcome-only="true"]')) layer.scrollTop = 0; }
   setTimeout(showGreetingTop, 600); setTimeout(showGreetingTop, 2000);
@@ -569,6 +625,7 @@ export function createDeck(root, data) {
     minBtn.setAttribute('aria-label', min ? (EN ? 'Show the chat' : 'Mostrar el chat') : (EN ? 'Minimize the chat' : 'Minimizar el chat'));
     minBtn.title = minBtn.getAttribute('aria-label');
     if (remember) { try { localStorage.setItem('akrasia-term-min', min ? '1' : '0'); } catch { /* ignore */ } }
+    if (min) setChatView(false); else if (remember && !servicesMode) setChatView(true);
   };
   let startMin = false; try { startMin = localStorage.getItem('akrasia-term-min') === '1'; } catch { /* ignore */ }
   setMin(startMin, false);
@@ -624,21 +681,85 @@ export function createDeck(root, data) {
   };
   watchTranscript();
 
-  // Videos: offset their start so fade-to-black endings never coincide.
-  screens.forEach((s, i) => {
-    if (!s.video) return;
-    const go = () => { try { s.video.currentTime = (i * 1.7) % Math.max(1, (s.video.duration || 8) - 1); } catch { /* ignore */ } s.video.play().catch(() => {}); };
-    s.video.readyState >= 1 ? go() : on(s.video, 'loadedmetadata', go, { once: true });
-  });
+  // ── Video on demand ───────────────────────────────────────────────────
+  // Screens show their cover first. On desktop the clips then load one after another,
+  // centre outwards; on phones and slow connections only the screen in front (or the
+  // focused one) plays, and at most two clips stay loaded.
+  const SLOW_NET = /(^|-)[23]g$/.test(navigator.connection?.effectiveType || '');
+  const VIDEO_CAP = MOBILE || HELIX || SLOW_NET ? 2 : Infinity;
+  const liveVideos = [];
+  function stopVideo(s) {
+    const v = s.video; if (!v) return;
+    s.video = null; const at = liveVideos.indexOf(s); if (at >= 0) liveVideos.splice(at, 1);
+    s.mat.uniforms.map.value = s.mirrorMat.uniforms.map.value = s.still;
+    s.vtex?.dispose(); s.vtex = null;
+    v.pause(); v.removeAttribute('src'); v.load();
+  }
+  function startVideo(i, done) {
+    const s = screens[i];
+    if (!s || !s.item.video || s.video) { done?.(); return; }
+    const v = document.createElement('video');
+    Object.assign(v, { muted: true, loop: true, playsInline: true, preload: 'auto' });
+    v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+    s.video = v; liveVideos.push(s);
+    let settled = false; const settle = () => { if (!settled) { settled = true; done?.(); } };
+    on(v, 'loadeddata', () => {
+      if (s.video !== v) return;
+      s.vtex = new THREE.VideoTexture(v); s.vtex.colorSpace = THREE.SRGBColorSpace;
+      s.mat.uniforms.map.value = s.mirrorMat.uniforms.map.value = s.vtex;
+      // Offset each start so fade-to-black endings never coincide.
+      try { v.currentTime = (i * 1.7) % Math.max(1, (v.duration || 8) - 1); } catch { /* ignore */ }
+      v.play().catch(() => {}); settle();
+    }, { once: true });
+    on(v, 'error', () => { if (s.video === v) stopVideo(s); settle(); }, { once: true });
+    setTimeout(settle, 5000);
+    v.src = s.item.video;
+    while (liveVideos.length > VIDEO_CAP) stopVideo(liveVideos.find(x => x !== s));
+  }
+  let wantedVideo = -1;
+  if (VIDEO_CAP === Infinity) {
+    const mid = (screens.length - 1) / 2;
+    const order = screens.map((_, i) => i).sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid));
+    const next = () => { if (ac.signal.aborted || !order.length) return; startVideo(order.shift(), () => setTimeout(next, 250)); };
+    setTimeout(next, 1400);
+  }
+
+  // ── Adaptive quality ──────────────────────────────────────────────────
+  // If the device can't hold a smooth frame rate, trade sharpness and glow for fluidity:
+  // tier 1 renders at fewer pixels, tier 2 also drops the bloom. It never steps back up,
+  // so the picture doesn't pump. `?deckq=0|1|2` pins a tier for QA.
+  let tier = 0, slowMs = 0, slowFrames = 0, lastStamp = 0;
+  const pinned = /[?&]deckq=([012])/.exec(location.search);
+  function setTier(n) {
+    tier = n;
+    const ratio = n === 0 ? FULL_RATIO : Math.min(FULL_RATIO, n === 1 ? 1 : .75);
+    renderer.setPixelRatio(ratio); composer.setPixelRatio(ratio); uPx.value = ratio;
+    bloom.enabled = n < 2;
+    document.documentElement.dataset.deckQuality = String(n);
+  }
+  if (pinned) setTier(Number(pinned[1]));
+  function watchFrameRate(now, boot) {
+    const ms = now - lastStamp; lastStamp = now;
+    // Skip the boot sequence, tab switches and one-off stalls.
+    if (pinned || tier >= 2 || boot < 1 || ms <= 0 || ms > 250) return;
+    slowMs += ms;
+    if (++slowFrames < 90) return;
+    const fps = 1000 / (slowMs / slowFrames); slowMs = 0; slowFrames = 0;
+    if (fps < 38) setTier(tier + 1);
+  }
 
   // ── Loop ──────────────────────────────────────────────────────────────
   const bootStart = performance.now();
-  setTimeout(() => $h('.deck-hint')?.classList.add('gone'), 9000);
+  // The hint stays until the visitor explores (or long enough to be read).
+  const dismissHint = () => $h('.deck-hint')?.classList.add('gone');
+  setTimeout(dismissHint, 16000);
+  on(canvas, 'pointerdown', dismissHint, { once: true }); on(canvas, 'wheel', dismissHint, { once: true, passive: true });
   function frame() {
     const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
     uTime.value = t;
     const boot = THREE.MathUtils.clamp((performance.now() - bootStart - 300) / 2600, 0, 1);
     uBoot.value = boot;
+    watchFrameRate(performance.now(), boot);
     uAssemble.value = THREE.MathUtils.smoothstep(boot, .05, .8);
     uThink.value += ((thinking ? 1 : 0) - uThink.value) * Math.min(1, dt * 5);
     lambdaGroup.rotation.y = t * .45;
@@ -668,8 +789,12 @@ export function createDeck(root, data) {
       $h('[data-now]').textContent = now && !now.placeholder ? now.title : '—';
       sign.rotation.y -= dt * .05;
     }
+    if (VIDEO_CAP !== Infinity && boot > .5) {
+      const want = focused?.kind === 'work' ? focused.index : HELIX ? frontIndex : Math.floor((screens.length - 1) / 2);
+      if (want !== wantedVideo) { wantedVideo = want; startVideo(want); }
+    }
     screens.forEach((s, i) => {
-      const target = (hovered === s.mesh || hovered === s.label || (focused?.kind === 'work' && focused.index === i) || (HELIX && !focused && i === frontIndex && !s.item.placeholder)) ? 1 : 0;
+      const target = (hovered === s.mesh || hovered === s.label || (focused?.kind === 'work' && focused.index === i) || (kbTarget?.kind === 'work' && kbTarget.index === i) || (HELIX && !focused && i === frontIndex && !s.item.placeholder)) ? 1 : 0;
       s.hover += (target - s.hover) * Math.min(1, dt * 6);
       s.mat.uniforms.uHover.value = s.hover;
       s.mat.uniforms.uOn.value = THREE.MathUtils.clamp((boot - .35) * 1.8, 0, 1);
@@ -688,7 +813,7 @@ export function createDeck(root, data) {
     });
     if (focused?.kind !== 'service') orbitClock += dt;
     nodes.forEach((n, i) => {
-      const target = (hovered?.parent === n.g || (focused?.kind === 'service' && focused.index === i)) ? 1 : 0;
+      const target = (hovered?.parent === n.g || (focused?.kind === 'service' && focused.index === i) || (kbTarget?.kind === 'service' && kbTarget.index === i)) ? 1 : 0;
       n.hover += (target - n.hover) * Math.min(1, dt * 6);
       const a = n.base + orbitClock * .16;
       n.g.position.set(Math.cos(a) * 2.6, Math.sin(t * .9 + i) * .08, Math.sin(a) * 2.6);
@@ -707,6 +832,12 @@ export function createDeck(root, data) {
       desired.pos.x += parallax.x * .6; desired.pos.y += parallax.y * .35;
       if (HELIX) desired.look.set(parallax.x * .3, CORE_Y - .7 + parallax.y * .2, 0);
       else desired.look.set(parallax.x * .4, 2.25 + parallax.y * .2, -1.2);
+      chatMix += ((focused ? 0 : chatView) - chatMix) * Math.min(1, dt * 2.2);
+      if (chatMix > .001) {
+        const k = chatMix * chatMix * (3 - 2 * chatMix);
+        desired.pos.lerp(tmpB.copy(CHAT_POSE.pos).add(tmpA.set(parallax.x * .35, parallax.y * .2, 0)), k);
+        desired.look.lerp(CHAT_POSE.look, k);
+      }
     }
     const ease = Math.min(1, dt * (focused ? 3 : 1.6));
     camera.position.lerp(desired.pos, ease);
@@ -734,10 +865,17 @@ export function createDeck(root, data) {
     }
     placeTerminal();
     composer.render();
+    if (!HELIX) {
+      // A colour background would force a clear and wipe the composed frame.
+      const bg = scene.background; scene.background = null;
+      renderer.autoClear = false; renderer.clearDepth(); camera.layers.set(SIGN_LAYER);
+      renderer.render(scene, camera);
+      camera.layers.set(0); renderer.autoClear = true; scene.background = bg;
+    }
     cssRenderer.render(cssScene, camera);
   }
   renderer.setAnimationLoop(frame);
-  on(document, 'visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : frame));
+  on(document, 'visibilitychange', () => { lastStamp = 0; slowMs = 0; slowFrames = 0; renderer.setAnimationLoop(document.hidden ? null : frame); });
   on(window, 'resize', () => {
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); cssRenderer.setSize(innerWidth, innerHeight);
@@ -755,7 +893,7 @@ export function createDeck(root, data) {
     dispose() {
       ac.abort(); observer.disconnect(); resize.disconnect(); txObserver.disconnect(); typing?.finish();
       document.documentElement.classList.remove('deck-term3d', 'deck-term-collapsed'); minBtn.remove(); Object.values(termEls).forEach(el => el && (el.style.transform = '')); renderer.setAnimationLoop(null); sfx.close();
-      screens.forEach(s => { if (s.video) { s.video.pause(); s.video.removeAttribute('src'); s.video.load(); } });
+      screens.forEach(stopVideo);
       disposables.forEach(d => d.dispose?.()); composer.dispose?.(); renderer.dispose();
       root.replaceChildren();
       document.documentElement.classList.remove('deck-focusing', 'deck-helix');
