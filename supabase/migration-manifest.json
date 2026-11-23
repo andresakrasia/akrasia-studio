@@ -126,6 +126,11 @@
       "version": 25,
       "name": "migration-v25.sql",
       "sha256": "666992b1d307d86b057e557f56dfd2ae611bb6890d9d3a5846d7eabf5bf20b04"
+    },
+    {
+      "version": 26,
+      "name": "migration-v26.sql",
+      "sha256": "96e1d9fb8a237de0a9a03f0950650954bd02b6f230a0771bd4194672413dcad2"
     }
   ]
 }

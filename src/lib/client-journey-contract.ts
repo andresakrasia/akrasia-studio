@@ -1,10 +1,11 @@
 import { DashboardInputError, DashboardStorageError, dashboardId } from './dashboard';
+import type { LinkedBooking } from './lead-links';
 
 export const JOURNEY_STAGES = ['received','evaluating','quote_preparation','quote_sent','accepted','in_production','review','delivered','closed','lost'] as const;
 export type JourneyStage = typeof JOURNEY_STAGES[number];
 export const EMAIL_DRAFT_TEMPLATES = ['evaluation','quote','follow_up','kickoff','progress','delivery','final_delivery','closure','custom'] as const;
 export type EmailDraftTemplate = typeof EMAIL_DRAFT_TEMPLATES[number];
-export interface ClientJourney { id:string; lead_id:string|null; client_id:string; project_id:string; client_name:string; project_title:string; brief:string; stage:JourneyStage; budget_amount:number|null; budget_currency:string; budget_scope:string; budget_timing:string; created_at:string; updated_at:string; lead_email?:string; lead_name?:string; lead_visitor_id?:string; client_email?:string; client_phone?:string; client_company?:string; tasks_total?:number; tasks_pending?:number; tasks_completed?:number }
+export interface ClientJourney { id:string; lead_id:string|null; client_id:string; project_id:string; client_name:string; project_title:string; brief:string; stage:JourneyStage; budget_amount:number|null; budget_currency:string; budget_scope:string; budget_timing:string; next_action_date?:string|null; next_action_note?:string; booking?:LinkedBooking|null; created_at:string; updated_at:string; lead_email?:string; lead_name?:string; lead_visitor_id?:string; client_email?:string; client_phone?:string; client_company?:string; tasks_total?:number; tasks_pending?:number; tasks_completed?:number }
 export interface ClientJourneyEvent { id:string; journey_id:string; event_type:'created'|'stage_changed'|'note'|'quote_updated'|'email_queued'; stage:JourneyStage; note:string; metadata:Record<string,unknown>; operation_id:string; created_at:string; provider_status?:string|null }
 
 export interface JourneyTaskCounts { tasks_total:number; tasks_pending:number; tasks_completed:number }

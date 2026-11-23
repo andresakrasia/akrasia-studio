@@ -1,6 +1,8 @@
 import { dashboardRoute, dashboardJson, dashResponse, dashboardList, requireDashboardId, DashboardInputError, sbRpc, sbQuery } from '../../../lib/dashboard';
 import { journeyText, requireJourneyStage, journeyRpcRow, journeyTransitionIssue, type ClientJourney } from '../../../lib/client-journey-contract';
 import { journeyTaskCounts, mapWithConcurrency } from '../../../lib/client-journey-data';
+import { bookingsByVisitor } from '../../../lib/lead-links';
+import { isCivilDate } from '../../../lib/civil-time';
 
 export const GET = dashboardRoute(async ({ request }) => {
   const params=new URL(request.url).searchParams;
@@ -22,7 +24,8 @@ export const GET = dashboardRoute(async ({ request }) => {
     leads.length?sbQuery('leads',`select=id,email,name,visitor_id&id=in.(${leads.join(',')})&limit=100`):[],
     projects.length?sbQuery('projects',`select=id,title&id=in.(${projects.join(',')})&limit=100`):[],
   ]);
-  const enriched=await mapWithConcurrency(rows,6,async(row:any)=>{const client=clientRows.find(item=>item.id===row.client_id);const lead=leadRows.find(item=>item.id===row.lead_id);const project=projectRows.find(item=>item.id===row.project_id);return {...row,...await journeyTaskCounts(row.project_id),client_name:client?.name??row.client_name,project_title:project?.title??row.project_title,client_email:client?.email??'',client_phone:client?.phone??'',client_company:client?.company??'',lead_email:lead?.email??'',lead_name:lead?.name??'',lead_visitor_id:lead?.visitor_id??''};});
+  const bookings=await bookingsByVisitor(leadRows.map(item=>item.visitor_id));
+  const enriched=await mapWithConcurrency(rows,6,async(row:any)=>{const client=clientRows.find(item=>item.id===row.client_id);const lead=leadRows.find(item=>item.id===row.lead_id);const project=projectRows.find(item=>item.id===row.project_id);return {...row,...await journeyTaskCounts(row.project_id),client_name:client?.name??row.client_name,project_title:project?.title??row.project_title,client_email:client?.email??'',client_phone:client?.phone??'',client_company:client?.company??'',lead_email:lead?.email??'',lead_name:lead?.name??'',lead_visitor_id:lead?.visitor_id??'',booking:bookings.get(lead?.visitor_id)??null};});
   return dashResponse(enriched,200,Object.fromEntries(response.headers));
 });
 export const POST = dashboardRoute(async ({ request }) => {
@@ -37,7 +40,7 @@ export const POST = dashboardRoute(async ({ request }) => {
 });
 export const PATCH = dashboardRoute(async ({ request }) => {
   const body=await dashboardJson(request,16000);const id=requireDashboardId(body.id);
-  if (Object.keys(body).some(key=>!['id','stage','note','budget_amount','budget_currency','budget_scope','budget_timing','operation_id'].includes(key))) throw new DashboardInputError('Campos de seguimiento no admitidos.');
+  if (Object.keys(body).some(key=>!['id','stage','note','budget_amount','budget_currency','budget_scope','budget_timing','next_action_date','next_action_note','operation_id'].includes(key))) throw new DashboardInputError('Campos de seguimiento no admitidos.');
   const changes:Record<string,unknown>={};
   if (body.stage!==undefined) changes.stage=requireJourneyStage(body.stage);
   if (body.note!==undefined) changes.note=journeyText(body.note,'Nota',4000);
@@ -51,6 +54,16 @@ export const PATCH = dashboardRoute(async ({ request }) => {
   }
   if (body.budget_scope!==undefined) changes.budget_scope=journeyText(body.budget_scope,'Alcance',8000);
   if (body.budget_timing!==undefined) changes.budget_timing=journeyText(body.budget_timing,'Plazo',1000);
+  // The dated next step is a Madrid civil day; null clears it and its reminder.
+  if (body.next_action_date!==undefined) {
+    if (body.next_action_date!==null && !isCivilDate(body.next_action_date)) throw new DashboardInputError('La fecha del próximo paso no es válida.');
+    changes.next_action_date=body.next_action_date;
+  }
+  if (body.next_action_note!==undefined) {
+    const note=journeyText(body.next_action_note,'Próximo paso',300);
+    if (/[\r\n]/.test(note)) throw new DashboardInputError('Describe el próximo paso en una sola línea.');
+    changes.next_action_note=note;
+  }
   if (!Object.keys(changes).length) throw new DashboardInputError('No hay cambios que guardar.');
   if(changes.stage!==undefined) {
     // Receipts must still replay after the stage has advanced; the SQL RPC owns

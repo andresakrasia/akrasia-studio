@@ -10,7 +10,7 @@ const suites = ['check-secrets','migration-manifest','check-isolated',
   'test-visitor-isolation','test-booking-isolation','test-safe-rendering','test-supabase-security',
   'test-project-publication','test-projects-sql','test-privacy-consent','test-analytics','test-chat-lifecycle',
   'test-project-upload','test-project-upload-http','test-project-media','test-csv-export','test-storage-sql',
-  'test-agenda-integrations','test-booking-admin-email','test-booking-notification-status','test-admin-booking-agenda','test-dashboard-availability','test-availability-display','test-panel-data','test-client-journey','test-lead-conversation-context','test-email-writing','test-production-ai-context','test-public-web','test-chat-navigation','test-predefined-chat','test-public-activity','test-hud-activity','test-production-config',
+  'test-agenda-integrations','test-booking-admin-email','test-booking-notification-status','test-admin-booking-agenda','test-dashboard-availability','test-availability-display','test-panel-data','test-client-journey','test-crm-followup','test-lead-conversation-context','test-email-writing','test-production-ai-context','test-public-web','test-chat-navigation','test-predefined-chat','test-public-activity','test-hud-activity','test-production-config',
   'test-chat-capture','test-chat-client-actions','test-chat-project-cards','test-chat-first-live-provider','test-chat-preview-clock','test-chat-preview-dashboard','test-chat-preview-agenda','test-preview-agenda-persistence','test-preview-bookings-persistence','test-preview-production-ai-fixture','test-services-catalogue','test-services-catalogue-sql','test-postgres','build-isolated'];
 const results = [];
 const startedAt = new Date().toISOString();

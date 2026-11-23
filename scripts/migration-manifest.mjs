@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 export const projectRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 export const manifestPath=path.join(projectRoot,'supabase/migration-manifest.json');
-export const migrationNames=Array.from({length:25},(_,index)=>index===0?'migration.sql':`migration-v${index+1}.sql`);
+export const migrationNames=Array.from({length:26},(_,index)=>index===0?'migration.sql':`migration-v${index+1}.sql`);
 export const sqlDigest=sql=>createHash('sha256').update(sql).digest('hex');
 export async function generateMigrationManifest() {
  const migrations=[];

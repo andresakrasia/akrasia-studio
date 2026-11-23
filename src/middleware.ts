@@ -12,6 +12,11 @@ function dashboardNavigationParams(search: URLSearchParams): URLSearchParams {
     const value = search.get(key);
     if (value) clean.set(key, value.slice(0, 128));
   }
+  // A notice may open one lead or one journey; only a well-formed id survives.
+  for (const [key, tab] of [['lead', 'leads'], ['journey', 'journeys']]) {
+    const value = search.get(key);
+    if (value && search.get('tab') === tab && search.getAll(key).length === 1 && /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value)) clean.set(key, value);
+  }
   const date = search.get('date');
   if (search.get('tab') === 'bookings' && search.getAll('tab').length === 1 && search.getAll('date').length === 1 && isCivilDate(date)) clean.set('date', date);
   return clean;
@@ -25,7 +30,7 @@ function loginReturnDestination(url: URL): string {
     if (requested.origin !== url.origin || requested.pathname !== '/dashboard') return '/dashboard';
     const clean = dashboardNavigationParams(requested.searchParams);
     const tab = clean.get('tab');
-    if (tab && !['overview', 'visitors', 'conversations', 'leads', 'projects', 'feed', 'studio', 'content', 'bookings'].includes(tab)) clean.delete('tab');
+    if (tab && !['overview', 'visitors', 'conversations', 'leads', 'journeys', 'emails', 'projects', 'feed', 'studio', 'content', 'bookings'].includes(tab)) { clean.delete('tab'); clean.delete('lead'); clean.delete('journey'); }
     const visitor = clean.get('visitor_id');
     if (visitor && !/^[a-zA-Z0-9_-]{1,128}$/.test(visitor)) clean.delete('visitor_id');
     return `/dashboard${clean.size ? `?${clean}` : ''}`;
@@ -61,8 +66,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (page && !loginPage && path !== '/dashboard') {
     return respond(new Response(null, { status: 303, headers: { Location: '/dashboard' } }));
   }
-  if (page && path === '/dashboard' && read && ([...url.searchParams.keys()].some(key => !['tab', 'visitor_id', 'date'].includes(key)) ||
-      (url.searchParams.has('date') && !dashboardNavigationParams(url.searchParams).has('date')))) {
+  if (page && path === '/dashboard' && read && ([...url.searchParams.keys()].some(key => !['tab', 'visitor_id', 'date', 'lead', 'journey'].includes(key)) ||
+      ['date', 'lead', 'journey'].some(key => url.searchParams.has(key) && !dashboardNavigationParams(url.searchParams).has(key)))) {
     const clean = dashboardNavigationParams(url.searchParams);
     return respond(new Response(null, { status: 303, headers: { Location: `/dashboard${clean.size ? `?${clean}` : ''}` } }));
   }

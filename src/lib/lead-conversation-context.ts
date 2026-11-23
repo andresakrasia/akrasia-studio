@@ -181,7 +181,12 @@ async function messagePage(conversationId: string, offset: number, limit: number
 
 export async function loadLeadConversationContext(leadId: string, signal?: AbortSignal): Promise<LeadConversationContext> {
   const id = requireDashboardId(leadId);
-  const lead = oneDashboardRow(await sbQuery('leads', `select=id,visitor_id,conversation_id,name,company,email,phone,project_type&id=eq.${id}&limit=2`, signal), id);
+  const lead = oneDashboardRow(await sbQuery('leads', `select=id,visitor_id,conversation_id,name,company,email,phone,project_type,source&id=eq.${id}&limit=2`, signal), id);
+  // A contact registered by hand never had a chat; its known data is the context.
+  if (lead.visitor_id === null && lead.conversation_id === null && lead.source === 'manual') {
+    return { leadId: id, visitorId: '', conversationId: null, ...conversationFacts(lead, []), email: field(lead.email, 254), phone: field(lead.phone, 40),
+      messages: [], totalMessages: 0, truncated: false, source: 'none' };
+  }
   if (typeof lead.visitor_id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(lead.visitor_id)) throw new DashboardStorageError();
   const visitorId = lead.visitor_id;
   let source: LeadConversationContext['source'] = 'none', conversationId: string | null = null;

@@ -7,6 +7,8 @@ import DashboardEmails, { type EmailLaunch } from './DashboardEmails';
 import BookingAgenda from './BookingAgenda';
 import type { EmailDraftContext } from '../../lib/client-email-writing';
 import { mergeDashboardProjectForm } from '../../lib/dashboard-project-refresh';
+import type { JourneyStage } from '../../lib/client-journey-contract';
+import { JOURNEY_STAGE_LABELS, shortCivilDate, daysUntil } from '../../lib/client-journey-ui';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 type Tab = 'overview' | 'visitors' | 'conversations' | 'leads' | 'journeys' | 'emails' | 'projects' | 'feed' | 'studio' | 'content' | 'bookings';
@@ -45,8 +47,13 @@ interface Message {
 
 interface Lead {
   id: string;
-  visitor_id: string;
-  conversation_id: string;
+  visitor_id: string | null;
+  conversation_id: string | null;
+  source?: string | null;
+  origin?: string;
+  journey?: { id: string; stage: JourneyStage; next_action_date: string | null } | null;
+  booking?: { id: string; date: string; time: string; status: 'confirmed' | 'completed'; meet_url: string } | null;
+  expires_at?: string | null;
   email: string | null;
   phone: string | null;
   name: string | null;
@@ -224,6 +231,12 @@ function runDashboardAction(action:()=>unknown) {
   });
 }
 
+const EMPTY_MANUAL_LEAD = { name: '', email: '', phone: '', company: '', project_type: '', origin: '', summary: '' };
+/** One lead or journey named by a notice link; anything but a UUID is ignored. */
+function initialRecordFilter(key: 'lead' | 'journey') {
+  const value = new URLSearchParams(window.location.search).get(key);
+  return value && /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value) ? value : '';
+}
 function initialVisitorFilter() {
   const visitor = new URLSearchParams(window.location.search).get('visitor_id');
   return visitor && /^[a-zA-Z0-9_-]{1,128}$/.test(visitor) ? visitor : '';
@@ -717,10 +730,39 @@ function LeadsTab({ csrfToken, request, onEmailDraft, onOpenProject }: { csrfTok
   const [statusFilter, setStatusFilter] = useState('');
   const [committedSearch,setCommittedSearch]=useState(search);
   useEffect(()=>{const timer=setTimeout(()=>setCommittedSearch(search.trim()),300);return()=>clearTimeout(timer);},[search]);
-  const query=new URLSearchParams();if(committedSearch)query.set('search',committedSearch);if(statusFilter)query.set('status',statusFilter);
+  // A Telegram notice opens the panel on one contact; "Ver todos" returns to the list.
+  const [focusLead, setFocusLead] = useState(initialRecordFilter('lead'));
+  const query=new URLSearchParams();if(focusLead)query.set('id',focusLead);else{if(committedSearch)query.set('search',committedSearch);if(statusFilter)query.set('status',statusFilter);}
   const { data, loading, refetch, pagination } = useDashFetch<Lead[]>(csrfToken, '/api/dashboard/leads'+(query.size?'?'+query.toString():''));
   const [updating, setUpdating] = useState<string | null>(null);
   const [journeyLead, setJourneyLead] = useState<Lead | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [manual, setManual] = useState(EMPTY_MANUAL_LEAD);
+  const [manualPending, setManualPending] = useState(false);
+  const [manualError, setManualError] = useState('');
+  const [manualNotice, setManualNotice] = useState('');
+  const manualOperation = useRef<{ fingerprint: string; id: string } | null>(null);
+
+  const createManualLead = async () => {
+    if (manualPending) return;
+    const fields = Object.fromEntries(Object.entries(manual).map(([key, value]) => [key, value.trim()]));
+    if (!fields.name) { setManualError('Indica el nombre del contacto.'); return; }
+    // The same attempt keeps its id, so a retry after a lost response cannot duplicate the contact.
+    const fingerprint = JSON.stringify(fields);
+    if (manualOperation.current?.fingerprint !== fingerprint) manualOperation.current = { fingerprint, id: crypto.randomUUID() };
+    setManualPending(true); setManualError(''); setManualNotice('');
+    try {
+      const response = await request('/api/dashboard/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...fields, operation_id: manualOperation.current.id }) });
+      const saved = await response.json() as Lead;
+      if (!saved || saved.id !== manualOperation.current.id) throw new Error('El servidor no confirmó el contacto.');
+      manualOperation.current = null;
+      setManual(EMPTY_MANUAL_LEAD); setAdding(false);
+      setManualNotice(`Contacto «${saved.name}» añadido. Abre «Ficha y seguimiento» para crear su cliente y proyecto.`);
+      await refetch();
+    } catch (cause) {
+      setManualError(cause instanceof Error && cause.message ? cause.message : 'No se pudo añadir el contacto. Tus datos siguen aquí para reintentar.');
+    } finally { setManualPending(false); }
+  };
 
   const filtered = data || [];
 
@@ -780,6 +822,9 @@ function LeadsTab({ csrfToken, request, onEmailDraft, onOpenProject }: { csrfTok
           <option value="lost">Perdido</option>
         </select>
         <div className="flex-1" />
+        <button type="button" onClick={() => { setAdding(value => !value); setManualError(''); }} aria-expanded={adding} className="text-[11px] text-primary border border-primary/40 bg-primary/10 hover:bg-primary/20 rounded px-3 py-1.5 transition-colors">
+          {adding ? 'Cerrar alta' : 'Añadir contacto'}
+        </button>
         <button onClick={exportCsv} className="text-[11px] text-primary/70 hover:text-primary border border-primary/20 hover:border-primary/40 rounded px-3 py-1.5 transition-colors">
           Exportar CSV
         </button>
@@ -787,6 +832,33 @@ function LeadsTab({ csrfToken, request, onEmailDraft, onOpenProject }: { csrfTok
           Actualizar
         </button>
       </div>
+
+      {focusLead && (
+        <p className="mb-4 rounded border border-cyan-500/25 bg-primary/5 px-3 py-2 text-xs text-slate-300">
+          Mostrando el contacto del aviso.{' '}
+          <button type="button" className="text-primary underline" onClick={() => { setFocusLead(''); const url = new URL(window.location.href); url.searchParams.delete('lead'); window.history.replaceState(null, '', `${url.pathname}${url.search}`); }}>Ver todos los contactos</button>
+        </p>
+      )}
+      {manualNotice && <p role="status" className="mb-4 rounded bg-primary/5 px-3 py-2 text-xs text-primary">{manualNotice}</p>}
+      {adding && (
+        <form className="mb-4 rounded-lg border border-cyan-500/25 bg-[#0a0a0a] p-4 space-y-3" onSubmit={(event) => { event.preventDefault(); void createManualLead(); }}>
+          <div>
+            <h3 className="text-sm text-slate-100">Añadir un contacto que no llegó por el chat</h3>
+            <p className="mt-1 text-[11px] leading-relaxed text-slate-400">Para encargos que llegan por Instagram, email, teléfono o recomendación. Sigue el mismo recorrido que un lead del chat y no caduca con la conservación del chat.</p>
+          </div>
+          <fieldset disabled={manualPending} className="grid gap-3 md:grid-cols-3">
+            <label className="block space-y-1 text-xs text-slate-400"><span>Nombre</span><input required maxLength={150} className={INPUT_CLS} value={manual.name} onChange={(event) => setManual(previous => ({ ...previous, name: event.target.value }))} /></label>
+            <label className="block space-y-1 text-xs text-slate-400"><span>Email</span><input type="email" maxLength={254} className={INPUT_CLS} value={manual.email} onChange={(event) => setManual(previous => ({ ...previous, email: event.target.value }))} /></label>
+            <label className="block space-y-1 text-xs text-slate-400"><span>Teléfono</span><input maxLength={40} className={INPUT_CLS} value={manual.phone} onChange={(event) => setManual(previous => ({ ...previous, phone: event.target.value }))} /></label>
+            <label className="block space-y-1 text-xs text-slate-400"><span>Empresa o marca</span><input maxLength={150} className={INPUT_CLS} value={manual.company} onChange={(event) => setManual(previous => ({ ...previous, company: event.target.value }))} /></label>
+            <label className="block space-y-1 text-xs text-slate-400"><span>Tipo de proyecto</span><input maxLength={80} className={INPUT_CLS} value={manual.project_type} onChange={(event) => setManual(previous => ({ ...previous, project_type: event.target.value }))} placeholder="Videoclip, spot, branded…" /></label>
+            <label className="block space-y-1 text-xs text-slate-400"><span>Cómo llegó</span><input maxLength={80} className={INPUT_CLS} value={manual.origin} onChange={(event) => setManual(previous => ({ ...previous, origin: event.target.value }))} placeholder="Instagram, recomendación de…" /></label>
+            <label className="block space-y-1 text-xs text-slate-400 md:col-span-3"><span>Qué necesita</span><textarea rows={3} maxLength={8000} className={INPUT_CLS} value={manual.summary} onChange={(event) => setManual(previous => ({ ...previous, summary: event.target.value }))} placeholder="Lo que sabes del encargo. Será el resumen inicial de la ficha." /></label>
+          </fieldset>
+          {manualError && <p role="alert" className="text-xs text-red-300">{manualError}</p>}
+          <button type="submit" disabled={manualPending} className="text-[11px] text-primary border border-primary/40 bg-primary/10 hover:bg-primary/20 rounded px-3 py-1.5 disabled:opacity-40">{manualPending ? 'Añadiendo…' : 'Añadir contacto'}</button>
+        </form>
+      )}
 
       <div className="bg-[#0a0a0a] border border-cyan-500/25 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
@@ -798,13 +870,14 @@ function LeadsTab({ csrfToken, request, onEmailDraft, onOpenProject }: { csrfTok
                 <th className="text-left p-3">Teléfono</th>
                 <th className="text-left p-3">Tipo proyecto</th>
                 <th className="text-left p-3">Estado</th>
+                <th className="text-left p-3">Videollamada</th>
                 <th className="text-left p-3">Fecha</th>
                 <th className="text-left p-3">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="p-8 text-center text-slate-500">Sin leads</td></tr>
+                <tr><td colSpan={8} className="p-8 text-center text-slate-500">{focusLead ? 'Este contacto ya no está disponible.' : 'Sin leads'}</td></tr>
               )}
               {filtered.map((l) => (
                 <tr key={l.id} className="border-b border-cyan-500/25/50 hover:bg-[#0f0f0f] transition-colors">
@@ -812,20 +885,34 @@ function LeadsTab({ csrfToken, request, onEmailDraft, onOpenProject }: { csrfTok
                     <div>
                       <p className="text-slate-300 text-xs">{l.name || '—'}</p>
                       {l.company && <p className="text-[10px] text-slate-600">{l.company}</p>}
-                      {l.interest_level&&<p className="text-[10px] text-slate-500">Interés {({cold:'bajo',warm:'medio',hot:'alto'} as const)[l.interest_level]}{typeof l.interest_score==='number'?` · ${l.interest_score}/100`:''}</p>}
+                      {l.source==='manual'
+                        ? <p className="text-[10px] text-slate-500">Alta manual{l.origin ? ` · ${l.origin}` : ''}</p>
+                        : l.interest_level&&<p className="text-[10px] text-slate-500">Interés {({cold:'bajo',warm:'medio',hot:'alto'} as const)[l.interest_level]}{typeof l.interest_score==='number'?` · ${l.interest_score}/100`:''}</p>}
                     </div>
                   </td>
                   <td className="p-3 text-xs text-slate-400">{l.email || '—'}</td>
                   <td className="p-3 text-xs text-slate-400">{l.phone || '—'}</td>
                   <td className="p-3 text-xs text-slate-400">{l.project_type || '—'}</td>
-                  <td className="p-3"><Badge status={l.status} /></td>
-                  <td className="p-3 text-[11px] text-slate-500" title={l.contact_captured_at?'Fecha de captación del contacto':'Fecha de creación del perfil; el contacto histórico no tiene fecha separada'}>{formatDate(l.contact_captured_at||l.created_at)}</td>
+                  <td className="p-3">
+                    {/* Once a journey exists, its stage is where this contact really is. */}
+                    {l.journey
+                      ? <span className="inline-block rounded border border-primary/20 bg-primary/5 px-2 py-0.5 text-[10px] text-primary whitespace-nowrap" title="Etapa de su ficha de seguimiento">{JOURNEY_STAGE_LABELS[l.journey.stage] || 'En seguimiento'}</span>
+                      : <Badge status={l.status} />}
+                    {l.journey?.next_action_date && <p className="mt-1 text-[10px] text-slate-500 whitespace-nowrap">Próximo paso: {shortCivilDate(l.journey.next_action_date)}</p>}
+                  </td>
+                  <td className="p-3 text-[11px] text-slate-400 whitespace-nowrap">
+                    {l.booking ? <>{shortCivilDate(l.booking.date)} · {l.booking.time}<span className="block text-[10px] text-slate-500">{l.booking.status === 'completed' ? 'Realizada' : 'Confirmada'}</span></> : '—'}
+                  </td>
+                  <td className="p-3 text-[11px] text-slate-500" title={l.contact_captured_at?'Fecha de captación del contacto':'Fecha de creación del perfil; el contacto histórico no tiene fecha separada'}>
+                    {formatDate(l.contact_captured_at||l.created_at)}
+                    {(() => { const days = l.journey ? null : daysUntil(l.expires_at); return days !== null && days <= 21 ? <span className="block text-[10px] text-amber-300" title="Los contactos del chat sin ficha se eliminan al terminar su plazo de conservación. Crear la ficha conserva al cliente.">{days <= 0 ? 'Caduca en la próxima limpieza' : `Caduca en ${days} ${days === 1 ? 'día' : 'días'} sin ficha`}</span> : null; })()}
+                  </td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
                       <button type="button" onClick={() => setJourneyLead(l)} className="text-[10px] px-2 py-1 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10 rounded whitespace-nowrap">Ficha y seguimiento</button>
                       {l.email && (
                         <button
-                          onClick={() => onEmailDraft({ leadId: l.id, visitorId: l.visitor_id, to: l.email || '', toName: l.name || l.company || '', projectTitle: l.project_type || '', brief: l.summary || '', templateType: 'evaluation' })}
+                          onClick={() => onEmailDraft({ leadId: l.id, visitorId: l.visitor_id || undefined, to: l.email || '', toName: l.name || l.company || '', projectTitle: l.project_type || '', brief: l.summary || '', templateType: 'evaluation' })}
                           className="text-[10px] px-2 py-0.5 border border-primary/30 text-primary/70 hover:text-primary hover:border-primary/50 rounded transition-colors"
                           title="Enviar email"
                         >
@@ -2187,7 +2274,7 @@ export default function DashboardApp({ csrfToken, expiresAt }: Props) {
         {activeTab === 'visitors' && <VisitorsTab csrfToken={csrfToken} />}
         {activeTab === 'conversations' && <ConversationsTab csrfToken={csrfToken} />}
         {workflowTabs.includes('leads') && <div hidden={activeTab !== 'leads'}><LeadsTab csrfToken={csrfToken} request={request} onEmailDraft={openEmailDraft} onOpenProject={openProject} /></div>}
-        {workflowTabs.includes('journeys') && <div hidden={activeTab !== 'journeys'}><ClientJourneyPanel request={request} onEmailDraft={openEmailDraft} onOpenProject={openProject} /></div>}
+        {workflowTabs.includes('journeys') && <div hidden={activeTab !== 'journeys'}><ClientJourneyPanel request={request} onEmailDraft={openEmailDraft} onOpenProject={openProject} initialJourneyId={initialRecordFilter('journey')} /></div>}
         {emailsOpened && <div hidden={activeTab !== 'emails'}><DashboardEmails request={request} launch={emailLaunch} /></div>}
         {workflowTabs.includes('projects') && <div hidden={activeTab !== 'projects'}><ProjectsTab csrfToken={csrfToken} request={request} onEmailDraft={openEmailDraft} launch={projectLaunch} /></div>}
         {activeTab === 'feed' && <FeedTab csrfToken={csrfToken} />}

@@ -77,7 +77,8 @@ export function checkedLeadConversationContext(data: unknown, leadId: string): L
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('No se pudo cargar el contexto de la conversación.');
   const value = data as Record<string, unknown>;
   const stringFields = ['visitorId', 'clientName', 'company', 'email', 'phone', 'projectTitle', 'brief', 'requestedTiming'] as const;
-  if (!leadId || value.leadId !== leadId || stringFields.some(key => typeof value[key] !== 'string') || !value.visitorId ||
+  if (!leadId || value.leadId !== leadId || stringFields.some(key => typeof value[key] !== 'string') ||
+    (!value.visitorId && (value.source !== 'none' || value.conversationId !== null || value.totalMessages !== 0)) ||
     (value.conversationId !== null && (typeof value.conversationId !== 'string' || !value.conversationId)) ||
     typeof value.source !== 'string' || !['linked', 'visitor_latest', 'none'].includes(value.source) ||
     typeof value.totalMessages !== 'number' || !Number.isSafeInteger(value.totalMessages) || value.totalMessages < 0 ||

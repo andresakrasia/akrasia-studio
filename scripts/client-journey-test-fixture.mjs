@@ -14,16 +14,31 @@ export function attachClientJourneyFixture(tables,state) {
   };
   return ({url,body,json})=>{
     const rpc=url.pathname.replace('/rest/v1/rpc/','');
-    if (!['dashboard_create_client_journey','dashboard_update_client_journey','dashboard_save_email_draft','dashboard_queue_email_draft'].includes(rpc)) return false;
+    if (!['dashboard_create_client_journey','dashboard_update_client_journey','dashboard_save_email_draft','dashboard_queue_email_draft','dashboard_create_manual_lead'].includes(rpc)) return false;
     if (state.journeyUnavailable) { json({error:'Synthetic journey outage'},503);return true; }
     const now=new Date().toISOString();
+    if (rpc==='dashboard_create_manual_lead') {
+      // Mirrors v26: the operation id is the row id; same data replays, other data conflicts.
+      const fields=body.p_fields;const keys=['name','company','email','phone','project_type','summary','origin'];
+      if (!fields||typeof fields!=='object'||Object.keys(fields).length!==keys.length||keys.some(key=>typeof fields[key]!=='string')||!fields.name.trim()) {json({error:'Synthetic invalid manual contact'},400);return true;}
+      const existing=tables.leads.find(row=>row.id===body.p_id);
+      if (existing) {
+        if (existing.source!=='manual'||existing.name!==fields.name.trim()||(existing.email??'')!==fields.email||(existing.phone??'')!==fields.phone||(existing.summary??'')!==fields.summary) json({error:'Synthetic operation conflict'},409);
+        else json(clone(existing));
+        return true;
+      }
+      const lead={id:body.p_id,visitor_id:null,conversation_id:null,source:'manual',status:'new',name:fields.name.trim(),company:fields.company.trim()||null,email:fields.email.trim()||null,phone:fields.phone.trim()||null,
+        project_type:fields.project_type.trim()||null,summary:fields.summary||null,origin:fields.origin.trim(),interest_score:0,interest_level:'cold',tags:[],
+        contact_captured_at:fields.email.trim()||fields.phone.trim()?now:null,created_at:now,updated_at:now};
+      tables.leads.push(lead);json(clone(lead));return true;
+    }
     if (rpc==='dashboard_create_client_journey') {
       resolveOperation('create',body.p_operation,{lead_id:body.p_lead_id,client_name:body.p_client_name,project_title:body.p_project_title,brief:body.p_brief},json,()=>{
         const lead=tables.leads.find(row=>row.id===body.p_lead_id);if (!lead) {json({error:'Synthetic lead missing'},404);return;}
         const existing=tables.client_journeys.find(row=>row.lead_id===lead.id);if (existing) return existing;
         const client={id:randomUUID(),name:body.p_client_name,company:lead.company??'',email:lead.email??'',phone:lead.phone??'',notes:body.p_brief,created_at:now,updated_at:now};
         const project={id:randomUUID(),title:body.p_project_title,type:lead.project_type??'',status:'planning',client_id:client.id,client_name:client.name,description:body.p_brief,is_active:true,is_published:false,sort_order:0,created_at:now,updated_at:now};project.slug=`proyecto-${project.id}`;
-        const journey={id:randomUUID(),lead_id:lead.id,client_id:client.id,project_id:project.id,client_name:client.name,project_title:project.title,brief:body.p_brief,stage:'received',budget_amount:null,budget_currency:'EUR',budget_scope:'',budget_timing:'',created_at:now,updated_at:now};
+        const journey={id:randomUUID(),lead_id:lead.id,client_id:client.id,project_id:project.id,client_name:client.name,project_title:project.title,brief:body.p_brief,stage:'received',budget_amount:null,budget_currency:'EUR',budget_scope:'',budget_timing:'',next_action_date:null,next_action_note:'',created_at:now,updated_at:now};
         tables.clients.push(client);tables.projects.push(project);tables.client_journeys.push(journey);event(journey,'created','Cliente y proyecto creados desde el lead.',body.p_operation);return journey;
       });
     }

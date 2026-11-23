@@ -4,11 +4,13 @@ import type { EmailDraftContext } from '../../lib/client-email-writing';
 import { checkedLeadConversationContext, conversationWritingContext, emailDraftStateLabel, EMAIL_TEMPLATES } from '../../lib/client-email-writing';
 import type { LeadConversationContext } from '../../lib/lead-conversation-context';
 import { LeadConversationOverview } from './EmailComposer';
-import { journeyProgressFrom, mergeJourneyProgress, type JourneyProgressDraft } from '../../lib/client-journey-ui';
+import { journeyProgressFrom, mergeJourneyProgress, nextActionState, shortCivilDate, type JourneyProgressDraft } from '../../lib/client-journey-ui';
+import { isCivilDate, madridDateKey } from '../../lib/civil-time';
 
 export interface LeadContact {
   id: string;
-  visitor_id?: string;
+  visitor_id?: string | null;
+  source?: string | null;
   name?: string | null;
   email?: string | null;
   phone?: string | null;
@@ -24,6 +26,8 @@ export type ClientJourneyEmailContext = EmailDraftContext;
 export interface ClientJourneyPanelProps {
   lead?: LeadContact;
   journeyId?: string;
+  /** In the list view, the journey a reminder link asked to open first. */
+  initialJourneyId?: string;
   projectId?: string;
   request: (endpoint: string, options?: RequestInit) => Promise<Response>;
   onClose?: () => void;
@@ -110,8 +114,10 @@ function HistoryEventDetails({ event }: { event: ClientJourneyEvent }) {
   return null;
 }
 
-export default function ClientJourneyPanel({ lead, journeyId, projectId, request, onClose, onEmailDraft, onCreated, onOpenProject }: ClientJourneyPanelProps) {
+export default function ClientJourneyPanel({ lead, journeyId, initialJourneyId, projectId, request, onClose, onEmailDraft, onCreated, onOpenProject }: ClientJourneyPanelProps) {
   const [selectedId, setSelectedId] = useState('');
+  const [nextDate, setNextDate] = useState('');
+  const [nextNote, setNextNote] = useState('');
   const [journey, setJourney] = useState<ClientJourney | null>(null);
   const [rows, setRows] = useState<ClientJourney[]>([]);
   const [offset, setOffset] = useState(0);
@@ -124,6 +130,9 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
   const [contextLoading, setContextLoading] = useState(!!lead?.id);
   const [contextError, setContextError] = useState('');
   const [contextReload, setContextReload] = useState(0);
+  const [briefPending, setBriefPending] = useState(false);
+  const [briefMissing, setBriefMissing] = useState<string[] | null>(null);
+  const [briefPrevious, setBriefPrevious] = useState<string | null>(null);
   const [progress, setProgress] = useState<ProgressDraft>(EMPTY_PROGRESS);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
@@ -152,10 +161,17 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
   liveProgress.current = progress;
   const focusId = journeyId || selectedId;
   const listMode = !focusId && !projectId && !lead?.id;
-  const contextLeadId = lead?.id || journey?.lead_id || '';
+  // A contact registered by hand has no chat to recover: its own data is the context.
+  const contextLeadId = lead ? (lead.visitor_id ? lead.id : '') : (journey?.lead_id && journey.lead_visitor_id ? journey.lead_id : '');
+  const today = madridDateKey();
 
   useEffect(() => {
-    setSelectedId('');
+    setNextDate(journey?.next_action_date || '');
+    setNextNote(journey?.next_action_note || '');
+  }, [journey?.id, journey?.next_action_date, journey?.next_action_note]);
+
+  useEffect(() => {
+    setSelectedId(!lead && !journeyId && !projectId && initialJourneyId ? initialJourneyId : '');
     setCreation(defaultCreation(lead));
     setCreationBaseline(defaultCreation(lead));
     creationEdits.current.clear();
@@ -325,6 +341,25 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
     return operation.current.id;
   }
 
+  // Orders the chat into the director's brief. It only fills the editable field:
+  // nothing is saved until the team creates the journey.
+  async function generateBrief() {
+    if (!lead || briefPending || pending) return;
+    setBriefPending(true);
+    setError('');
+    setNotice('');
+    try {
+      const response = await request('/api/dashboard/lead-brief', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lead_id: lead.id }) });
+      const data = await responseData(response);
+      if (!data || typeof data !== 'object' || !('text' in data) || typeof data.text !== 'string' || !('missing' in data) || !Array.isArray(data.missing) || data.missing.some(item => typeof item !== 'string')) throw new Error('La IA no devolvió un brief válido. El resumen actual sigue disponible.');
+      setBriefPrevious(creation.brief);
+      editCreation('brief', data.text.slice(0, 8000));
+      setBriefMissing(data.missing as string[]);
+    } catch (cause) {
+      setError(getError(cause, 'No se pudo ordenar el brief. El resumen actual sigue disponible.'));
+    } finally { setBriefPending(false); }
+  }
+
   async function createJourney(): Promise<boolean> {
     if (!lead || lock.current || contextLoading) return false;
     if (!creation.client_name.trim() || !creation.project_title.trim()) { setError('Completa el nombre del cliente y el título del proyecto.'); return false; }
@@ -338,7 +373,7 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
       const response = await request('/api/dashboard/client-journeys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, operation_id: operationFor(payload) }) });
       const saved = requireJourney(await responseData(response));
       if (current !== generation.current) return false;
-      setJourney({ ...saved, lead_email: lead.email || undefined, lead_name: lead.name || undefined, lead_visitor_id: lead.visitor_id });
+      setJourney({ ...saved, lead_email: lead.email || undefined, lead_name: lead.name || undefined, lead_visitor_id: lead.visitor_id || undefined });
       setProgress(progressFrom(saved));
       operation.current = null;
       setNotice('Cliente, proyecto y seguimiento creados. Ya puedes preparar el primer email.');
@@ -381,6 +416,30 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
     } catch (cause) {
       if (current === generation.current) setError(getError(cause, 'No se pudieron guardar los cambios. Tus notas siguen aquí.'));
       return false;
+    } finally { lock.current = false; if (current === generation.current) setPending(false); }
+  }
+
+  /** The dated next step is saved on its own: it never confirms a stage and keeps
+   * any unsaved stage, quote or note edits of the form below untouched. */
+  async function saveNextAction(date: string, note: string): Promise<void> {
+    if (!journey || lock.current) return;
+    if (date && !isCivilDate(date)) { setError('Elige una fecha válida para el próximo paso.'); return; }
+    const payload = { id: journey.id, next_action_date: date || null, next_action_note: note.trim() };
+    lock.current = true;
+    setPending(true);
+    setError('');
+    setNotice('');
+    const current = generation.current;
+    try {
+      const response = await request('/api/dashboard/client-journeys', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, operation_id: operationFor(payload) }) });
+      const saved = requireJourney(await responseData(response));
+      if (current !== generation.current) return;
+      setJourney({ ...journey, ...saved });
+      operation.current = null;
+      setNotice(saved.next_action_date ? `Próximo paso guardado para el ${shortCivilDate(saved.next_action_date)}. Ese día recibirás un aviso por Telegram si la integración está activa.` : 'Próximo paso retirado.');
+      window.dispatchEvent(new CustomEvent('dashboard-journey-updated', { detail: { projectId: saved.project_id, journeyId: saved.id, sourceId: instanceId } }));
+    } catch (cause) {
+      if (current === generation.current) setError(getError(cause, 'No se pudo guardar el próximo paso. Tus datos siguen aquí.'));
     } finally { lock.current = false; if (current === generation.current) setPending(false); }
   }
 
@@ -432,7 +491,7 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
     {!!contextLeadId && <LeadConversationOverview conversation={conversation} loading={contextLoading} error={contextError} onRetry={() => setContextReload(value => value + 1)} savedTiming={journey?.budget_timing} />}
     {loading && <p role="status" className="py-8 text-sm text-slate-400">Cargando seguimiento…</p>}
     {!loading && listMode && !loadError && <>
-      {!rows.length ? <div className={CARD}><p className="text-sm">Todavía no hay fichas de seguimiento.</p><p className="mt-2 text-xs text-slate-400">Abre un lead y crea su cliente y proyecto para empezar.</p></div> : <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{rows.map(row => <button key={row.id} type="button" onClick={() => { setSelectedId(row.id); setNotice(''); }} className={`${CARD} text-left hover:border-primary/50`}><p className="text-sm text-slate-100">{row.project_title}</p><p className="mt-1 text-xs text-slate-400">{row.client_name}</p><span className="mt-3 inline-block rounded border border-primary/20 bg-primary/5 px-2 py-1 text-[11px] text-primary">{STAGE_LABELS[row.stage]}</span><p className="mt-3 text-[11px] text-slate-500">Actualizado {formatDate(row.updated_at)}</p></button>)}</div>}
+      {!rows.length ? <div className={CARD}><p className="text-sm">Todavía no hay fichas de seguimiento.</p><p className="mt-2 text-xs text-slate-400">Abre un lead y crea su cliente y proyecto para empezar. Si el encargo no llegó por el chat, añade antes el contacto desde Leads.</p></div> : <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{rows.map(row => <button key={row.id} type="button" onClick={() => { setSelectedId(row.id); setNotice(''); }} className={`${CARD} text-left hover:border-primary/50`}><p className="text-sm text-slate-100">{row.project_title}</p><p className="mt-1 text-xs text-slate-400">{row.client_name}</p><span className="mt-3 inline-block rounded border border-primary/20 bg-primary/5 px-2 py-1 text-[11px] text-primary">{STAGE_LABELS[row.stage]}</span>{row.next_action_date && !['closed', 'lost'].includes(row.stage) && <p className={`mt-3 text-[11px] ${nextActionState(row.next_action_date, today) === 'upcoming' ? 'text-slate-400' : 'text-amber-300'}`}>{{ overdue: 'Próximo paso vencido', today: 'Próximo paso hoy', upcoming: 'Próximo paso', none: '' }[nextActionState(row.next_action_date, today)]}: {shortCivilDate(row.next_action_date)}{row.next_action_note ? ` · ${row.next_action_note}` : ''}</p>}<p className="mt-3 text-[11px] text-slate-500">Actualizado {formatDate(row.updated_at)}</p></button>)}</div>}
       <div className="flex items-center justify-between gap-3 text-xs text-slate-400"><span>{total} {total === 1 ? 'ficha' : 'fichas'}</span><div className="flex gap-4"><button type="button" disabled={offset === 0} onClick={() => setOffset(value => Math.max(0, value - 25))} className="disabled:opacity-30">Anterior</button><button type="button" disabled={next === null} onClick={() => next !== null && setOffset(next)} className="disabled:opacity-30">Siguiente</button></div></div>
     </>}
     {!loading && !listMode && !journey && !loadError && (lead ? <div className={CARD}>
@@ -443,6 +502,13 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
         <fieldset disabled={pending} className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2"><label className="block space-y-2 text-xs text-slate-400"><span>Nombre del cliente</span><input required maxLength={150} className={INPUT} value={creation.client_name} onChange={event => editCreation('client_name', event.target.value)} /></label><label className="block space-y-2 text-xs text-slate-400"><span>Título del proyecto</span><input required maxLength={200} className={INPUT} value={creation.project_title} onChange={event => editCreation('project_title', event.target.value)} /></label></div>
           <label className="block space-y-2 text-xs text-slate-400"><span>Resumen de la propuesta</span><textarea rows={5} maxLength={8000} className={INPUT} value={creation.brief} onChange={event => editCreation('brief', event.target.value)} placeholder="Qué necesita el cliente, objetivos y contexto conocido." /></label>
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" onClick={() => void generateBrief()} disabled={briefPending || contextLoading || !conversation?.messages.some(message => message.role === 'user')} className={BUTTON}>{briefPending ? 'Ordenando brief…' : 'Ordenar brief con IA'}</button>
+            {briefPrevious !== null && !briefPending && <button type="button" onClick={() => { editCreation('brief', briefPrevious); setBriefPrevious(null); setBriefMissing(null); }} className="text-xs text-slate-400 underline hover:text-slate-200">Recuperar resumen anterior</button>}
+          </div>
+          {briefMissing && (briefMissing.length
+            ? <p role="status" className="text-xs leading-relaxed text-amber-200">Pendiente para la videollamada: {briefMissing.join(' · ')}. Revisa el brief antes de crear la ficha.</p>
+            : <p role="status" className="text-xs text-slate-400">El brief cubre las siete preguntas. Revísalo antes de crear la ficha.</p>)}
           <button type="submit" disabled={contextLoading} className={BUTTON}>{pending ? 'Creando ficha…' : contextLoading ? 'Recuperando propuesta…' : 'Crear cliente y proyecto'}</button>
         </fieldset>
       </form>
@@ -450,9 +516,18 @@ export default function ClientJourneyPanel({ lead, journeyId, projectId, request
     {!loading && journey && <>
       <div className={`${CARD} flex flex-wrap items-start justify-between gap-4`}>
         <div><p className="text-sm text-slate-100">{effectiveJourney.toName}</p><p className="mt-1 break-all text-xs text-slate-400">{[journey.client_email || journey.lead_email || lead?.email || conversation?.email, journey.client_company || lead?.company || conversation?.company, journey.client_phone || lead?.phone || conversation?.phone].filter(Boolean).join(' · ') || 'Datos de contacto pendientes'}</p>{onOpenProject && <button type="button" disabled={pending} onClick={() => onOpenProject(journey.project_id)} className={`${BUTTON} mt-3`}>Abrir proyecto y tareas</button>}</div>
-        <div className="space-y-1 text-xs text-slate-400"><p>Etapa actual: <span className={journey.stage === 'lost' ? 'text-red-300' : 'text-primary'}>{STAGE_LABELS[journey.stage]}</span></p><p>Presupuesto: {formatBudget(journey)}</p></div>
+        <div className="space-y-1 text-xs text-slate-400"><p>Etapa actual: <span className={journey.stage === 'lost' ? 'text-red-300' : 'text-primary'}>{STAGE_LABELS[journey.stage]}</span></p><p>Presupuesto: {formatBudget(journey)}</p>{journey.booking && <p>Videollamada: <span className="text-slate-200">{shortCivilDate(journey.booking.date)} · {journey.booking.time}</span> ({journey.booking.status === 'completed' ? 'realizada' : 'confirmada'}){journey.booking.status === 'confirmed' && /^https:\/\//.test(journey.booking.meet_url) && <> · <a href={journey.booking.meet_url} target="_blank" rel="noopener noreferrer" className="text-primary underline">Abrir sala</a></>}</p>}</div>
         <details className="w-full text-[11px] text-slate-500"><summary className="cursor-pointer">Referencias de las fichas vinculadas</summary><div className="mt-2 space-y-1 break-all"><p>Cliente: {journey.client_id}</p><p>Proyecto: {journey.project_id}</p><p>Lead: {journey.lead_id}</p></div></details>
       </div>
+      {!['closed', 'lost'].includes(journey.stage) && <form className={CARD} onSubmit={event => { event.preventDefault(); void saveNextAction(nextDate, nextNote); }}>
+        <div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="text-sm text-slate-100">Próximo paso con fecha</h3>{journey.next_action_date && <span className={`text-[11px] ${nextActionState(journey.next_action_date, today) === 'upcoming' ? 'text-slate-400' : 'text-amber-300'}`}>{{ overdue: 'Vencido el', today: 'Para hoy,', upcoming: 'Programado para el', none: '' }[nextActionState(journey.next_action_date, today)]} {shortCivilDate(journey.next_action_date)}</span>}</div>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">Anota cuándo toca volver a mover esta ficha, por ejemplo reclamar la respuesta a un presupuesto. Ese día, a partir de las 9:00, recibirás un aviso por Telegram con este texto y un enlace a la ficha.</p>
+        <fieldset disabled={pending} className="mt-3 grid gap-3 md:grid-cols-[170px_1fr_auto] md:items-end">
+          <label className="block space-y-2 text-xs text-slate-400"><span>Fecha</span><input type="date" className={INPUT} value={nextDate} onChange={event => setNextDate(event.target.value)} /></label>
+          <label className="block space-y-2 text-xs text-slate-400"><span>Qué hay que hacer</span><input maxLength={300} className={INPUT} value={nextNote} onChange={event => setNextNote(event.target.value)} placeholder="Llamar para confirmar el presupuesto" /></label>
+          <div className="flex gap-2"><button type="submit" disabled={!nextDate || (nextDate === (journey.next_action_date || '') && nextNote.trim() === (journey.next_action_note || ''))} className={BUTTON}>Guardar</button>{journey.next_action_date && <button type="button" onClick={() => void saveNextAction('', '')} className="rounded border border-slate-700 px-3 py-2 text-xs text-slate-400 hover:text-slate-200 disabled:opacity-40">Quitar</button>}</div>
+        </fieldset>
+      </form>}
       <div className={CARD}>
         <h3 className="text-sm text-slate-100">Roadmap del cliente</h3>
         <p className="mt-2 text-[11px] leading-relaxed text-slate-400">La etapa actual indica dónde está el proyecto. Los hitos registrados corresponden a cambios confirmados en el historial.</p>

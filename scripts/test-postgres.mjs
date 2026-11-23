@@ -129,6 +129,8 @@ try {
   await runFile('supabase/tests/dashboard-availability-verify.sql');
   await runFile('supabase/migration-v25.sql'); await runFile('supabase/migration-v25.sql');
   await runFile('supabase/tests/booking-admin-notification-verify.sql');
+  await runFile('supabase/migration-v26.sql'); await runFile('supabase/migration-v26.sql');
+  await runFile('supabase/tests/crm-followup-verify.sql');
   const { verifyClientJourneyConcurrency } = await import('./client-journey-concurrency-check.mjs');
   results.push({file:'scripts/client-journey-concurrency-check.mjs',passed:true,
     ...await verifyClientJourneyConcurrency({host:'127.0.0.1',port,user:'postgres',password,database:'akrasia_a05_integrated'})});

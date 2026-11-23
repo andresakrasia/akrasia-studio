@@ -115,9 +115,9 @@ try {
   let token;
   let csrf;
 
-  await group('Coverage: all 24 administrative routes and 50 handlers discovered', async () => {
-    equal(protectedRoutes.length, 24);
-    equal(protectedHandlers.length, 50);
+  await group('Coverage: all 25 administrative routes and 52 handlers discovered', async () => {
+    equal(protectedRoutes.length, 25);
+    equal(protectedHandlers.length, 52);
   });
 
   await group('Each handler rejects direct requests before any data/provider access', async () => {
@@ -345,6 +345,7 @@ try {
     // These paths stop at local validation/configuration; they cannot send anything.
     equal((await dispatch(app, '/api/dashboard/send-email', { method: 'POST', cookie, csrf, headers, body: {} })).response.status, 400);
     equal((await dispatch(app, '/api/dashboard/ai-generate', { method: 'POST', cookie, csrf, headers, body: {} })).response.status, 400);
+    equal((await dispatch(app, '/api/dashboard/lead-brief', { method: 'POST', cookie, csrf, headers, body: {} })).response.status, 400);
     equal((await dispatch(app, '/api/dashboard/upload', { method: 'POST', cookie, csrf, headers, body: new FormData() })).response.status, 400);
   });
 

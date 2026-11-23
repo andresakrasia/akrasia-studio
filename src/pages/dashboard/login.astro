@@ -55,9 +55,13 @@ if (Astro.locals.dashboardSession) return Astro.redirect('/dashboard');
       if (requested.origin !== url.origin || requested.pathname !== '/dashboard') return url.pathname;
       const tab = requested.searchParams.get('tab');
       const visitor = requested.searchParams.get('visitor_id');
-      const tabs = ['overview', 'visitors', 'conversations', 'leads', 'projects', 'feed', 'studio', 'content', 'bookings'];
+      const tabs = ['overview', 'visitors', 'conversations', 'leads', 'journeys', 'emails', 'projects', 'feed', 'studio', 'content', 'bookings'];
       if (tab && tabs.includes(tab)) url.searchParams.set('tab', tab);
       if (visitor && /^[a-zA-Z0-9_-]{1,128}$/.test(visitor)) url.searchParams.set('visitor_id', visitor);
+      for (const [key, owner] of [['lead', 'leads'], ['journey', 'journeys']]) {
+        const id = requested.searchParams.get(key);
+        if (id && tab === owner && requested.searchParams.getAll(key).length === 1 && /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(id)) url.searchParams.set(key, id);
+      }
       const date = requested.searchParams.get('date');
       if (tab === 'bookings' && requested.searchParams.getAll('tab').length === 1 && requested.searchParams.getAll('date').length === 1 && isCivilDate(date)) url.searchParams.set('date', date);
       return `${url.pathname}${url.search}`;

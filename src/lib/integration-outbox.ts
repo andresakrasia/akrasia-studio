@@ -25,6 +25,28 @@ function checkedPayload(channel: 'email' | 'telegram', value: unknown): EmailPay
   return { to: p.to, ...(p.toName ? { toName: p.toName as string } : {}), subject: p.subject, bodyText: p.bodyText, templateType,
     bodyHtml: generateEmailHtml(p.bodyText, { subject: p.subject, templateType }) };
 }
+const PANEL_REFERENCE = /^(lead|journey):([a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/;
+/** Server-queued notices may name one private record. The link is built here from
+ * SITE_URL, so neither SQL nor a caller can place an arbitrary URL in a notice. */
+export function telegramNotice(value: unknown, siteUrl: string | undefined = import.meta.env.SITE_URL): { text: string } {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ChatFailure('invalid_request', 400);
+  const { panel, ...rest } = value as Record<string, unknown>;
+  const { text } = checkedPayload('telegram', rest) as { text: string };
+  if (panel === undefined) return { text };
+  const match = typeof panel === 'string' ? PANEL_REFERENCE.exec(panel) : null;
+  if (!match) throw new ChatFailure('invalid_request', 400);
+  const site = siteUrl || 'https://akrasia.studio';
+  let dashboard: URL;
+  try {
+    const origin = new URL(site);
+    if (site.length > 800 || origin.protocol !== 'https:' || origin.username || origin.password || origin.pathname !== '/' || origin.search || origin.hash || /[\s\u0000-\u001f\u007f]/.test(site)) throw new Error();
+    dashboard = new URL('/dashboard', origin);
+  } catch { return { text }; }
+  dashboard.searchParams.set('tab', match[1] === 'lead' ? 'leads' : 'journeys');
+  dashboard.searchParams.set(match[1], match[2]);
+  const linked = text + '\nAbrir en el panel: ' + dashboard.href;
+  return { text: linked.length > 3500 ? text : linked };
+}
 export async function enqueueIntegration(input: IntegrationInput, signal?: AbortSignal): Promise<QueuedIntegration> {
   if (!input || !['email', 'telegram'].includes(input.channel) || !/^[A-Za-z0-9:._-]{1,200}$/.test(input.idempotencyKey) ||
     (input.visitorId != null && !isVisitorUuid(input.visitorId)) || (input.contextVersion != null && (!Number.isSafeInteger(input.contextVersion) || input.contextVersion < 0))) throw new ChatFailure('invalid_request', 400);
@@ -65,7 +87,7 @@ export async function processIntegrationBatch(limit = 5, signal?: AbortSignal): 
           });
           payload = { ...message, attachments: [{ filename: 'akrasia-videollamada.ics', content: Buffer.from(calendar,'utf8').toString('base64'), content_type: 'text/calendar' }] };
         } else payload = { text: `Nueva videollamada confirmada: ${formatCivilDateES(p.date, p.time)} (Europe/Madrid). Duración: 30 minutos.\n${meetUrl ? `Enlace: ${meetUrl}` : 'El equipo debe facilitar el enlace de videollamada.'}\nReferencia: ${p.id}` };
-      } else payload = checkedPayload(job.channel as 'email' | 'telegram', job.payload);
+      } else payload = job.channel === 'telegram' ? telegramNotice(job.payload) : checkedPayload('email', job.payload);
       if (job.channel.endsWith('email')) {
         const frozen = await integrationRpc('integration_email_payload', { p_id: job.id, p_token: job.leaseToken, p_payload: emailDeliveryPayload(payload as EmailPayload) }, signal);
         if (!frozen || typeof frozen !== 'object' || Array.isArray(frozen)) throw new Error();
