@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A03 · Prueba sintética de renderizado</title>
+  <style>
+    :root { color-scheme: dark; font: 14px system-ui,sans-serif; background:#080d17; color:#d7e1ef }
+    * { box-sizing:border-box } body { margin:0; padding:24px; max-width:1440px }
+    h1,h2 { color:#8ce7d1 } h1 { font-size:24px } h2 { font-size:17px }
+    p { line-height:1.5 } a { color:#87dbea } button,textarea { font:inherit }
+    button { background:#12382f; color:#adf6dd; border:1px solid #386657; padding:9px 14px; border-radius:5px; cursor:pointer }
+    button:disabled { opacity:.5; cursor:wait } textarea { width:100%; color:#def7ee; background:#0b1922; border:1px solid #244456; padding:10px; resize:vertical }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px } .grid { display:grid; grid-template-columns:1fr 1fr; gap:22px }
+    .card { background:#101b2a; padding:18px; border:1px solid #263951; border-radius:9px; min-width:0 }
+    pre { overflow:auto; background:#07101c; padding:10px; white-space:pre-wrap; overflow-wrap:anywhere }
+    #results { max-height:310px; overflow:auto; font-size:12px } #execution-count { color:#9afaad; font-weight:700 }
+    #render-scratch { display:none } #markdown-preview { overflow-wrap:anywhere }
+    #markdown-preview table { border-collapse:collapse } #markdown-preview th,#markdown-preview td { padding:5px 14px; border:1px solid #456 }
+    #chat-desktop-root { height:430px; position:relative; overflow:hidden; background:#07131d; border:1px solid #2b4c55; border-radius:6px }
+    .chat-layer { height:100%; overflow:auto; padding:14px; display:flex; flex-direction:column; gap:12px }
+    .chat-bubble-agent { background:#102b2b; border-left:2px solid #60c5aa; padding:10px; overflow-wrap:anywhere }
+    .chat-bubble-user { background:#132235; padding:10px; text-align:right; overflow-wrap:anywhere }
+    .formatted-text p { margin:5px 0 } .formatted-text { line-height:1.5 } .formatted-text code { background:#07111d; padding:1px 4px }
+    #chat-desktop-root > div[class*="bottom-0"] { position:absolute; bottom:0; left:0; right:0; padding:12px; background:#0b1525 }
+    #chat-desktop-root > div[class*="bottom-0"] > div:last-child { display:flex; align-items:center; gap:8px }
+    #chat-desktop-root > div[class*="bottom-0"] > div:last-child > div:nth-child(2) { flex:1 }
+    #chat-desktop-root .chat-hint { display:none } .material-symbols-outlined { font-size:10px; opacity:.6 }
+    #mobileChatSlot { display:none } #chat-harness-root > .fixed { position:fixed; inset:0; z-index:90; padding:12px; background:#070f1bee }
+    #chat-harness-root .glass-panel { height:calc(100vh - 35px); display:flex; flex-direction:column; background:#101b2a; border:1px solid #397565; padding:12px }
+    #chat-harness-root .glass-panel > div:first-child { display:flex; align-items:center; justify-content:space-between }
+    #chat-harness-root .glass-panel > div:nth-child(2) { flex:1; overflow:auto; padding:12px 0 }
+    #chat-harness-root .glass-panel > div:last-child > div:last-child { display:flex; gap:10px; margin-top:8px }
+    #chat-harness-root .glass-panel > div:last-child textarea { flex:1 }
+    .activity { font-family:ui-monospace,monospace; font-size:12px; overflow-wrap:anywhere } .activity > * { padding:6px; border-left:2px solid #4e9b85 }
+    .text-green-500 { color:#88e49b } .text-yellow-500 { color:#e2d68b } .text-primary { color:#80ddc6 }
+    #a03-local-target { scroll-margin-top:20px; padding:12px; border:1px solid #276257; margin-top:18px }
+    #a03-local-target:target { background:#174438; outline:2px solid #6fd6b7 }
+    @media(max-width:1023px) { body{padding:14px} .grid{grid-template-columns:1fr} #chat-desktop-root{display:none} #mobileChatSlot{display:block} }
+  </style>
+</head>
+<body>
+  <h1>A03 · Renderizado seguro</h1>
+  <p>Componentes reales con historial, actividad y SSE sintéticos. Sin IA, reservas, mensajes ni base remota.</p>
+  <p>Marcador de ejecución maliciosa: <output id="execution-count" data-test-executions="0">0</output>. <span id="status">Preparando pruebas…</span></p>
+  <div class="toolbar"><button id="rerun" disabled>Repetir pruebas</button><button id="send-stream" disabled>Enviar prueba SSE</button><button id="open-mobile">Abrir chat móvil</button></div>
+  <div class="grid" style="margin-top:20px">
+    <section class="card"><h2>Resultados automáticos</h2><pre id="results" aria-live="polite"></pre><h2>Markdown permitido</h2><div id="markdown-preview"></div></section>
+    <section class="card"><h2>Chat real</h2><div id="chat-desktop-root"></div><div id="mobileChatSlot"></div><div id="chat-harness-root"></div><h2>Feed / logs literales</h2><div id="activity-preview" class="activity"></div></section>
+  </div>
+  <div id="a03-local-target" tabindex="-1">Destino local verificado: el enlace funciona en esta página.</div>
+  <div id="render-scratch"></div>
+  <script type="module" src="/scripts/safe-rendering-browser.tsx"></script>
+</body>
+</html>

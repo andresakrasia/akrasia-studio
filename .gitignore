@@ -11,8 +11,21 @@ dist/
 .vscode/
 *.swp
 *.swo
+.codex-tmp/
+coverage/
 
 # SSH keys
 *.pub
 G1thub.Sound3ox*
 b3BlbnNzaC1rZXktdjEAAAA*
+
+# Generated / local tooling
+*.tsbuildinfo
+.kilo/node_modules/
+.kilo/package-lock.json
+.kilo/bun.lock
+.kilo/plans/
+_to_delete/
+
+# QA screenshots and raw evidence (large, local only)
+docs/evidence/

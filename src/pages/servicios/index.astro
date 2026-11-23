@@ -1,0 +1,40 @@
+---
+import PublicPage from '../../components/PublicPage.astro';
+import { loadPublicServices, type PublicService } from '../../lib/public-content';
+import { PUBLIC_PROJECT_CACHE_HEADERS } from '../../lib/public-projects';
+import { pageLang, languagePath } from '../../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../../lib/chat-navigation';
+import { serviceHasEnglish } from '../../lib/public-seo';
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+let services: PublicService[] = [];
+let unavailable = false;
+try { services = await loadPublicServices(); } catch { unavailable = true; Astro.response.status = 503; }
+for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
+if (unavailable) Astro.response.headers.set('Retry-After', '60');
+const title = english ? 'Audiovisual production and creative services | Akrasia Studio' : 'Servicios de producción audiovisual y dirección creativa | Akrasia Studio';
+const description = english ? 'Explore the published services of Akrasia Studio in Barcelona, including their scope and production process. Discuss your project with the studio.' : 'Conoce los servicios publicados de Akrasia Studio en Barcelona, su alcance y su proceso de producción. Habla con el estudio sobre tu proyecto.';
+---
+<PublicPage title={title} description={description} lang={lang} noindex={unavailable || services.length === 0}>
+  <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'SERVICES' : 'SERVICIOS'}</p>
+  <h1>{english ? 'Audiovisual production and creative direction' : 'Producción audiovisual y dirección creativa'}</h1>
+  <p class="page-intro editorial-intro">{english ? 'We are directors, creators and producers in Barcelona. Human creative direction guides the work, with AI as part of the production process. Explore each published service to understand its scope and how we approach a project.' : 'Somos directores, creadores y productores en Barcelona. El criterio creativo humano dirige el trabajo, con la IA como parte del proceso de producción. Consulta cada servicio publicado para conocer su alcance y cómo abordamos un proyecto.'}</p>
+  {services.length > 0 && <div class="editorial-grid">
+    {services.map(service => {
+      const translated = english && serviceHasEnglish(service);
+      return <article class="content-card glass-panel" lang={translated ? 'en' : 'es'}>
+        <h2><a href={languagePath(`/servicios/${service.slug}`, translated ? 'en' : 'es')}>{translated ? service.title_en : service.title}</a></h2>
+        <p>{translated ? service.description_en || service.hero_description_en : service.description || service.hero_description}</p>
+        <a class="editorial-text-link" href={languagePath(`/servicios/${service.slug}`, translated ? 'en' : 'es')}>{translated ? 'Scope and process' : 'Alcance y proceso'} <span aria-hidden="true">↗</span></a>
+      </article>;
+    })}
+  </div>}
+  {services.length === 0 && <section class="content-card glass-panel" role="status">
+    <h2>{unavailable ? (english ? 'Service information is temporarily unavailable' : 'La información de servicios no está disponible temporalmente') : (english ? 'Talk to us about your project' : 'Háblanos de tu proyecto')}</h2>
+    <p>{unavailable ? (english ? 'Please try again later or contact the studio directly.' : 'Puedes volver a intentarlo más tarde o contactar directamente con el estudio.') : (english ? 'There are no published service details at the moment. Contact us to discuss your audiovisual project.' : 'En este momento no hay fichas de servicios publicadas. Contacta con nosotros para hablar de tu proyecto audiovisual.')}</p>
+  </section>}
+  <div class="editorial-actions">
+    <a class="primary-action" href={chatIntentPath('start', lang)} data-chat-message={chatIntentMessage('start', lang)}>{english ? 'Discuss your project' : 'Hablar de tu proyecto'}</a>
+    <a class="secondary-action" href={languagePath('/contacto', lang)}>{english ? 'Contact the studio' : 'Contactar con el estudio'}</a>
+  </div>
+</PublicPage>

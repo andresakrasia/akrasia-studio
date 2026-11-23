@@ -1,0 +1,203 @@
+/* Transparent instruments over the studio core; light is an interaction cue. */
+@property --studio-glass-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.home-screen .studio-header,
+.home-screen .hud-site-footer {
+  background: linear-gradient(120deg, #06172b94, #0710278c 70%, #18273b73);
+  backdrop-filter: blur(8px) saturate(1.12);
+  -webkit-backdrop-filter: blur(8px) saturate(1.12);
+}
+.home-screen .studio-sidebar .hud-section {
+  background:
+    radial-gradient(ellipse at 0 0, #0c548323, transparent 65%),
+    linear-gradient(135deg, #06182c88, #040b1a99 70%, #111c2b80);
+  backdrop-filter: blur(8px) saturate(1.14);
+  -webkit-backdrop-filter: blur(8px) saturate(1.14);
+  border-color: #73d4f345;
+  box-shadow: inset 0 0 0 2px #081b2e40, inset 0 0 30px #0063a514, 0 8px 22px #01071138;
+}
+.home-screen .studio-conversation-shell {
+  background: linear-gradient(140deg, #06152a59, #030a1880 68%, #131d2b66);
+  backdrop-filter: blur(6px) saturate(1.12);
+  -webkit-backdrop-filter: blur(6px) saturate(1.12);
+  border-color: #65d8f34d;
+  box-shadow: inset 0 0 0 3px #9cdfff04, 0 10px 30px #01071230;
+}
+.home-screen .studio-sidebar .studio-work-card {
+  background: linear-gradient(140deg, #071b3085, #071026a1 72%, #20314766);
+  backdrop-filter: blur(8px) saturate(1.1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.1);
+  border-color: #8dbdec55;
+  box-shadow: inset 0 0 0 2px #020b172b, 0 8px 20px #01071130;
+}
+.home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer) {
+  transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+.home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  padding: 1px;
+  z-index: 2;
+  pointer-events: none;
+  border: 0;
+  border-radius: inherit;
+  background: conic-gradient(from var(--studio-glass-angle),
+    #5dccff08 0deg 55deg, #44ecff24 85deg, #b7faffa3 105deg,
+    #1cc6ef18 130deg, #5a84e60a 180deg 235deg, #91c1ff85 270deg,
+    #6bdcf91c 305deg, #5dccff08 360deg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  box-shadow: none;
+  opacity: .45;
+  animation: none;
+  transition: opacity .25s ease;
+}
+.home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer):focus-within {
+  border-color: #84e4f7aa;
+  box-shadow: inset 0 0 0 2px #79caff0c, inset 0 0 32px #00b2ef14, 0 0 24px #09bdf328, 0 0 6px #8abdff22;
+}
+.home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer):focus-within::after {
+  opacity: 1;
+  animation: studioGlassEdgeOrbit 9s linear infinite;
+}
+
+/* Reserve an unchanging inset for projection: no sideways scroll or relayout. */
+.home-screen .studio-sidebar .studio-services { overflow: visible; }
+.home-screen .studio-service-list {
+  position: relative;
+  padding: 8px max(8px, 3%);
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  overflow: visible;
+}
+.home-screen .studio-sidebar .studio-service-list .studio-service {
+  transform: translate3d(0, 0, 0);
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  transition: transform .28s cubic-bezier(.2, .7, .2, 1), border-color .24s ease, box-shadow .28s ease, background-color .24s ease;
+}
+.home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible {
+  z-index: 3;
+  transform: translateZ(24px) scale(1.025);
+  border-color: #99f8ff;
+  background: linear-gradient(112deg, #104769dc, #162c50d9 70%, #2c4668bd);
+  box-shadow: 0 11px 20px #0008179c, 0 0 17px #18d8ff30, inset 0 1px 0 #d7fdff33;
+}
+.home-screen .studio-sidebar .studio-service-list .studio-service:has(~ .studio-service:focus-visible) { transform: translateY(-6px); }
+.home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible ~ .studio-service { transform: translateY(6px); }
+
+/* Keep the seven original glyphs, their sizes, and inline timing variables. */
+.home-screen .hud-brand-wordmark .neon-char {
+  --glass-neon-color: #00f0ff;
+  --glass-neon-peak: #c4fcff;
+  --glass-neon-halo: #00e6ef;
+  color: var(--glass-neon-color);
+  animation-name: studioGlassLogoNeon;
+  animation-duration: var(--neon-dur, 4s);
+  animation-delay: var(--neon-delay, 0s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.home-screen .hud-brand-subtitle {
+  color: #00f0ff;
+  text-shadow: 0 0 8px #00e6ef42;
+  animation-name: studioGlassLogoSubtitle;
+}
+
+@keyframes studioGlassEdgeOrbit { to { --studio-glass-angle: 360deg; } }
+@keyframes studioGlassLogoSubtitle {
+  0%, 100% { color: #00f0ff99; text-shadow: 0 0 6px #00e6ef30; }
+  50% { color: #00f0ffd9; text-shadow: 0 0 10px #00e6ef59; }
+}
+@keyframes studioGlassLogoNeon {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    color: var(--glass-neon-color);
+    opacity: 1;
+    text-shadow: 0 0 4px var(--glass-neon-halo), 0 0 12px var(--glass-neon-halo), 0 0 26px #00f0ff26;
+  }
+  20%, 24%, 55% {
+    color: var(--glass-neon-color);
+    opacity: .58;
+    text-shadow: 0 0 2px var(--glass-neon-halo);
+  }
+  40% {
+    color: var(--glass-neon-peak);
+    opacity: 1;
+    text-shadow: 0 0 6px var(--glass-neon-halo), 0 0 18px var(--glass-neon-halo), 0 0 34px #00f0ff4d;
+  }
+  70% {
+    color: var(--glass-neon-color);
+    opacity: .96;
+    text-shadow: 0 0 5px var(--glass-neon-halo), 0 0 14px var(--glass-neon-halo), 0 0 28px #00f0ff33;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer):hover {
+    border-color: #7ceaf0aa;
+    box-shadow: inset 0 0 0 2px #79caff0c, inset 0 0 32px #00b2ef14, 0 0 24px #09bdf328, 0 0 6px #8abdff22;
+  }
+  .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer):hover::after {
+    opacity: 1;
+    animation: studioGlassEdgeOrbit 9s linear infinite;
+  }
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:hover {
+    z-index: 3;
+    transform: translateZ(24px) rotateX(1deg) scale(1.025);
+    border-color: #99f8ff;
+    background: linear-gradient(112deg, #104769dc, #162c50d9 70%, #2c4668bd);
+    box-shadow: 0 11px 20px #0008179c, 0 0 17px #18d8ff30, inset 0 1px 0 #d7fdff33;
+  }
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:has(~ .studio-service:hover) { transform: translateY(-6px); }
+  .home-screen .studio-sidebar .studio-service-list:not(:has(.studio-service:focus-visible)) .studio-service:hover ~ .studio-service { transform: translateY(6px); }
+}
+@media (max-width: 1023px) {
+  .home-screen .studio-sidebar .hud-section {
+    background: linear-gradient(135deg, #06182c9c, #040b1ab8 70%, #111c2b99);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+  }
+  .home-screen .studio-conversation-shell { backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+  .home-screen .studio-service-list { padding: 6px; }
+  .home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible { transform: translateZ(10px) scale(1.01); }
+}
+@media (hover: none), (pointer: coarse) {
+  .home-screen .studio-service-list { perspective: none; transform-style: flat; }
+  .home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible,
+  .home-screen .studio-sidebar .studio-service-list .studio-service:has(~ .studio-service:focus-visible),
+  .home-screen .studio-sidebar .studio-service-list .studio-service:focus-visible ~ .studio-service { transform: none; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-screen .studio-sidebar .hud-section,
+  .home-screen .studio-header,
+  .home-screen .hud-site-footer { background: linear-gradient(135deg, #071a2ae3, #080c20e8); }
+  .home-screen .studio-conversation-shell { background: linear-gradient(135deg, #071a2ae0, #050b1be3); }
+  .home-screen .studio-sidebar .studio-work-card { background: #08172ae8; }
+}
+html[data-hud-paused="true"] .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer)::after,
+html[data-hud-paused="true"] .home-screen .hud-brand-wordmark .neon-char,
+html[data-hud-paused="true"] .home-screen .hud-brand-subtitle { animation-play-state: paused !important; }
+html[data-hud-paused="true"] .home-screen .studio-sidebar .studio-service-list .studio-service { transform: none !important; }
+html[data-hud-paused="true"] .home-screen .studio-sidebar .studio-service-list .studio-service,
+html[data-hud-paused="true"] .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer),
+html[data-hud-paused="true"] .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer)::after { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer),
+  .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer)::after,
+  .home-screen .studio-sidebar .studio-service-list .studio-service { transition: none; }
+  .home-screen :is(.studio-sidebar .hud-section, .studio-conversation-shell, .studio-sidebar .studio-work-card, .studio-header, .hud-site-footer)::after,
+  .home-screen .hud-brand-wordmark .neon-char,
+  .home-screen .hud-brand-subtitle { animation: none !important; }
+  .home-screen .studio-sidebar .studio-service-list .studio-service { transform: none !important; }
+  .home-screen .hud-brand-wordmark .neon-char { color: var(--glass-neon-color); text-shadow: 0 0 5px var(--glass-neon-halo); }
+}

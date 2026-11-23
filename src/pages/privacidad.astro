@@ -1,0 +1,89 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { PRIVACY_NOTICE as notice, PRIVACY_SOURCES as sources, publicChatSessionSeconds, durationLabel } from '../lib/privacy-notice';
+import { readRetentionConfig, type RetentionConfig } from '../lib/privacy-retention';
+let retention: RetentionConfig | null = null;
+try { retention = readRetentionConfig(import.meta.env); } catch { /* Keep information and contact available when configuration is invalid. */ }
+const chatDuration = durationLabel(publicChatSessionSeconds(import.meta.env));
+const days = (value: number | undefined) => value === undefined ? 'Configuración no disponible: consulta al responsable' : `${value} días`;
+---
+
+<LegalPage title="Privacidad" description="Tratamiento del chat y su IA, contactos, reservas, proveedores, conservación, borrado y derechos en Akrasia Studio." current="privacidad">
+  <div class="legal-notice">
+    <p>El chat utiliza IA y guarda los mensajes de tu sesión para responder y dar continuidad a tu consulta. Si incluyes datos de contacto, pueden incorporarse a la solicitud y avisarse al equipo. Puedes <a href="/">volver al estudio y abrir el chat</a> y usar «Borrar conversación y perfil» para eliminar la conversación y los datos de contacto y perfil derivados de ella.</p>
+    <p>Las reservas confirmadas y las copias ya enviadas a proveedores requieren una gestión distinta. No necesitas permitir analítica para utilizar el chat.</p>
+  </div>
+  <section aria-labelledby="responsable">
+    <h2 id="responsable">Quién trata tus datos</h2>
+    <p>Responsable: {notice.controller}, con nombre comercial {notice.commercialName}, NIF {notice.nif} y domicilio comunicado en {notice.address}. Para consultas de privacidad y ejercicio de derechos: <a href={`mailto:${notice.email}`}>{notice.email}</a>.</p>
+    <p>La identificación ha sido aportada por el titular. Puedes consultar los datos de contacto y las condiciones de uso en el <a href="/aviso-legal">aviso legal</a>.</p>
+  </section>
+  <section aria-labelledby="tratamientos">
+    <h2 id="tratamientos">Qué datos se usan y para qué</h2>
+    <h3 id="chat">Conversación e inteligencia artificial</h3>
+    <p>Se utilizan tu mensaje, los mensajes recientes guardados por el servidor para tu sesión y, cuando los has facilitado, tu nombre o empresa para responder sobre el estudio, sus servicios y tu consulta. El texto se envía a OpenRouter para obtener la respuesta de un modelo de IA. Las respuestas pueden contener errores.</p>
+    <p>El navegador guarda una caché de la conversación y el servidor guarda conversaciones y mensajes asociados a una sesión firmada. No necesitas facilitar nombre, correo o teléfono para una consulta general. No envíes datos sensibles, credenciales ni información innecesaria de terceros.</p>
+    <h3>Contactos y perfil derivados de la consulta</h3>
+    <p>El servicio puede detectar los datos de contacto que escribas, el tipo de proyecto y referencias a interés, presupuesto o urgencia. Estos datos se guardan para atender tu solicitud y ordenar los avisos al equipo. No equivalen a una aceptación de comunicaciones promocionales. Esa clasificación no confirma un presupuesto ni una reserva y puedes solicitar su revisión al responsable.</p>
+    <h3>Reservas</h3>
+    <p>Una propuesta de llamada utiliza la fecha, hora, nombre y correo proporcionados. Requiere confirmación explícita antes de guardar la reserva. La reserva confirmada conserva sus datos de contacto, horario, estado y enlace de reunión para gestionarla. Borrar el chat no cancela esa reserva.</p>
+    <h3>Avisos y correos</h3>
+    <p>Si la integración está activa, el equipo recibe avisos de contactos, interés o reservas por Telegram, con datos de contacto y fragmentos de la consulta. Los correos enviados desde el panel utilizan Resend y pueden dejar un registro independiente del envío. El chat no garantiza un correo automático de confirmación.</p>
+    <h3>Seguridad y cuotas</h3>
+    <p>Se mantiene el mínimo estado de sesión y contadores necesarios para evitar abuso, aplicar límites y impedir que peticiones antiguas recuperen un contexto borrado. Las tablas de cuotas utilizan referencias transformadas de sesión y conexión, sin el texto de tus mensajes ni la IP en claro en esos contadores. La plataforma de alojamiento puede mantener sus propios registros de acceso; sus condiciones y plazos deben confirmarse.</p>
+    <h3>Analítica y vídeos externos</h3>
+    <p>Son opciones separadas y desactivadas inicialmente. Su activación requiere tu elección válida. Puedes cambiarlas sin perder acceso al chat en la <a href="/cookies">configuración de cookies</a>.</p>
+  </section>
+  <section aria-labelledby="proveedores">
+    <h2 id="proveedores">Servicios que pueden recibir datos</h2>
+    <p>Estas integraciones están presentes en el servicio. La disponibilidad de sus claves o conexiones no acredita contratos, regiones o plazos externos.</p>
+    <ul>
+      <li><strong>OpenRouter:</strong> recibe el mensaje y contexto del chat para la inferencia de IA. El modelo configurado es Gemini 2.5 Flash; el nombre del modelo no identifica por sí solo el proveedor que atiende la petición. Consulta la <a href="https://openrouter.ai/privacy">información de privacidad de OpenRouter</a>.</li>
+      <li><strong>Supabase:</strong> integración de base de datos para conversaciones, contactos, reservas y estado técnico. Consulta la <a href="https://supabase.com/privacy">información de privacidad de Supabase</a>.</li>
+      <li><strong>Telegram:</strong> avisos al equipo, cuando esté configurado, con datos y fragmentos indicados anteriormente. Consulta la <a href="https://telegram.org/privacy/eu">información de privacidad de Telegram</a>.</li>
+      <li><strong>Resend:</strong> envío de correos iniciado desde el panel, cuando esté configurado. Consulta la <a href="https://resend.com/legal/privacy-policy">información de privacidad de Resend</a>.</li>
+      <li><strong>Google y Vimeo:</strong> contenido de vídeo externo y la integración de etiquetas de Google, únicamente conforme a las opciones habilitadas y tu elección. Consulta la <a href="/cookies">información de cookies y proveedores opcionales</a>.</li>
+    </ul>
+    <p class="legal-notice legal-pending">Están pendientes de confirmación los proveedores de inferencia efectivos, sus condiciones sobre conservación y entrenamiento, los contratos de tratamiento, la región de los datos, el alojamiento efectivo, los subencargados y las garantías para transferencias fuera del Espacio Económico Europeo. Esta información no afirma que exista almacenamiento exclusivamente europeo ni ausencia de uso de datos por el proveedor del modelo.</p>
+    <p>Los enlaces de reserva pueden abrir una reunión en un servicio externo de videollamada. Al visitar ese servicio se aplican sus condiciones; abrir un enlace externo no lo convierte en parte del borrado del chat.</p>
+  </section>
+  <section aria-labelledby="base">
+    <h2 id="base">Base jurídica e información pendiente</h2>
+    <p>La elección de analítica y vídeos externos se solicita por separado. Puedes rechazarla o retirarla en cualquier momento. Enviar un mensaje no activa estas opciones ni supone aceptar indiscriminadamente todos los tratamientos.</p>
+    <p class="legal-notice legal-pending">El titular debe confirmar y documentar la base jurídica concreta del chat y su IA, la gestión de consultas y contactos, las reservas, los avisos y las medidas de seguridad, junto con sus condiciones aplicables. Los plazos técnicos siguientes han sido confirmados por el titular y son configurables; no son plazos legales acreditados. La activación del mantenimiento periódico y las políticas de reservas y copias externas están pendientes de verificación.</p>
+    <p>El deber de información y la limitación de conservación se recogen en el <a href={sources.gdpr}>Reglamento general de protección de datos</a> y la <a href={sources.spanishDataProtection}>Ley Orgánica 3/2018</a>. La publicación de este texto no acredita una revisión jurídica completa.</p>
+  </section>
+  <section aria-labelledby="conservacion">
+    <h2 id="conservacion">Conservación por finalidad</h2>
+    <div class="legal-table-wrap" role="region" aria-label="Plazos de conservación" tabindex="0">
+      <table>
+        <caption>Plazos operativos de la configuración de esta versión</caption>
+        <thead><tr><th scope="col">Datos</th><th scope="col">Plazo y criterio</th><th scope="col">Alcance</th></tr></thead>
+        <tbody>
+          <tr><td>Mensajes del chat</td><td>{days(retention?.chatDays)} desde la creación de cada mensaje.</td><td>El mantenimiento elimina los mensajes antiguos y las conversaciones vacías e inactivas. Puedes borrarlos antes con el control del chat.</td></tr>
+          <tr><td>Contacto y perfil derivados del chat</td><td>{days(retention?.profileDays)} desde la última actualización.</td><td>Información derivada de consultas web. El borrado del chat elimina los datos derivados propios antes de este plazo.</td></tr>
+          <tr><td>Registro de correos enviados</td><td>{days(retention?.notificationDays)} desde la creación del registro.</td><td>Registro del sitio. No elimina las copias en buzones, Telegram, Resend ni otros proveedores.</td></tr>
+          <tr><td>Reservas</td><td>Durante su gestión y, una vez completadas o canceladas, hasta la fecha de retención que determine y revise el titular.</td><td>Las reservas activas se conservan. No hay un plazo automático asignado sin revisión; la política específica sigue pendiente.</td></tr>
+          <tr><td>Cuotas y seguridad del chat</td><td>Contadores y bloqueos hasta el vencimiento de sus ventanas; estado mínimo de contexto hasta la caducidad de sesión y la ventana de cuota aplicable.</td><td>El mantenimiento elimina registros vencidos. Borrar el chat no reinicia las cuotas ni evita sus límites.</td></tr>
+          <tr><td>Sesión e historial del navegador</td><td>Sesión: {chatDuration}. El historial local solo es válido durante esa sesión y se limpia al comprobar caducidad, cambiar de sesión o borrar el chat.</td><td>La caché puede permanecer físicamente en un navegador cerrado hasta su siguiente revisión. Consulta <a href="/cookies">cookies y almacenamiento</a>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>La limpieza automática del servidor depende de que esté activo el mantenimiento del servicio. Su activación y la conservación de copias externas todavía deben verificarse con el responsable; los plazos anteriores no acreditan que ya se haya realizado una limpieza de los datos existentes.</p>
+  </section>
+  <section aria-labelledby="borrado">
+    <h2 id="borrado">Qué hace «Borrar conversación y perfil»</h2>
+    <p>El control está dentro del chat y solicita confirmación. El servidor comprueba tu sesión y elimina las conversaciones, sus mensajes y el contacto o perfil derivados del chat que pertenecen a esa sesión; invalida las propuestas pendientes. El navegador limpia su historial y contexto cuando recibe un resultado coherente del servidor. Las demás sesiones quedan fuera de esta acción.</p>
+    <p>El contexto eliminado no se vuelve a enviar como historial del sitio a nuevas peticiones de IA. Una petición que ya hubiera enviado texto al proveedor antes del borrado no puede deshacerse. Si la operación falla, el sitio no afirma que tus datos del servidor se hayan borrado.</p>
+    <p>Se conservan las reservas, los registros independientes de envío y los datos de otros canales, así como el estado mínimo de cuotas y seguridad. El botón no elimina mensajes de Telegram, correos recibidos, copias de proveedores o copias de seguridad.</p>
+    <p>Para cancelar una reserva o pedir supresión de otros datos y gestión de copias externas, escribe a <a href={`mailto:${notice.email}`}>{notice.email}</a>. Si la sesión ha caducado o has eliminado su cookie, el botón ya no acredita acceso a la conversación anterior: utiliza este canal. Puedes ejercer tus derechos aunque no conserves la sesión del navegador.</p>
+  </section>
+  <section aria-labelledby="derechos">
+    <h2 id="derechos">Tus derechos y cómo solicitarlos</h2>
+    <p>Puedes solicitar acceso, rectificación, supresión, oposición, limitación y, cuando proceda, portabilidad, así como plantear una revisión del perfil o tratamiento automatizado, en <a href={`mailto:${notice.email}`}>{notice.email}</a>. Indica el derecho que deseas ejercer y los datos mínimos que permitan localizar tu solicitud. No envíes documentación de identidad sensible por el chat.</p>
+    <p>La respuesta a las solicitudes de derechos tiene, como regla general, un plazo de un mes. La supresión puede tener límites cuando resulte necesaria una conservación legal o para reclamaciones; el responsable deberá explicar el motivo aplicable a tu caso. Consulta la <a href={sources.rights}>información oficial sobre derechos de la AEPD</a>.</p>
+    <p>Si consideras que tus derechos no han sido atendidos, puedes presentar una reclamación ante la <a href="https://www.aepd.es">Agencia Española de Protección de Datos</a>.</p>
+    <button type="button" data-privacy-settings>Cambiar o retirar las opciones de cookies</button>
+  </section>
+</LegalPage>
+

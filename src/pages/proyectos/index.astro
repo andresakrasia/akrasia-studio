@@ -1,0 +1,42 @@
+---
+import PublicPage from '../../components/PublicPage.astro';
+import { getPublicProjects, type PublicProject, PUBLIC_PROJECT_CACHE_HEADERS, localProjectImage } from '../../lib/public-projects';
+import { pageLang, languagePath } from '../../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../../lib/chat-navigation';
+import { projectHasEnglish } from '../../lib/public-seo';
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+let projects: PublicProject[] = [];
+let unavailable = false;
+try { projects = await getPublicProjects(); } catch { unavailable = true; Astro.response.status = 503; }
+for (const [key, value] of Object.entries(PUBLIC_PROJECT_CACHE_HEADERS)) Astro.response.headers.set(key, value);
+if (unavailable) Astro.response.headers.set('Retry-After', '60');
+const title = english ? 'Audiovisual projects and case studies | Akrasia Studio' : 'Proyectos audiovisuales y casos de estudio | Akrasia Studio';
+const description = english ? 'Explore the audiovisual projects published by Akrasia Studio: their brief, creative process and result. Discover the work and discuss your own project.' : 'Explora los proyectos audiovisuales publicados por Akrasia Studio: el encargo, el proceso creativo y el resultado. Conoce el trabajo y plantea tu proyecto.';
+---
+<PublicPage title={title} description={description} lang={lang} noindex={unavailable || projects.length === 0}>
+  <p class="page-eyebrow">AKRASIA STUDIO // {english ? 'PUBLISHED WORK' : 'TRABAJOS PUBLICADOS'}</p>
+  <h1>{english ? 'Audiovisual projects' : 'Proyectos audiovisuales'}</h1>
+  <p class="page-intro editorial-intro">{english ? 'Discover the work approved for publication by the studio. Each case describes its brief, production process and result using the project’s published information.' : 'Descubre los trabajos aprobados para publicación por el estudio. Cada caso presenta su encargo, el proceso de producción y el resultado con la información publicada del proyecto.'}</p>
+  {projects.length > 0 && <div class="editorial-grid">
+    {projects.map(project => {
+      const translated = english && projectHasEnglish(project);
+      const thumbnail = localProjectImage(project.thumbnail);
+      return <article class="content-card glass-panel" lang={translated ? 'en' : 'es'}>
+        {thumbnail && <a href={languagePath(`/proyectos/${project.slug}`, translated ? 'en' : 'es')} tabindex="-1" aria-hidden="true"><img class="editorial-image" src={thumbnail} width="640" height="360" alt="" loading="lazy" decoding="async" /></a>}
+        <h2><a href={languagePath(`/proyectos/${project.slug}`, translated ? 'en' : 'es')}>{project.title}</a></h2>
+        {(project.type || project.duration) && <p lang="es">{[project.type, project.duration].filter(Boolean).join(' · ')}</p>}
+        <p>{translated ? project.case_study_en.brief : project.public_description || project.case_study.brief}</p>
+        <a class="editorial-text-link" href={languagePath(`/proyectos/${project.slug}`, translated ? 'en' : 'es')}>{translated ? 'Read the case study' : 'Leer el caso de estudio'} <span aria-hidden="true">↗</span></a>
+      </article>;
+    })}
+  </div>}
+  {projects.length === 0 && <section class="content-card glass-panel" role="status">
+    <h2>{unavailable ? (english ? 'The portfolio is temporarily unavailable' : 'El portfolio no está disponible temporalmente') : (english ? 'No projects are published at the moment' : 'En este momento no hay proyectos publicados')}</h2>
+    <p>{unavailable ? (english ? 'Please try again later or contact the studio.' : 'Puedes volver a intentarlo más tarde o contactar con el estudio.') : (english ? 'You can still explore our services and discuss your audiovisual project with the team.' : 'Puedes conocer nuestros servicios y hablar con el equipo sobre tu proyecto audiovisual.')}</p>
+  </section>}
+  <div class="editorial-actions">
+    <a class="primary-action" href={chatIntentPath('start', lang)} data-chat-message={chatIntentMessage('start', lang)}>{english ? 'Discuss your project' : 'Hablar de tu proyecto'}</a>
+    <a class="secondary-action" href={languagePath('/servicios', lang)}>{english ? 'Explore the services' : 'Conocer los servicios'}</a>
+  </div>
+</PublicPage>

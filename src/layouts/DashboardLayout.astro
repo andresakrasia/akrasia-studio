@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+import '../styles/dashboard-theme.css';
+import { DASHBOARD_THEME_STORAGE_KEY } from '../lib/dashboard-theme';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'AKRASIA // Dashboard' } = Astro.props;
+---
+
+<!doctype html>
+<html class="dark dashboard-page" lang="es" data-dashboard-theme="night">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline define:vars={{ themeStorageKey: DASHBOARD_THEME_STORAGE_KEY }}>
+      // Apply a saved preference before the first paint, including login.
+      try {
+        const theme = localStorage.getItem(themeStorageKey) === 'day' ? 'day' : 'night';
+        document.documentElement.dataset.dashboardTheme = theme;
+        document.documentElement.classList.toggle('dark', theme === 'night');
+      } catch { /* The default night theme works without browser storage. */ }
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  html {
+    font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace;
+  }
+  body {
+    font-family: inherit;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+  .font-mono {
+    font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace;
+  }
+</style>

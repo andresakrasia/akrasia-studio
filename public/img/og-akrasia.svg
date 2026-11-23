@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#071018"/>
+<g fill="none" stroke="#123e48"><path d="M0 90H1200M0 180H1200M0 270H1200M0 360H1200M0 450H1200M0 540H1200M120 0V630M240 0V630M360 0V630M480 0V630M600 0V630M720 0V630M840 0V630M960 0V630M1080 0V630"/><circle cx="1040" cy="315" r="220"/><circle cx="1040" cy="315" r="145"/><circle cx="1040" cy="315" r="70"/></g>
+<path d="M58 140V58H140M1060 58H1142V140M58 490V572H140M1060 572H1142V490" stroke="#00f0ff" stroke-width="4" fill="none"/>
+<rect x="100" y="205" width="860" height="195" fill="#071018"/>
+<text x="102" y="290" font-family="Segoe UI,Arial,sans-serif" font-size="74" font-weight="800" fill="#00f0ff" letter-spacing="3">AKRASIA STUDIO</text>
+<text x="106" y="352" font-family="Segoe UI,Arial,sans-serif" font-size="30" fill="#e2e8f0">Creative direction · Audiovisual production · AI</text>
+<text x="106" y="492" font-family="Consolas,monospace" font-size="25" fill="#67e8f9">BARCELONA · AKRASIA.STUDIO</text>
+</svg>
+

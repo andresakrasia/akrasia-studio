@@ -1,0 +1,38 @@
+/* A single light field follows the rendered list height, including dynamic services. */
+.home-screen .studio-sidebar .studio-service-list:has(> .studio-service)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 5px;
+  background-image:
+    linear-gradient(180deg, transparent 0%, #67f6ff26 20%, #a9ffffc9 46%, #edffff 50%, #83faff75 55%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #5eeaff00 22%, #5eeaff0d 43%, #baffff29 49%, #dfffff38 50%, #7befff13 54%, #5eeaff08 67%, transparent 100%);
+  background-size: 2px 88px, 100% 88px;
+  background-repeat: no-repeat;
+  background-position: 0 -88px;
+  opacity: .82;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-screen .studio-sidebar .studio-service-list:has(> .studio-service)::before {
+    animation: studioServiceScanDown 8.4s linear infinite;
+  }
+}
+
+@keyframes studioServiceScanDown {
+  0%, 8% { background-position: 0 -88px; }
+  76%, 100% { background-position: 0 calc(100% + 88px); }
+}
+
+html[data-hud-paused="true"] .home-screen .studio-sidebar .studio-service-list::before {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-screen .studio-sidebar .studio-service-list::before {
+    animation: none !important;
+    background-position: 0 -88px;
+  }
+}

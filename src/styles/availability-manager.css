@@ -1,0 +1,106 @@
+.availability-manager {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-panel);
+  color: var(--admin-text);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.availability-manager *, .availability-manager *::before, .availability-manager *::after { box-sizing: border-box; }
+.availability-manager [hidden] { display: none !important; }
+.availability-manager__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.availability-manager h3 { margin: 0; color: var(--admin-heading); font-size: 16px; font-weight: 700; }
+.availability-manager h4 { margin: 0; color: var(--admin-heading); font-size: 13px; font-weight: 600; }
+.availability-manager h5 { margin: 18px 0 9px; color: var(--admin-heading); font-size: 11px; font-weight: 600; }
+.availability-manager__header p { margin: 4px 0 0; color: var(--admin-muted); }
+.availability-manager__zone { padding: 4px 9px; border: 1px solid var(--admin-accent-border); border-radius: 6px; color: var(--admin-accent); white-space: nowrap; font-size: 10px; }
+.availability-manager__hint { margin: 9px 0 0; color: var(--admin-muted); font-size: 11px; }
+.availability-manager__tabs { display: flex; width: fit-content; max-width: 100%; gap: 4px; padding: 4px; margin: 20px 0 16px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-raised); }
+html.dashboard-page .availability-manager button { min-height: 34px; border: 1px solid var(--admin-border); border-radius: 6px; padding: 7px 11px; background: var(--admin-panel); color: var(--admin-text); font: inherit; font-size: 11px; line-height: 1.3; text-align: center; }
+html.dashboard-page .availability-manager button:hover:not(:disabled) { background: var(--admin-accent-soft); border-color: var(--admin-accent-border); color: var(--admin-accent); }
+html.dashboard-page .availability-manager button:disabled { cursor: wait; opacity: .5; }
+html.dashboard-page .availability-manager__tabs button { padding: 8px 14px; border-color: transparent; background: transparent; color: var(--admin-muted); font-weight: 600; }
+html.dashboard-page .availability-manager__tabs button[aria-selected='true'] { background: var(--admin-panel); border-color: var(--admin-accent-border); color: var(--admin-accent); }
+.availability-manager__intro { margin: 0 0 16px; color: var(--admin-muted); }
+.availability-manager__message { margin: 0 0 15px; padding: 10px 12px; border: 1px solid var(--admin-border); border-radius: 6px; }
+.availability-manager__message--success { background: rgba(45, 190, 116, .07); color: #69cf99; border-color: rgba(45, 190, 116, .3); }
+.availability-manager__message--error { background: rgba(231, 83, 83, .07); color: #f3a2a2; border-color: rgba(231, 83, 83, .3); }
+.availability-manager__week { overflow: hidden; border: 1px solid var(--admin-border); border-radius: 8px; }
+.availability-manager__day { display: grid; grid-template-columns: 145px minmax(0, 1fr) auto; align-items: start; gap: 16px; padding: 15px; }
+.availability-manager__day + .availability-manager__day { border-top: 1px solid var(--admin-border); }
+.availability-manager__day-name { padding-top: 4px; }
+.availability-manager__day-name span { display: block; margin-top: 3px; color: var(--admin-muted); font-size: 10px; }
+.availability-manager__day-slots { min-width: 0; }
+.availability-manager__empty { display: block; padding: 6px 0; color: var(--admin-dim); font-size: 11px; }
+.availability-manager__slot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 10px; border: 1px solid var(--admin-accent-border); border-radius: 6px; background: var(--admin-accent-soft); }
+.availability-manager__slot + .availability-manager__slot { margin-top: 6px; }
+.availability-manager__slot--paused { background: var(--admin-raised); border-color: var(--admin-border); }
+.availability-manager__slot-time { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.availability-manager__slot-time strong { color: var(--admin-heading); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.availability-manager__badge { border-radius: 4px; padding: 2px 6px; color: var(--admin-accent); background: var(--admin-accent-hover); font-size: 9px; }
+.availability-manager__badge--muted { color: var(--admin-muted); background: var(--admin-panel); }
+.availability-manager__actions { display: flex; flex-wrap: wrap; gap: 5px; }
+html.dashboard-page .availability-manager__actions button { min-height: 30px; padding: 5px 8px; font-size: 10px; }
+html.dashboard-page .availability-manager__actions .availability-manager__remove { color: #e9a0a0; }
+html.dashboard-page .availability-manager__add { margin-top: 1px; color: var(--admin-accent); border-color: var(--admin-accent-border); }
+.availability-manager fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.availability-manager legend { padding: 0; margin-bottom: 14px; color: var(--admin-heading); font-size: 12px; font-weight: 600; }
+.availability-manager label:not(.availability-manager__choice) { display: block; min-width: 0; color: var(--admin-text); font-size: 11px; }
+html.dashboard-page .availability-manager input:not([type='radio']) { display: block; width: 100%; min-width: 0; min-height: 40px; padding: 8px 10px; margin-top: 5px; border: 1px solid var(--admin-border); border-radius: 6px; background: var(--admin-panel); color: var(--admin-heading); font: inherit; font-size: 12px; }
+.availability-manager__time-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.availability-manager__form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+html.dashboard-page .availability-manager .availability-manager__primary { border-color: var(--admin-accent-border); background: var(--admin-accent-soft); color: var(--admin-accent); font-weight: 600; }
+.availability-manager__weekly-form { margin-top: 12px; padding: 14px; border: 1px solid var(--admin-accent-border); border-radius: 6px; background: var(--admin-raised); }
+.availability-manager__weekly-form legend { margin-bottom: 10px; }
+.availability-manager__dates { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 22px; align-items: start; }
+.availability-manager__date-form { padding: 18px; background: var(--admin-raised); border: 1px solid var(--admin-border); border-radius: 8px; }
+.availability-manager .availability-manager__choices { margin: 18px 0; }
+.availability-manager__choices legend { margin-bottom: 9px; font-size: 11px; font-weight: 400; color: var(--admin-text); }
+.availability-manager__choice { display: flex; align-items: flex-start; gap: 10px; margin-top: 6px; padding: 10px; border: 1px solid var(--admin-border); border-radius: 6px; background: var(--admin-panel); cursor: pointer; }
+.availability-manager__choice:has(input:checked) { border-color: var(--admin-accent-border); background: var(--admin-accent-soft); }
+.availability-manager__choice input { width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; accent-color: var(--admin-accent); }
+.availability-manager__choice strong { display: block; color: var(--admin-heading); font-size: 11px; font-weight: 600; }
+.availability-manager__choice small { display: block; margin-top: 2px; color: var(--admin-muted); font-size: 10px; }
+.availability-manager__date-form .availability-manager__time-fields { margin-bottom: 16px; }
+.availability-manager__optional { color: var(--admin-dim); }
+.availability-manager__whole-day { margin-bottom: 16px; }
+.availability-manager__whole-day button { margin-top: 8px; }
+.availability-manager__date-summary { padding: 3px 0 0; min-width: 0; }
+.availability-manager__date-summary > h4 { text-transform: capitalize; }
+.availability-manager__rules { display: grid; gap: 8px; }
+.availability-manager__rule { padding: 12px; border: 1px solid var(--admin-accent-border); border-radius: 6px; background: var(--admin-accent-soft); }
+.availability-manager__rule--blocked { border-color: rgba(218, 151, 74, .3); background: rgba(218, 151, 74, .05); }
+.availability-manager__rule > strong { display: block; color: var(--admin-heading); font-size: 11px; font-weight: 600; }
+.availability-manager__rule p { margin: 4px 0 0; color: var(--admin-muted); font-size: 10px; overflow-wrap: anywhere; }
+.availability-manager__rule .availability-manager__actions { margin-top: 9px; }
+.availability-manager__closure { margin: 14px 0 0; padding: 10px 12px; background: rgba(218, 151, 74, .08); border: 1px solid rgba(218, 151, 74, .3); border-radius: 6px; color: #e0b878; font-size: 11px; }
+.availability-manager__precedence { margin-top: 15px; }
+.availability-manager__other-dates { margin-top: 18px; border-top: 1px solid var(--admin-border); }
+html.dashboard-page .availability-manager__other-dates button { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 12px; text-align: left; margin-top: 6px; padding: 10px; }
+.availability-manager__other-dates button span { text-transform: capitalize; }
+.availability-manager__other-dates button small { flex-shrink: 0; color: var(--admin-muted); font-size: 9px; }
+html.dashboard-page[data-dashboard-theme='day'] .availability-manager__message--success { color: #17623c; }
+html.dashboard-page[data-dashboard-theme='day'] .availability-manager__message--error,
+html.dashboard-page[data-dashboard-theme='day'] .availability-manager__actions .availability-manager__remove { color: #ae3037; }
+html.dashboard-page[data-dashboard-theme='day'] .availability-manager__closure { color: #805500; }
+@media (max-width: 1050px) {
+  .availability-manager__day { grid-template-columns: 115px minmax(0, 1fr); gap: 12px; }
+  .availability-manager__add { grid-column: 2; justify-self: start; }
+  .availability-manager__slot { align-items: flex-start; flex-direction: column; gap: 8px; }
+}
+@media (max-width: 760px) {
+  .availability-manager { padding: 15px; }
+  .availability-manager__dates { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+}
+@media (max-width: 480px) {
+  .availability-manager__header { flex-direction: column; gap: 8px; }
+  .availability-manager__tabs { width: 100%; }
+  html.dashboard-page .availability-manager__tabs button { flex: 1; padding: 8px 6px; }
+  .availability-manager__day { grid-template-columns: minmax(0, 1fr); padding: 13px; gap: 10px; }
+  .availability-manager__day-name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .availability-manager__add { grid-column: 1; }
+  .availability-manager__date-form { padding: 13px; }
+  .availability-manager__other-dates button { align-items: flex-start; }
+}

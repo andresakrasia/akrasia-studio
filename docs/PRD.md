@@ -1,5 +1,17 @@
 # AKRASIA STUDIO — Product Requirements Document (PRD)
 
+Actualización de producción, 2 de octubre de 2026: los requisitos y fases históricos de este documento no acreditan un lanzamiento. El estado vigente está en [Estado de producción](ESTADO_PRODUCCION.md). El titular confirma que **el chat es la navegación y el centro de la experiencia**: servicios, proyectos, manifiesto y contacto abren mensajes predefinidos; sus catálogos y detalles se muestran dentro de la conversación. No se crean páginas comerciales independientes. Las páginas legales conservan acceso directo; email y teléfono sirven de salida cuando la conversación no está disponible. Se permite scroll cuando lo exige el contenido, el móvil o el zoom. La publicación depende de validación editorial y de las comprobaciones del entorno real.
+
+Decisiones confirmadas por el titular, 3 de octubre de 2026:
+
+- Akrasia es una productora audiovisual basada en IA y el portfolio de su trabajo de marketing y creación de contenido. Su filosofía es: «No somos una agencia de prompts. Somos directores, creadores y productores que han convertido la IA en su ventaja definitiva. Hacemos lo que antes no era posible».
+- El lanzamiento ofrece producción audiovisual con IA, marketing y estrategia, creación de contenido, dirección creativa, VFX/postproducción y diseño sonoro. El público comprende personas y organizaciones que necesitan un producto audiovisual; la conversación debe orientar por objetivo, formato y uso, sin exigir que conozcan nuestras disciplinas.
+- La estética es un hub tecnológico tipo JARVIS. El chat dirige la exploración; los paneles aportan catálogo, portfolio y avances publicados. La actividad editorial se aprueba desde el admin y conserva sus fechas reales. La animación de ambiente se identifica como interfaz visual. Los datos de clientes, notas, tareas y conversaciones siguen en la gestión privada.
+- El resultado comercial deseado es un resumen del encargo, corregible por el visitante, y una propuesta de reunión que confirme explícitamente. La reserva se acredita únicamente por el resultado del servidor. El admin sirve para gestionar los proyectos y su publicación, además del seguimiento comercial.
+- Giftmefy es un proyecto propio del titular. Él añadirá su caso y sus materiales desde el admin. Ha autorizado un proyecto ficticio, identificado como demostración, exclusivamente en la vista previa local para verificar portfolio y actividad.
+
+Mejoras de producto propuestas para la siguiente fase (no acreditan implementación): respuestas visuales con piezas y vídeos autorizados dentro de la conversación; paneles que destaquen servicios/trabajos relacionados; resumen del encargo con edición y confirmación antes de preparar reunión; vinculación explícita del encargo al proyecto de gestión. Validar estas mejoras con visitantes que busquen encargar una pieza y medir si encuentran un servicio, comprenden un caso y completan el siguiente paso.
+
 > **Version:** 1.0  
 > **Fecha:** 2026-04-08  
 > **Proyecto:** Web oficial de Acrasia Studio — Productora Audiovisual basada en IA  
@@ -14,7 +26,7 @@ AKRASIA STUDIO es una productora audiovisual que utiliza inteligencia artificial
 ### 1.1 Propuesta de valor
 
 - La web NO es un portfolio tradicional. Es una **experiencia interactiva** tipo HUD (Heads-Up Display).
-- El usuario no navega por menus; **interactua con un agente de IA** que le proporciona informacion, presupuestos y contenido.
+- El usuario explora servicios, proyectos, manifiesto y contacto mediante mensajes predefinidos en el chat y continúa la conversación con el agente. Las reservas y sus resultados dependen del contrato del servidor y de confirmación explícita.
 - El diseno transmite: "El futuro de la produccion audiovisual ya esta aqui".
 
 ### 1.2 Publico objetivo
@@ -67,9 +79,8 @@ Contenido adaptado a productora audiovisual:
 | Seccion | Contenido |
 |---------|-----------|
 | **Proyecto Activo** | Nombre del ultimo proyecto destacado + barra de progreso |
-| **Servicios** | Direction, AI Generation, VFX & Post, Sound Design, Branded Content |
-| **Sobre Nosotros** | "No somos una agencia de prompts. Somos directores, creadores y productores que han convertido la IA en su ventaja definitiva." |
-| **Tagline** | "We don't prompt. We direct." — visible en el viewport central |
+| **Servicios** | Lista de servicios: Direction, Post, VFX, Sound, AI Gen |
+| **Sobre Nosotros** | Mini texto de identidad |
 | **Estado en Vivo** | Logs simulados de actividad del estudio |
 
 ### 2.3 Center Panel (col-span-7) — Viewport Principal
@@ -99,12 +110,12 @@ Contenido adaptado a productora audiovisual:
 
 ## 3. Funcionalidades Principales
 
-### 3.1 Chat con Agente Acrasia (Prioridad ALTA)
+### 3.1 Chat con Agente akrasia (Prioridad ALTA)
 
 - Input de texto en la seccion central inferior
 - El usuario escribe preguntas, solicita presupuestos, pide informacion
 - El agente responde inline (reemplaza o complementa el contenido central)
-- **Requisito tecnico**: Integracion con API de IA (OpenAI / personalizado)
+- **Requisito tecnico**: Integración con Openrouter. 
 - Las respuestas aparecen como mensajes tipo chat dentro del viewport
 
 ### 3.2 Portfolio Dinamico (Prioridad ALTA)
@@ -179,7 +190,7 @@ Contenido adaptado a productora audiovisual:
 
 | Asset | Formato | Ubicacion actual |
 |-------|---------|-----------------|
-| Logo Acrasia | PNG | `/Logo/Logo akrasia.png` |
+| Logo akrasia | PNG | `/Logo/Logo akrasia.png` |
 | Logo nuevo (rebrand) | PNG | `/Logo/rebrand/logo new.png` |
 | Logo animado | MP4 | `/Logo/Logo animado/1.mp4`, `2.mp4` |
 | Robot vistas | PNG | `/Robot/back.png`, `front.png`, `left.png`, `right.png` |

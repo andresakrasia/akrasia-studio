@@ -1,201 +1,273 @@
 ---
-import projectsData from '../data/projects.json';
-
-const { projects } = projectsData;
-
-const statusColors: Record<string, string> = {
-  in_production: 'bg-primary animate-pulse',
-  completed: 'bg-primary',
-};
-
-const timelineColors: Record<string, string> = {
-  in_production: 'border-primary/40',
-  completed: 'border-slate-800',
-};
-
-const titleColors: Record<string, string> = {
-  in_production: 'text-white',
-  completed: 'text-primary',
-};
+import { type PublicProject } from '../lib/public-projects';
+import { localProjectImage } from '../lib/public-media';
+import { pageLang } from '../lib/public-ui';
+import { chatIntentPath, chatIntentMessage } from '../lib/chat-navigation';
+import StudioActivity from './StudioActivity.astro';
+interface Props { projects?: PublicProject[]; portfolioUnavailable?: boolean }
+const { projects = [], portfolioUnavailable = false } = Astro.props;
+const lang = pageLang(Astro.url);
+const english = lang === 'en';
+const featured = projects[0];
+const portfolioData = projects.map(({ id, slug, title, type, duration, thumbnail, resolution, aspect, public_description }) => ({
+  id, slug, title, type, duration, thumbnail: localProjectImage(thumbnail), resolution, aspect, public_description,
+}));
+const portfolioMessage = portfolioUnavailable
+  ? (english ? 'The portfolio is temporarily unavailable.' : 'El portfolio no está disponible en este momento.')
+  : (english ? 'No projects have been approved for publication yet.' : 'Todavía no hay proyectos aprobados para publicación.');
 ---
-
-<aside
-  class="col-span-12 lg:col-span-3 flex flex-col gap-4 lg:overflow-hidden"
->
-  <!-- Portfolio Reciente -->
-  <div
-    class="glass-panel p-4 lg:p-5 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto"
-  >
-    <div
-      class="text-xs text-primary opacity-50 mb-5 uppercase tracking-[0.2em] flex justify-between items-center"
-    >
-      <span>Portfolio_Reciente</span>
-      <span
-        class="material-symbols-outlined text-sm text-slate-600 cursor-pointer hover:text-primary transition-colors"
-      >
-        tune
-      </span>
+<aside class="home-side hud-side studio-sidebar studio-sidebar-right" aria-label={english ? 'Work and studio activity' : 'Trabajos y actividad del estudio'}>
+  <section class="glass-panel hud-section hud-portfolio studio-portfolio">
+    <div class="studio-section-heading">
+      <h2 class="hud-section-title"><a href={chatIntentPath('portfolio', lang)} data-chat-intent="portfolio" data-chat-message={chatIntentMessage('portfolio', lang)}>{english ? 'Recent portfolio' : 'Portfolio reciente'}</a></h2>
+      <span class="studio-section-mark" aria-hidden="true">↗</span>
     </div>
-    <div class="flex-1 overflow-y-auto space-y-3 scroll-hide">
-      {projects.map((project) => (
-        <div
-          class:list={[
-            'relative pl-5 py-4',
-            project.status === 'in_production'
-              ? 'border-l border-primary/40 bg-primary/5 rounded-r'
-              : 'border-l border-slate-800',
-          ]}
-        >
-          <div
-            class:list={[
-              'absolute -left-1 top-5 w-2 h-2 rounded-full',
-              statusColors[project.status] || 'bg-slate-600',
-            ]}
-          ></div>
-          <div
-            class:list={[
-              'text-xs font-bold',
-              project.status === 'in_production' ? 'text-white' : 'text-slate-400',
-            ]}
-          >
-            {project.title}
-          </div>
-          <div
-            class:list={[
-              'text-[11px]',
-              project.status === 'in_production'
-                ? 'text-primary/70'
-                : 'text-slate-500',
-            ]}
-          >
-            {project.type} | {project.duration} | {project.statusLabel}
-          </div>
+    <div id="portfolioWorks" class="studio-featured-work">
+      {featured && <a href={chatIntentPath(`project:${featured.slug}`, lang)} data-chat-intent={`project:${featured.slug}`} data-chat-message={chatIntentMessage(`project:${featured.slug}`, lang)} class="thumb-card studio-work-card" lang="es"
+        data-project-preview={localProjectImage(featured.thumbnail) ? '' : undefined}
+        data-project-id={featured.id} data-project-title={featured.title}
+        data-project-thumbnail={localProjectImage(featured.thumbnail)} data-project-resolution={featured.resolution} data-project-aspect={featured.aspect}>
+        <div class="studio-work-frame">
+          {localProjectImage(featured.thumbnail) && <img src={localProjectImage(featured.thumbnail)} width="480" height="270" alt="" loading="lazy" decoding="async" />}
+          <div class="studio-work-media-meta" aria-hidden="true"><span class="studio-work-index">01</span>{featured.duration && <span class="studio-work-duration">{featured.duration}</span>}</div>
+          <span class="studio-frame-corner" aria-hidden="true"></span>
         </div>
-      ))}
+        <div class="studio-work-copy">
+          <span class="studio-work-label">{english ? 'Featured project' : 'Proyecto destacado'}</span>
+          <h3>{featured.title}</h3>
+          <p class="studio-work-meta">{[featured.type, featured.duration].filter(Boolean).join(' · ')}</p>
+          {featured.public_description && <p class="studio-work-description">{featured.public_description}</p>}
+          <span class="studio-work-action">{english ? 'Discover in the chat' : 'Descubrir en el chat'} <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>}
     </div>
-  </div>
-
-  <!-- Trabajos (thumbnails) -->
-  <div
-    class="glass-panel p-4 lg:p-5 flex-1 flex flex-col overflow-hidden min-h-0 h-64 lg:h-auto order-first lg:order-none"
-  >
-    <div
-      class="text-xs text-primary opacity-50 mb-5 uppercase tracking-[0.2em]"
-    >
-      Trabajos
+    <div id="portfolioList" class="studio-project-list">
+      {projects.slice(1).map((project, index) => <article class="portfolio-item timeline-item studio-project-row">
+        <a class="studio-project-link" href={chatIntentPath(`project:${project.slug}`, lang)} data-chat-intent={`project:${project.slug}`} data-chat-message={chatIntentMessage(`project:${project.slug}`, lang)} lang="es" data-portfolio-select={project.id}
+          data-project-preview={localProjectImage(project.thumbnail) ? '' : undefined}
+          data-project-id={project.id} data-project-title={project.title}
+          data-project-thumbnail={localProjectImage(project.thumbnail)} data-project-resolution={project.resolution} data-project-aspect={project.aspect}>
+          <span class="studio-project-thumbnail" aria-hidden="true">
+            {localProjectImage(project.thumbnail) && <img src={localProjectImage(project.thumbnail)} width="160" height="100" alt="" loading="lazy" decoding="async" />}
+            <span class="studio-project-index">{String(index + 2).padStart(2, '0')}</span>
+          </span>
+          <div class="studio-project-copy"><h3>{project.title}</h3><p>{[project.type, project.duration].filter(Boolean).join(' · ')}</p></div>
+          <span class="studio-project-arrow" aria-hidden="true">↗</span>
+        </a>
+      </article>)}
     </div>
-    <div class="flex-1 overflow-y-auto scroll-hide">
-      <div class="grid grid-cols-2 gap-3">
-        {projects.filter(p => p.status === 'completed').slice(0, 6).map((project) => (
-          <div
-            class="thumb-card aspect-video glass-bubble overflow-hidden relative group"
-            data-project-video={project.videoUrl}
-            data-project-title={project.title}
-          >
-            <img
-              class="object-cover w-full h-full opacity-40 transition-all duration-300 group-hover:opacity-70"
-              src={project.thumbnail}
-              alt={project.title}
-              loading="lazy"
-            />
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center backdrop-blur-sm">
-                <span class="material-symbols-outlined text-primary text-xl">play_arrow</span>
-              </div>
-            </div>
-            <div
-              class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent"
-            >
-              <div class="text-[9px] text-primary font-bold">
-                {project.title}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-
-  <!-- System Logs -->
-  <div
-    class="glass-panel p-4 lg:p-5 flex-none h-36 lg:h-40 overflow-hidden"
-  >
-    <div class="text-xs text-primary opacity-50 mb-3">Estudio_Logs</div>
-    <div class="text-[10px] space-y-1 font-mono leading-tight" id="systemLogs">
-      <p class="text-slate-500">
-        [18:17:32] <span class="text-green-500">LISTO:</span> Motor de IA
-        sincronizado.
-      </p>
-      <p class="text-slate-500">
-        [18:17:28] <span class="text-primary">CORE:</span> Agente Acrasia
-        conectado.
-      </p>
-      <p class="text-slate-500">
-        [18:17:15] <span class="text-yellow-500">AVISO:</span> Nuevo proyecto
-        en cola.
-      </p>
-      <p class="text-slate-500">
-        [18:17:02] [INFO] Render 4K finalizado.
-      </p>
-    </div>
-  </div>
+    <p id="portfolioMessage" class="studio-empty" role="status" hidden={projects.length > 0}>{portfolioMessage}</p>
+    <p id="portfolioWorksMessage" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+    <a class="studio-catalogue-link" href={chatIntentPath('portfolio', lang)} data-chat-intent="portfolio" data-chat-message={chatIntentMessage('portfolio', lang)} hidden={projects.length === 0}>{english ? 'Explore the work' : 'Explorar los trabajos'} <span aria-hidden="true">↗</span></a>
+  </section>
+  <StudioActivity channel="logs" />
 </aside>
-
+<script id="portfolioProjectData" type="application/json" set:html={JSON.stringify(portfolioData).replace(/</g, '\\u003c')} />
 <script>
-  if (!(window as any).__rightPanelInit) {
-    (window as any).__rightPanelInit = true;
-
-    document.querySelectorAll('[data-project-video]').forEach((el) => {
-      el.addEventListener('click', () => {
-        document.dispatchEvent(
-          new CustomEvent('video-open', {
-            detail: {
-              videoUrl: (el as HTMLElement).dataset.projectVideo,
-              title: (el as HTMLElement).dataset.projectTitle,
-            },
-          })
-        );
-      });
-    });
-
-    const logMessages = [
-      { text: 'Render 4K finalizado — NEON ODYSSEY', type: 'success' },
-      { text: 'Color grade exportado — ASCENSION', type: 'info' },
-      { text: 'Nuevo proyecto en cola', type: 'warning' },
-      { text: 'Render 4K finalizado — CITY PULSE', type: 'success' },
-      { text: 'Motor de IA sincronizado', type: 'success' },
-      { text: 'Sesion de cliente iniciada', type: 'info' },
-      { text: 'Exportacion HDR completada', type: 'success' },
-      { text: 'VFX composite renderizado — VOID FRAGMENTS', type: 'info' },
-      { text: 'Backup automatico completado', type: 'info' },
-      { text: 'Audio mix finalizado — SIGNAL NOIR', type: 'success' },
-      { text: 'Pipeline de IA recalibrado', type: 'warning' },
-      { text: 'Cliente nuevo registrado', type: 'info' },
-    ];
-
-    const typeConfig = {
-      success: { label: 'LISTO:', cls: 'text-green-500' },
-      info: { label: 'CORE:', cls: 'text-primary' },
-      warning: { label: 'AVISO:', cls: 'text-yellow-500' },
-    };
-
-    function logNow() {
-      const d = new Date();
-      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
-    }
-
-    setInterval(() => {
-      const logsEl = document.getElementById('systemLogs');
-      if (!logsEl) return;
-      const msg = logMessages[Math.floor(Math.random() * logMessages.length)];
-      const cfg = typeConfig[msg.type as keyof typeof typeConfig];
-      const p = document.createElement('p');
-      p.className = 'text-slate-500';
-      p.innerHTML = `[${logNow()}] <span class="${cfg.cls}">${cfg.label}</span> ${msg.text}`;
-      logsEl.prepend(p);
-      while (logsEl.children.length > 6) {
-        logsEl.lastElementChild?.remove();
+  import { chatIntentPath, chatIntentMessage } from '../lib/chat-navigation';
+  import { localProjectImage } from '../lib/public-media';
+  import { isProjectId, isProjectSlug } from '../lib/public-projects';
+  interface PortfolioProject { id: string; slug: string; title: string; type: string; duration: string; thumbnail: string; resolution: string; aspect: string; public_description: string }
+  const list = document.getElementById('portfolioList');
+  const works = document.getElementById('portfolioWorks');
+  const message = document.getElementById('portfolioMessage');
+  const catalogueLink = document.querySelector<HTMLElement>('.studio-catalogue-link');
+  const selectionMessage = document.getElementById('portfolioWorksMessage');
+  const section = works?.closest<HTMLElement>('.studio-portfolio');
+  let refreshPending = false;
+  let snapshot = '';
+  let portfolioProjects: PortfolioProject[] = [];
+  let featuredId = '';
+  function parseProjects(payload: unknown): PortfolioProject[] {
+    if (!Array.isArray(payload) || payload.length > 1000) throw new Error('Invalid portfolio');
+    return payload.map(project => {
+      if (!project || typeof project !== 'object' || !isProjectId(project.id) || typeof project.title !== 'string' || !isProjectSlug(project.slug)) throw new Error('Invalid portfolio');
+      const output = { id:project.id, title:project.title, slug:project.slug, type:'', duration:'', thumbnail:'', resolution:'', aspect:'', public_description:'' };
+      for (const key of ['type','duration','thumbnail','resolution','aspect','public_description'] as const) {
+        if (project[key] != null && typeof project[key] !== 'string') throw new Error('Invalid portfolio');
+        output[key] = project[key] ?? '';
       }
-    }, 5000);
+      return output;
+    });
   }
+  function enableSelection(link: HTMLAnchorElement, project: PortfolioProject) {
+    const english = document.documentElement.lang === 'en';
+    link.dataset.portfolioSelect = project.id;
+    link.setAttribute('role', 'button');
+    link.setAttribute('aria-controls', 'portfolioWorks');
+    link.setAttribute('aria-label', english ? `Feature ${project.title}` : `Destacar ${project.title}`);
+  }
+  try {
+    portfolioProjects = parseProjects(JSON.parse(document.getElementById('portfolioProjectData')?.textContent || '[]'));
+    featuredId = portfolioProjects[0]?.id || '';
+    snapshot = JSON.stringify(portfolioProjects);
+    list?.querySelectorAll<HTMLAnchorElement>('[data-portfolio-select]').forEach(link => {
+      const project = portfolioProjects.find(project => project.id === link.dataset.portfolioSelect);
+      if (project) enableSelection(link, project);
+    });
+  } catch { /* The server-rendered links still open their project in the chat. */ }
+  function featureProject(trigger: HTMLAnchorElement) {
+    const project = portfolioProjects.find(project => project.id === trigger.dataset.portfolioSelect);
+    if (!project) return false;
+    featuredId = project.id;
+    renderProjects(portfolioProjects, true);
+    works?.querySelector<HTMLAnchorElement>('.studio-work-card')?.focus({ preventScroll: true });
+    if (selectionMessage) selectionMessage.textContent = document.documentElement.lang === 'en'
+      ? `${project.title}, featured project.` : `${project.title}, proyecto destacado.`;
+    const bounds = works?.getBoundingClientRect();
+    if (bounds && (bounds.top < 0 || bounds.bottom > window.innerHeight)) {
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.hudPaused === 'true';
+      section?.scrollIntoView({ block: 'start', behavior: still ? 'instant' : 'smooth' });
+    }
+    return true;
+  }
+  list?.addEventListener('click', event => {
+    if (!(event instanceof MouseEvent) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLAnchorElement>('a[data-portfolio-select]');
+    if (!trigger || !portfolioProjects.some(project => project.id === trigger.dataset.portfolioSelect)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    featureProject(trigger);
+  });
+  list?.addEventListener('keydown', event => {
+    if (!(event instanceof KeyboardEvent) || event.key !== ' ' || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLAnchorElement>('a[data-portfolio-select]');
+    if (!trigger || !portfolioProjects.some(project => project.id === trigger.dataset.portfolioSelect)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (!event.repeat) featureProject(trigger);
+  });
+  function previewAttributes(element: HTMLElement, project: PortfolioProject) {
+    const thumbnail = localProjectImage(project.thumbnail);
+    if (!thumbnail) return;
+    element.dataset.projectPreview = '';
+    element.dataset.projectId = project.id;
+    element.dataset.projectTitle = project.title;
+    element.dataset.projectThumbnail = thumbnail;
+    element.dataset.projectResolution = project.resolution;
+    element.dataset.projectAspect = project.aspect;
+  }
+  function selectProject(event: Event) {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLElement>('[data-project-preview]');
+    if (!trigger || (event instanceof MouseEvent && event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) return;
+    const thumbnail = localProjectImage(trigger.dataset.projectThumbnail);
+    if (!thumbnail) return;
+    document.dispatchEvent(new CustomEvent('project-select', { detail: {
+      id: trigger.dataset.projectId, title: trigger.dataset.projectTitle,
+      thumbnail, resolution: trigger.dataset.projectResolution, aspect: trigger.dataset.projectAspect,
+    } }));
+  }
+  list?.addEventListener('mouseover', selectProject);
+  list?.addEventListener('focusin', selectProject);
+  works?.addEventListener('mouseover', selectProject);
+  works?.addEventListener('focusin', selectProject);
+  function unavailable() {
+    list?.replaceChildren(); works?.replaceChildren();
+    if (message) {
+      message.hidden = false;
+      message.textContent = document.documentElement.lang === 'en' ? 'The portfolio is temporarily unavailable.' : 'El portfolio no está disponible en este momento.';
+    }
+    if (catalogueLink) catalogueLink.hidden = true;
+    snapshot = '';
+    portfolioProjects = [];
+    featuredId = '';
+    if (selectionMessage) selectionMessage.textContent = '';
+    document.dispatchEvent(new CustomEvent('portfolio-refresh', { detail: { ids: [], count: 0, unavailable: true } }));
+  }
+  function projectLink(project: PortfolioProject) {
+    const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+    const intent = `project:${project.slug}` as const;
+    const link = document.createElement('a');
+    link.href = chatIntentPath(intent, lang); link.lang = 'es';
+    link.dataset.projectId = project.id;
+    link.dataset.projectTitle = project.title;
+    link.dataset.chatIntent = intent;
+    link.dataset.chatMessage = chatIntentMessage(intent, lang);
+    previewAttributes(link, project);
+    return link;
+  }
+  function renderProjects(projects: PortfolioProject[], selectionChanged = false) {
+    if (!list || !message || !works) return;
+    const english = document.documentElement.lang === 'en';
+    const next = JSON.stringify(projects);
+    if (!selectionChanged && snapshot === next) return;
+    const active = document.activeElement;
+    const focusedProject = active instanceof HTMLElement && (works.contains(active) || list.contains(active))
+      ? active.closest<HTMLElement>('[data-project-id]')?.dataset.projectId : undefined;
+    if (!projects.some(project => project.id === featuredId)) featuredId = projects[0]?.id || '';
+    portfolioProjects = projects;
+    snapshot = next;
+    list.replaceChildren(); works.replaceChildren();
+    const ordered = [...projects.filter(project => project.id === featuredId), ...projects.filter(project => project.id !== featuredId)];
+    ordered.forEach((project, index) => {
+      const catalogueIndex = String(projects.indexOf(project) + 1).padStart(2, '0');
+      const link = projectLink(project);
+      if (index === 0) {
+        link.className = 'thumb-card studio-work-card';
+        const thumbnail = localProjectImage(project.thumbnail);
+        const frame = document.createElement('div'); frame.className = 'studio-work-frame';
+        if (thumbnail) {
+          const image = document.createElement('img'); image.src = thumbnail; image.alt = ''; image.width = 480; image.height = 270;
+          image.loading = 'lazy'; image.decoding = 'async';
+          frame.append(image);
+        }
+        const mediaMeta = document.createElement('div'); mediaMeta.className = 'studio-work-media-meta'; mediaMeta.setAttribute('aria-hidden', 'true');
+        const mediaIndex = document.createElement('span'); mediaIndex.className = 'studio-work-index'; mediaIndex.textContent = catalogueIndex; mediaMeta.append(mediaIndex);
+        if (project.duration) { const duration = document.createElement('span'); duration.className = 'studio-work-duration'; duration.textContent = project.duration; mediaMeta.append(duration); }
+        const corner = document.createElement('span'); corner.className = 'studio-frame-corner'; corner.setAttribute('aria-hidden', 'true');
+        frame.append(mediaMeta, corner); link.append(frame);
+        const copy = document.createElement('div'); copy.className = 'studio-work-copy';
+        const label = document.createElement('span'); label.className = 'studio-work-label'; label.textContent = english ? 'Featured project' : 'Proyecto destacado';
+        const title = document.createElement('h3'); title.textContent = project.title;
+        const meta = document.createElement('p'); meta.className = 'studio-work-meta'; meta.textContent = [project.type, project.duration].filter(Boolean).join(' · ');
+        copy.append(label, title, meta);
+        if (project.public_description) { const description = document.createElement('p'); description.className = 'studio-work-description'; description.textContent = project.public_description; copy.append(description); }
+        const action = document.createElement('span'); action.className = 'studio-work-action'; action.textContent = english ? 'Discover in the chat' : 'Descubrir en el chat';
+        const arrow = document.createElement('span'); arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '↗'; action.append(arrow);
+        copy.append(action); link.append(copy); works.append(link);
+      } else {
+        const row = document.createElement('article'); row.className = 'portfolio-item timeline-item studio-project-row';
+        link.className = 'studio-project-link';
+        enableSelection(link, project);
+        const thumbnail = localProjectImage(project.thumbnail);
+        const frame = document.createElement('span'); frame.className = 'studio-project-thumbnail'; frame.setAttribute('aria-hidden', 'true');
+        if (thumbnail) {
+          const image = document.createElement('img'); image.src = thumbnail; image.alt = ''; image.width = 160; image.height = 100;
+          image.loading = 'lazy'; image.decoding = 'async'; frame.append(image);
+        }
+        const projectIndex = document.createElement('span'); projectIndex.className = 'studio-project-index'; projectIndex.textContent = catalogueIndex; frame.append(projectIndex);
+        const copy = document.createElement('div'); copy.className = 'studio-project-copy';
+        const heading = document.createElement('h3'); heading.textContent = project.title;
+        const meta = document.createElement('p'); meta.textContent = [project.type, project.duration].filter(Boolean).join(' · ');
+        copy.append(heading, meta);
+        const arrow = document.createElement('span'); arrow.className = 'studio-project-arrow'; arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '↗';
+        link.append(frame, copy, arrow); row.append(link); list.append(row);
+      }
+    });
+    if (selectionChanged) list.scrollTop = 0;
+    message.hidden = projects.length > 0;
+    if (catalogueLink) catalogueLink.hidden = projects.length === 0;
+    message.textContent = english ? 'No projects have been approved for publication yet.' : 'Todavía no hay proyectos aprobados para publicación.';
+    if (!selectionChanged && focusedProject) {
+      const links = [...works.querySelectorAll<HTMLAnchorElement>('a'), ...list.querySelectorAll<HTMLAnchorElement>('a')];
+      (links.find(link => link.dataset.projectId === focusedProject) || works.querySelector<HTMLAnchorElement>('a'))?.focus({ preventScroll: true });
+    }
+    if (!selectionChanged) document.dispatchEvent(new CustomEvent('portfolio-refresh', { detail: { ids: projects.map(project => project.id), count: projects.length, unavailable: false } }));
+  }
+  async function refreshPortfolio() {
+    if (refreshPending || document.visibilityState === 'hidden') return;
+    refreshPending = true;
+    try {
+      const response = await fetch('/api/projects', { cache: 'no-store', signal: AbortSignal.timeout(6000) });
+      if (!response.ok) throw new Error('Unavailable');
+      const payload: unknown = await response.json();
+      const projects = parseProjects(payload);
+      renderProjects(projects);
+    } catch { unavailable(); }
+    finally { refreshPending = false; }
+  }
+  window.addEventListener('pageshow', event => { if (event.persisted) void refreshPortfolio(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') void refreshPortfolio(); });
+  setInterval(refreshPortfolio, 30000);
 </script>

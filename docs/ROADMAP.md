@@ -1,8 +1,10 @@
 # AKRASIA STUDIO — Roadmap de Desarrollo
 
-> **Version:** 2.0  
-> **Fecha:** 2026-04-09  
-> **Ultima actualizacion:** Incorporacion de Fase 4 (Leads) y Fase 5 (Admin Dashboard)
+Actualización de producción, 2 de octubre de 2026: las fases marcadas como completadas reflejan hitos históricos de implementación. El lanzamiento continúa pendiente de staging, infraestructura, integraciones y revisión editorial/jurídica. Consultar [Estado de producción](ESTADO_PRODUCCION.md) y [Entorno y validación](ENTORNO_Y_VALIDACION.md) para las correcciones y evidencias actuales; no usar las estimaciones antiguas como autorización de despliegue.
+
+> **Version:** 4.0  
+> **Fecha:** 2026-04-14  
+> **Ultima actualizacion:** Fase 14 completada, Fase 15 planificada
 
 ---
 
@@ -11,223 +13,264 @@
 ```
 FASE 0: Pre-Produccion                        ✅ COMPLETADO
 FASE 1: Shell Estatico                        ✅ COMPLETADO
-FASE 2: Datos Dinamicos (JSON)                ← ACTUAL
-FASE 3: Chat con Agente IA                    Chat funcional con OpenAI
-FASE 4: Captacion de Leads + Base de Datos    Supabase + extraccion automatica
-FASE 5: Admin Dashboard                       Panel privado sin login
-FASE 6: Pulido y Animaciones                  Refinamiento visual
-FASE 7: Responsive y Accesibilidad            Multi-dispositivo
-FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
+FASE 2: Datos Dinamicos (JSON)                ✅ COMPLETADO
+FASE 3: Chat con Agente IA                    ✅ COMPLETADO
+FASE 5: Admin Dashboard                       ✅ COMPLETADO
+FASE 6: Pulido y Animaciones                  ✅ COMPLETADO
+FASE 7: Responsive y Accesibilidad            ✅ COMPLETADO
+FASE 8: Seguridad y SEO                       ✅ COMPLETADO
+FASE 9: Analytics y Graficas                  ✅ COMPLETADO
+FASE 10: Telegram Bidireccional               ✅ COMPLETADO
+FASE 11: Agente IA con Memoria                ✅ COMPLETADO
+FASE 12: Booking + Qualifier                  ✅ COMPLETADO
+FASE 13: Email Builder                        ✅ COMPLETADO
+FASE 14: i18n + Contenido Estatico            ✅ COMPLETADO
+FASE 15: Deploy Produccion                    ← AHORA
 ```
 
 ---
 
-## FASE 0: Pre-Produccion ✅
+## FASE 8: Seguridad y SEO
 
-**Objetivo:** Documentacion, planificacion y preparacion del entorno.
+**Objetivo:** Proteger el endpoint del chat y añadir metadatos basicos.
 
-| Tarea | Estado | Notas |
-|-------|--------|-------|
-| Analizar codigo original | ✅ COMPLETADO | HTML extraido y documentado |
-| Definir PRD | ✅ COMPLETADO | `docs/PRD.md` |
-| Definir Brand Guidelines | ✅ COMPLETADO | `docs/BRAND_GUIDELINES.md` |
-| Definir Arquitectura | ✅ COMPLETADO | `docs/ARCHITECTURE.md` |
-| Definir Roadmap | ✅ COMPLETADO | Este documento |
-| Inicializar repositorio Git | ✅ COMPLETADO | Repo privado en GitHub |
-| Inicializar proyecto Astro | PENDIENTE | `npm create astro@latest` |
-| Configurar Tailwind | PENDIENTE | Plugin + configuracion de marca |
-| Preparar assets | PENDIENTE | Copiar logo, robot, videos |
-
-**Entregable:** Repositorio inicializado con documentacion completa y entorno configurado.
-
----
-
-## FASE 1: Shell Estatico ✅
-
-**Objetivo:** Layout completo con HTML/CSS estatico. Sin interactividad real.
-
-**Duracion estimada:** 2-3 sesiones
-
-| Tarea | Prioridad | Estado |
-|-------|-----------|--------|
-| Layout grid 3 columnas | ALTA | ✅ Implementado en mockup.html |
-| Header (logo + status + CTA) | ALTA | ✅ |
-| Footer (links + copyright) | ALTA | ✅ |
-| Left Panel — Proyecto Activo | ALTA | ✅ Con progress bar |
-| Left Panel — Servicios | MEDIA | ✅ Con animacion de rotacion |
-| Left Panel — AI Feed | MEDIA | ✅ Feed de logs simulados |
-| Center Panel — Viewport | ALTA | ✅ Imagen de fondo + overlay |
-| Center Panel — Radar | MEDIA | ✅ Circulo animado con spin |
-| Center Panel — HUD Overlay | ALTA | ✅ Datos tecnicos superpuestos |
-| Right Panel — Timeline | ALTA | ✅ Linea de tiempo de proyectos |
-| Right Panel — Thumbnails | ALTA | ✅ Grid 2x2 de portfolio |
-| Right Panel — System Logs | MEDIA | ✅ Logs decorativos |
-| Efectos HUD (scanlines, dot grid, glitch) | MEDIA | ✅ |
-| Chat demo con respuestas aleatorias | ALTA | ✅ Typewriter effect + burbujas |
-| Chat overlay movil | ALTA | ✅ FAB + overlay completo |
-| Responsive basico | BAJA | ✅ Stack en movil |
-
-**Entregable:** `mockup.html` — Shell estatico completo con chat demo funcional.
-
----
-
-## FASE 2: Datos Dinamicos (JSON) ← ACTUAL
-
-**Objetivo:** Migrar mockup a Astro. Contenido cargado desde JSON. Sistema de datos para portfolio.
-
-**Duracion estimada:** 2-3 sesiones
+**Duracion estimada:** 1-2 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Inicializar proyecto Astro | ALTA | `npm create astro` con React + Tailwind |
-| Configurar Tailwind (colores, fuentes) | ALTA | Replicar config de mockup |
-| Componente Layout principal | ALTA | Grid 3 columnas responsive |
-| Componente Header | ALTA | Logo + status bar + CTA |
-| Componente Footer | ALTA | Links + copyright |
-| Componente LeftPanel | ALTA | Paneles de proyecto, servicios, AI feed |
-| Componente Viewport (Center) | ALTA | Imagen/video + radar + HUD |
-| Componente RightPanel | ALTA | Timeline + thumbnails + logs |
-| Componente Chat | ALTA | Input + mensajes + typewriter |
-| projects.json | ALTA | Schema de proyectos con datos reales |
-| services.json | MEDIA | Lista de servicios con descripcion |
-| Cargar portfolio desde JSON | ALTA | Timeline y thumbnails dinamicos |
-| Click en thumbnail → viewport | ALTA | Mostrar imagen/video seleccionado |
-| Animacion de transicion | MEDIA | Fade/swap al cambiar contenido |
-| Status messages dinamicos | BAJA | Rotacion de mensajes de log |
-| Efecto glass-panel | ALTA | Preservar borderSweep y conic-gradient |
-| Chat overlay movil | ALTA | FAB + overlay responsive |
+| Rate limiting chat | URGENTE | Limite 20 msgs/hora por visitor_id en el endpoint `/api/chat`. Middleware simple con contador en memoria o Supabase |
+| SEO meta tags | ALTA | Title, description, og:image en `Layout.astro`. Open Graph para LinkedIn/WhatsApp |
+| Favicon | ALTA | Logo AKRASIA como favicon.ico + SVG |
+| Sesión dashboard | ALTA | A01 corregido con contraseña y sesión revocable de 8 horas, autorización central, CSRF y límite persistente. Configuración en `docs/ACCESO_ADMINISTRATIVO.md` |
+| Paginas de servicios estaticas | MEDIA | `/servicios/branded-content`, `/servicios/cortometraje`, etc. con texto real para Google. No son el foco de la experiencia pero indexan bien |
 
-**Criterio de aceptacion:** El sitio Astro es visualmente identico al mockup. Anadir un proyecto solo requiere editar JSON.
+**Archivos afectados:**
+- `src/pages/api/chat.ts` — Rate limiting
+- `src/layouts/Layout.astro` — Meta tags OG
+- `src/pages/dashboard/login.astro` y `src/middleware.ts` — acceso y sesión; la URL antigua redirige a `/dashboard`
+- `src/pages/servicios/[slug].astro` — Paginas SEO (nuevo)
 
-**Branch:** `fase-2`
+**Criterio de aceptacion:** Un bot no puede disparar costes de API. La URL se ve bien en WhatsApp/LinkedIn.
 
 ---
 
-## FASE 3: Chat con Agente IA
+## FASE 9: Analytics y Graficas en Dashboard
 
-**Objetivo:** Sistema de chat funcional conectado a API de OpenAI.
+**Objetivo:** Visualizar evolucion temporal de leads y conversaciones.
 
-**Duracion estimada:** 2-3 sesiones
+**Duracion estimada:** 2-3 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| ChatInput component (React) | ALTA | Input + boton de envio |
-| ChatMessage component (React) | ALTA | Mensaje individual con estilo |
-| ChatPanel component (React) | ALTA | Contenedor con historial |
-| Endpoint API (OpenAI) | ALTA | Endpoint seguro para respuestas |
-| System prompt de Acrasia | ALTA | Personalidad y tono del agente |
-| Mostrar chat en viewport | ALTA | Reemplazar overlay con chat |
-| Toggle entre chat y viewport | MEDIA | Cambiar vista sin perder estado |
-| Indicador "escribiendo..." | MEDIA | Feedback visual mientras responde |
-| Respuestas con formato | BAJA | Markdown o HTML en respuestas |
-| Historial de sesion | MEDIA | Mantener contexto en localStorage |
+| GA4 basico | ALTA | Script de Google Analytics en Layout.astro. Cero mantenimiento |
+| Grafica leads/semana | ALTA | Chart simple (barras o linea) en OverviewTab usando datos de Supabase |
+| Tiempo medio conversacion | ALTA | Calcular avg(msgs) y avg(duracion) por conversacion, mostrar en Overview |
+| Ratio conversacion→lead | MEDIA | De todas las conversaciones, cuantas generaron lead. KPI de eficacia del agente |
+| Visitas unicas por dia | MEDIA | Agrupar visitors por fecha, mostrar tendencia |
 
-**Criterio de aceptacion:** El usuario puede escribir y recibir respuestas del agente Acrasia con personalidad definida.
+**Enfoque:** No PostHog por ahora. GA4 para trafico general + graficas propias en el dashboard con datos de Supabase. PostHog cuando haya 500+ visitas/mes.
+
+**Archivos afectados:**
+- `src/layouts/Layout.astro` — GA4 script
+- `src/components/dashboard/DashboardApp.tsx` — OverviewTab con graficas
+- `src/pages/api/dashboard/metrics.ts` — Endpoint con datos agrupados
+
+**Dependencia:** `recharts` o `chart.js` para las graficas (npm install)
+
+**Criterio de aceptacion:** El dashboard muestra leads por semana, tiempo medio de chat, y ratio de conversion.
 
 ---
 
-## FASE 4: Captacion de Leads + Base de Datos
+## FASE 10: Telegram Bidireccional
 
-**Objetivo:** El chat se convierte en herramienta de captacion automatica. Supabase como backend.
+**Objetivo:** Detectar leads calientes automaticamente y notificar con contexto.
 
-**Duracion estimada:** 2-3 sesiones
+**Duracion estimada:** 2-3 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Configurar proyecto Supabase | ALTA | Base de datos + API |
-| Tabla `visitors` | ALTA | Identificacion anonima (cookie/localStorage) |
-| Tabla `conversations` | ALTA | Historial completo de chats |
-| Tabla `leads` | ALTA | Datos de contacto extraidos |
-| Extraccion automatica de datos | ALTA | IA detecta email, telefono, empresa en el chat |
-| Guardar conversaciones en BD | ALTA | Cada mensaje se almacena |
-| Asociar visitor → conversation → lead | ALTA | Relaciones entre tablas |
-| Notificacion de lead nuevo | MEDIA | Email o Telegram al capturar un lead |
-| Tag automatico de leads | BAJA | Clasificar por interes (web, branding, etc.) |
-| Estadisticas basicas | BAJA | Contador de visitantes y leads |
+| Deteccion lead caliente | ALTA | En el system prompt o post-procesamiento del chat, detectar palabras clave: presupuesto, plazo, presupuesto, tipo de proyecto, urgencia |
+| Cambio estado automatico | ALTA | Si se detecta lead caliente → cambiar estado a `hot` en Supabase |
+| Notificacion estructurada | ALTA | Enviar a Telegram: nombre, tipo proyecto, presupuesto mencionado, enlace al dashboard, ultimos 3 mensajes del chat |
+| Botones en Telegram | MEDIA | Boton "Ver conversacion" que enlace al dashboard con la conversacion abierta |
 
-**Criterio de aceptacion:** Cuando un visitante menciona su email o telefono en el chat, se captura automaticamente como lead en Supabase.
+**Logica de deteccion:**
+```
+Palabras clave: presupuesto, precio, cuanto cuesta, plazo, fecha, urgente, 
+  necesitamos, proyecto, producir, rodar, grabar, campana
+Si visitor menciona 2+ keywords → marcar como hot
+Si visitor da email o telefono → lead confirmado
+```
+
+**Archivos afectados:**
+- `src/pages/api/chat.ts` — Post-procesamiento de mensajes
+- `src/lib/notify.ts` — Mensaje estructurado a Telegram
+- `src/hooks/ChatContext.tsx` — Posible ajuste del system prompt
+
+**Criterio de aceptacion:** Cuando un visitante menciona presupuesto + tipo de proyecto, recibes un Telegram con el contexto completo.
 
 ---
 
-## FASE 5: Admin Dashboard
+## FASE 11: Agente IA con Memoria
 
-**Objetivo:** Panel privado para gestionar leads, conversaciones y contenido web — sin tocar codigo, sin sistema de login.
+**Objetivo:** El agente reconoce visitantes que vuelven y carga historial.
 
-**Duracion estimada:** 2-3 sesiones
+**Duracion estimada:** 2-3 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Ruta secreta `/dashboard/{secret}` | ALTA | Acceso via URL secreta (sin login) |
-| Vista de visitantes | ALTA | Lista con tags, estado (color), ultima actividad |
-| Vista de conversaciones | ALTA | Historial completo por visitante |
-| Vista de leads | ALTA | Datos de contacto + origen + estado |
-| Exportar leads a CSV | MEDIA | Descarga de lista de leads |
-| Editor de contenido web | MEDIA | Editar proyectos y servicios desde el panel |
-| Metricas basicas | MEDIA | Visitas hoy, leads esta semana, pregunta mas frecuente |
-| Filtros y busqueda | BAJA | Buscar por nombre, email, fecha |
-| Marcar lead como contactado | BAJA | Cambiar estado del lead |
+| Cookie visitor_id persistente | ALTA | Ya se genera un visitor_id. Guardarlo en cookie con expiracion 30 dias |
+| Cargar historial al volver | ALTA | Cuando un visitante con historial abre el chat, el agente carga las ultimas 10 conversaciones como contexto |
+| Mensaje de bienvenida personalizado | MEDIA | "Hola de nuevo, la ultima vez hablabamos de [tema]. En que te puedo ayudar hoy?" |
+| System prompt con contexto | MEDIA | Incluir resumen de conversaciones anteriores en el prompt del agente |
 
-**Criterio de aceptacion:** Desde el panel se pueden ver todos los leads, leer conversaciones y editar el contenido de la web.
+**Enfoque tecnico:**
+1. Visitor ya existe en Supabase con `visitor_id`
+2. Al cargar el chat, si hay cookie → GET `/api/dashboard/conversations?visitor_id=X`
+3. Las ultimas N conversaciones se pasan como contexto en el system prompt
+4. No hace falta vector DB, con las ultimas 5-10 conversaciones es suficiente
+
+**Archivos afectados:**
+- `src/lib/visitorId.ts` — Cookie persistente
+- `src/hooks/ChatContext.tsx` — Cargar historial al iniciar
+- `src/pages/api/chat.ts` — Contexto de conversaciones anteriores
+
+**Criterio de aceptacion:** Si vuelvo a la web despues de 2 semanas, el agente sabe de que hablamos.
 
 ---
 
-## FASE 6: Pulido y Animaciones
+## FASE 12: Booking + Qualifier
 
-**Objetivo:** Refinar la experiencia visual y las animaciones.
+**Objetivo:** Cualificar leads y ofrecer llamada directamente en el chat.
 
-**Duracion estimada:** 1-2 sesiones
+**Duracion estimada:** 2-3 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Animaciones de entrada | ALTA | Fade-in de paneles al cargar |
-| Hover effects en thumbnails | ALTA | Zoom o reveal al pasar cursor |
-| Transicion entre vistas | MEDIA | Smooth swap entre viewport y chat |
-| Parallax sutil en overlay | BAJA | Movimiento del overlay con mouse |
-| Sonido ambiente (opcional) | BAJA | Click en botones, envio de chat |
-| Loading state | MEDIA | Pantalla de carga con logo animado |
-| Micro-interacciones | BAJA | Feedback visual en cada accion |
+| Cal.com integration | ALTA | Embeber link de Cal.com cuando el agente detecta intencion de avanzar. El agente muestra: "Te ofrezco una llamada de 30 min para hablar de tu proyecto" + link |
+| Preguntas cualificadoras | ALTA | El agente pregunta: tipo proyecto, duracion, localizaciones, actores, post-produccion, plazo. NO da precios, solo cualifica |
+| Flow agente→llamada | ALTA | Cuando el agente tiene suficiente contexto → ofrece la llamada. "Con este contexto, tiene sentido que hablemos en una llamada" |
+| Boton de llamada en el chat | MEDIA | Cuando el agente ofrece llamada, muestra un boton estilo "Reservar llamada" que abre Cal.com en nueva tab |
 
-**Criterio de aceptacion:** La experiencia se siente fluida y profesional.
+**Decision de diseno:** NO mostrar precios automaticamente. El agente cualifica con preguntas y al final deriva a llamada. Asi no anclas mal un precio.
+
+**Archivos afectados:**
+- `src/hooks/ChatContext.tsx` — Ajuste del system prompt
+- `src/components/ChatWrapper.tsx` — Boton "Reservar llamada" en el chat
+- `.env` — `CALCOM_LINK=https://cal.com/akrasia-studio/...`
+
+**Criterio de aceptacion:** El agente cualifica y ofrece llamada cuando tiene contexto suficiente.
 
 ---
 
-## FASE 7: Responsive y Accesibilidad
+## FASE 13: Email Builder
 
-**Objetivo:** La web funciona perfectamente en todos los dispositivos.
+**Objetivo:** Enviar emails a leads directamente desde el dashboard con IA.
 
-**Duracion estimada:** 1-2 sesiones
+**Duracion estimada:** 3-4 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Responsive movil | ALTA | Stack vertical, scroll entre paneles |
-| Responsive tablet | ALTA | Layout adaptado a pantalla media |
-| Navegacion en movil | ALTA | Menu hamburguesa o tabs |
-| Touch interactions | MEDIA | Swipe entre paneles en movil |
-| Accesibilidad basica | MEDIA | Contrast ratio, aria labels |
-| Keyboard navigation | BAJA | Tab navigation funcional |
+| API Resend o SendGrid | ALTA | Cuenta gratuita (100 emails/dia). Guardar API key en env |
+| Plantillas basicas | ALTA | Seguimiento, propuesta, cierre. 3 templates con variables |
+| IA genera email con contexto | ALTA | Desde el dashboard, seleccionas lead → la IA genera email con el contexto de la conversacion |
+| Editor simple | MEDIA | Textarea con preview, enviar directamente |
+| Historial emails enviados | BAJA | Tabla `sent_emails` en Supabase para tracking |
 
-**Criterio de aceptacion:** La web es usable en iPhone, Android y tablets.
+**Flujo:**
+1. Dashboard → tab Leads → seleccionar lead → boton "Enviar email"
+2. La IA genera el email con el contexto de la conversacion
+3. Revisas/editas el texto
+4. Enviar → Resend API → llega al lead
+
+**Archivos afectados:**
+- `src/pages/api/dashboard/send-email.ts` — Nuevo endpoint
+- `src/components/dashboard/DashboardApp.tsx` — UI de email builder
+- `supabase/migration-v5.sql` — Tabla `sent_emails`
+- `.env` — `RESEND_API_KEY`
+
+**Dependencia:** `npm install resend`
+
+**Criterio de aceptacion:** Desde el dashboard puedes enviar un email personalizado a un lead con un click.
 
 ---
 
-## FASE 8: Deploy y Produccion
+## FASE 14: i18n + Contenido Estatico
 
-**Objetivo:** Publicar la web en el dominio akrasia.studio.
+**Objetivo:** Version en ingles + paginas de servicios para SEO + case studies.
 
-**Duracion estimada:** 1 sesion
+**Duracion estimada:** 3-4 horas
 
 | Tarea | Prioridad | Descripcion |
 |-------|-----------|-------------|
-| Configurar Vercel/Netlify | ALTA | Deploy automatico desde Git |
-| Dominio akrasia.studio | ALTA | DNS y SSL |
-| SEO meta tags | ALTA | Title, description, og:image |
-| Favicon | ALTA | Logo como favicon |
-| Performance audit | MEDIA | Lighthouse score > 90 |
-| Analytics (opcional) | BAJA | Google Analytics o similar |
-| Error pages | BAJA | 404 custom |
-| Variables de entorno | ALTA | API keys, URL secreta, Supabase creds |
+| Deteccion idioma en el chat | ALTA | El agente detecta si el visitante escribe en ingles y responde en ingles. Sin necesidad de i18n en la UI |
+| Paginas de servicios estaticas | ALTA | `/servicios/branded-content`, `/servicios/cortometraje`, `/servicios/postproduccion` — texto SEO en es/en |
+| Case studies (cuando haya contenido) | MEDIA | `/proyectos/[slug]` con brief → proceso → resultado → metricas. Empezar con el cortometraje entregado |
+| Sitemap basico | BAJA | `@astrojs/sitemap` para Google indexe las paginas estaticas |
 
-**Criterio de aceptacion:** La web esta publicada y accesible en akrasia.studio.
+**Enfoque SEO:** La web HUD no indexa bien en Google. Las paginas de servicios son contenido estatico que SI indexa. No es blackhat, es arquitectura de contenido normal. El SEO organico no sera el canal principal — LinkedIn y referencias directas son mas importantes para el target B2B.
+
+**Archivos afectados:**
+- `src/pages/servicios/[slug].astro` — Nuevo
+- `src/pages/proyectos/[slug].astro` — Nuevo
+- `src/hooks/ChatContext.tsx` — Deteccion de idioma
+- `astro.config.mjs` — Plugin sitemap
+
+**Criterio de aceptación vigente (2026-10-02):** la portada y sus variantes ES/EN son indexables; servicios y proyectos se exploran dentro del chat mediante mensajes predefinidos y contenido público aprobado. No se añaden páginas comerciales separadas para SEO. Las páginas legales mantienen acceso directo. El chat respeta el idioma de la interfaz.
+
+---
+
+## FASE 15: Deploy Produccion
+
+**Objetivo:** Publicar en akrasia.studio.
+
+**Duracion estimada:** 1 hora
+
+| Tarea | Prioridad | Descripcion |
+|-------|-----------|-------------|
+| Ejecutar migraciones SQL | URGENTE | `migration-v3.sql` y `migration-v4.sql` en Supabase SQL Editor |
+| Conectar Vercel | ALTA | Repo Git → Vercel. Deploy automatico por push |
+| Variables de entorno | ALTA | Todas las env vars en Vercel dashboard |
+| DNS akrasia.studio | ALTA | Apuntar a Vercel + SSL automatico |
+| Testeo end-to-end | ALTA | Flujo completo: chat → lead → dashboard → email |
+| Lighthouse audit | MEDIA | Performance > 90, lazy load imagenes |
+
+**Pre-requisitos completados:**
+- [ ] Rate limiting en chat (Fase 8)
+- [ ] Configurar contraseña y migración de sesiones del dashboard (Fase 8, A01)
+- [ ] SEO meta tags (Fase 8)
+- [ ] Todas las migraciones SQL ejecutadas
+
+**Criterio de aceptacion:** La web esta publicada, el chat funciona, el dashboard es accesible, leads llegan a Telegram.
+
+---
+
+## Orden de Ejecucion Recomendado
+
+```
+FASE 8  (Seguridad + SEO)          → 1-2h   — ANTES del deploy
+FASE 9  (Analytics + Graficas)     → 2-3h   — Pre-deploy, nice to have
+FASE 10 (Telegram Bidireccional)   → 2-3h   — Post-deploy
+FASE 11 (Memoria IA)               → 2-3h   — Post-deploy
+FASE 12 (Booking + Qualifier)      → 2-3h   — Post-deploy
+FASE 13 (Email Builder)            → 3-4h   — Post-deploy
+FASE 14 (i18n + Contenido)         → 3-4h   — Post-deploy
+FASE 15 (Deploy)                   → 1h     — Cuando todo este listo
+```
+
+**Total estimado:** 16-23 horas de desarrollo
+
+---
+
+## Backlog Post-Deploy
+
+| Tarea | Cuando |
+|-------|--------|
+| LinkedIn feed integrado | Cuando empieces redes sociales |
+| Case studies con metricas | Cuando tengas proyectos documentados |
+| PostHog analytics | Cuando haya 500+ visitas/mes |
+| Supabase Auth (multi-usuario) | Si necesitas dar acceso a otras personas |
+| Calculadora de precios en chat | Solo si el modelo de negocio lo permite sin riesgo |
 
 ---
 
@@ -235,11 +278,15 @@ FASE 8: Deploy y Produccion                   Publicacion en akrasia.studio
 
 ```
 SEMANA 1:  FASE 0 + FASE 1 (shell estatico)                    ✅
-SEMANA 2:  FASE 2 (migracion Astro + datos dinamicos)           ← ACTUAL
-SEMANA 3:  FASE 3 (chat con IA) + inicio FASE 4 (leads)
-SEMANA 4:  FASE 4 (leads + Supabase) + FASE 5 (admin dashboard)
-SEMANA 5:  FASE 6 (pulido) + FASE 7 (responsive)
-SEMANA 6:  FASE 8 (deploy y produccion)
+SEMANA 2:  FASE 2 (migracion Astro + datos dinamicos)           ✅
+SEMANA 3:  FASE 3 (chat con IA) + FASE 4 (leads + Supabase)     ✅
+SEMANA 4:  FASE 5 (admin dashboard)                              ✅
+SEMANA 5:  FASE 6 (pulido) + FASE 7 (responsive)                ✅
+SEMANA 6:  FASE 8 (seguridad + SEO)                              ✅
+SEMANA 7:  FASE 9 (analytics + graficas)                          ✅
+SEMANA 8:  FASE 10-11 (telegram + memoria IA)                     ✅
+SEMANA 9:  FASE 13-14 (email + i18n)                              ✅
+SEMANA 10: FASE 15 (deploy produccion)
 ```
 
 ---
@@ -247,7 +294,8 @@ SEMANA 6:  FASE 8 (deploy y produccion)
 ## Notas
 
 - Cada fase produce codigo funcional y deployable.
-- Se puede hacer deploy en cualquier momento despues de FASE 2.
+- Se puede hacer deploy en cualquier momento despues de FASE 8.
 - Las fases son incrementales: cada una anade sobre la anterior sin reescribir.
-- Si alguna fase requiere cambios en el PRD o Brand Guidelines, actualizar la documentacion primero.
-- **Fase 4 y 5 son el valor diferencial del proyecto:** convierten la web en una herramienta activa de captacion de clientes.
+- Fase 8 (rate limiting) es urgente antes de poner la web publica.
+- Dashboard con contraseña y sesión comprobada por servidor para el administrador actual; MFA y proveedor de identidad quedan pendientes.
+- SEO: las paginas de servicios estaticas indexan bien. La web HUD no depende de SEO organico — el canal principal es LinkedIn + referencias.

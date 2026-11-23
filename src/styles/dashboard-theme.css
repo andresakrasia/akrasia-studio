@@ -1,0 +1,134 @@
+/* Dashboard-only tokens. The public studio and rendered email documents keep
+   their own brand palette; a theme switch never remounts an editing panel. */
+html.dashboard-page {
+  color-scheme: dark;
+  --admin-bg: #050505;
+  --admin-panel: #0a0a0a;
+  --admin-raised: #0f0f0f;
+  --admin-text: #a9b7c9;
+  --admin-heading: #e2e8f0;
+  --admin-muted: #8b9aae;
+  --admin-dim: #7d8a9e;
+  --admin-border: #29313a;
+  --admin-accent: #00f0ff;
+  --admin-accent-soft: rgba(0, 240, 255, .07);
+  --admin-accent-hover: rgba(0, 240, 255, .14);
+  --admin-accent-border: rgba(0, 240, 255, .25);
+  --admin-chart-grid: #29313a;
+  --admin-chart-fill: rgba(0, 240, 255, .6);
+  --admin-overlay: rgba(0, 0, 0, .72);
+}
+
+html.dashboard-page[data-dashboard-theme='day'] {
+  color-scheme: light;
+  --admin-bg: #edf3f5;
+  --admin-panel: #ffffff;
+  --admin-raised: #f4f8fa;
+  --admin-text: #2a3e4b;
+  --admin-heading: #122b38;
+  --admin-muted: #4d626f;
+  --admin-dim: #526673;
+  --admin-border: #c9d7df;
+  /* Dark cyan on white keeps the studio's accent readable in daylight. */
+  --admin-accent: #006a76;
+  --admin-accent-soft: rgba(0, 106, 118, .07);
+  --admin-accent-hover: rgba(0, 106, 118, .12);
+  --admin-accent-border: rgba(0, 106, 118, .28);
+  --admin-chart-grid: #d6e1e7;
+  --admin-chart-fill: #00818d;
+  --admin-overlay: rgba(24, 48, 60, .4);
+}
+
+html.dashboard-page body {
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
+  cursor: default;
+}
+html.dashboard-page :is(a, button, [role='button']) { cursor: pointer; }
+html.dashboard-page :is(input, textarea, [contenteditable]) { cursor: text; }
+html.dashboard-page select { cursor: pointer; }
+
+:where(html.dashboard-page) :is(select, input, textarea, button) {
+  background-color: var(--admin-panel);
+  color: var(--admin-text);
+  border-color: var(--admin-accent-border);
+}
+html.dashboard-page select option { background-color: var(--admin-panel); color: var(--admin-text); }
+html.dashboard-page :is(input, textarea)::placeholder { color: var(--admin-dim); opacity: 1; }
+html.dashboard-page input[type='checkbox'] { accent-color: var(--admin-accent); }
+html.dashboard-page :is(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 3px;
+}
+
+/* Adapt shared panels, nested forms and dialogs without modifying their
+   workflow code. Exact utility tokens also avoid matching hover-only colors. */
+html.dashboard-page [class~='bg-[#050505]'] { background-color: var(--admin-bg); }
+html.dashboard-page :is([class~='bg-[#0a0a0a]'], [class~='bg-[#080808]'], [class~='bg-[#070b0c]'], [class~='bg-panel']) { background-color: var(--admin-panel); }
+html.dashboard-page :is([class~='bg-[#0f0f0f]'], [class~='bg-[#101517]'], [class~='bg-slate-800'], [class~='bg-slate-900']) { background-color: var(--admin-raised); }
+html.dashboard-page [class~='hover:bg-[#0f0f0f]']:hover { background-color: var(--admin-raised); }
+html.dashboard-page [class~='bg-transparent'] { background-color: transparent; }
+html.dashboard-page [class*='bg-black/'] { background-color: var(--admin-overlay); }
+
+html.dashboard-page :is([class~='text-slate-100'], [class~='text-slate-200'], [class~='text-white']) { color: var(--admin-heading); }
+html.dashboard-page [class~='text-slate-300'] { color: var(--admin-text); }
+html.dashboard-page :is([class~='text-slate-400'], [class~='text-slate-500']) { color: var(--admin-muted); }
+html.dashboard-page :is([class~='text-slate-600'], [class~='text-slate-700']) { color: var(--admin-dim); }
+html.dashboard-page :is([class~='text-primary'], [class~='text-primary/70'], [class~='text-primary/80'], [class~='text-cyan-200'], [class~='text-cyan-300'], [class~='text-cyan-400']) { color: var(--admin-accent); }
+html.dashboard-page :is([class~='hover:text-primary'], [class~='hover:text-cyan-200'], [class~='hover:text-cyan-400']):hover { color: var(--admin-accent); }
+html.dashboard-page :is([class~='hover:text-white'], [class~='hover:text-slate-100'], [class~='hover:text-slate-200'], [class~='hover:text-slate-300'], [class~='hover:text-slate-400']):hover { color: var(--admin-heading); }
+html.dashboard-page [class~='placeholder:text-slate-600']::placeholder { color: var(--admin-dim); }
+
+html.dashboard-page :is([class~='border-slate-600'], [class~='border-slate-700'], [class~='border-slate-800'], [class~='border-cyan-500/15'], [class~='border-cyan-500/20'], [class~='border-cyan-500/25'], [class~='border-cyan-500/30']) { border-color: var(--admin-border); }
+html.dashboard-page :is([class~='border-primary/20'], [class~='border-primary/30'], [class~='border-primary/40'], [class~='border-primary/50'], [class~='border-cyan-500/40'], [class~='border-cyan-500/50']) { border-color: var(--admin-accent-border); }
+html.dashboard-page :is([class~='hover:border-primary/40'], [class~='hover:border-primary/50'], [class~='hover:border-cyan-500/25']):hover { border-color: var(--admin-accent); }
+html.dashboard-page [class~='border-l-primary'] { border-left-color: var(--admin-accent); }
+html.dashboard-page :is([class~='focus:border-primary'], [class~='focus:border-primary/40'], [class~='focus:border-primary/60'], [class~='focus:border-cyan-400']):focus { border-color: var(--admin-accent); }
+
+html.dashboard-page :is([class~='bg-primary/5'], [class~='bg-primary/10'], [class~='bg-cyan-500/5'], [class~='bg-cyan-500/10'], [class~='bg-cyan-500/20']) { background-color: var(--admin-accent-soft); }
+html.dashboard-page :is([class~='hover:bg-primary/10'], [class~='hover:bg-primary/20'], [class~='hover:bg-cyan-500/10']):hover { background-color: var(--admin-accent-hover); }
+html.dashboard-page [class~='bg-primary'] { background-color: var(--admin-accent); }
+html.dashboard-page [class~='bg-primary/60'] { background-color: var(--admin-chart-fill); }
+html.dashboard-page [class~='bg-primary'][class~='text-black'] { background-color: #00f0ff; color: #001a20; }
+
+/* Functional states need darker foregrounds in the light theme. */
+html.dashboard-page[data-dashboard-theme='day'] :is([class~='text-green-300'], [class~='text-green-400'], [class~='text-green-400/70'], [class~='text-green-500/60'], [class~='hover:text-green-400']:hover) { color: #17623c; }
+html.dashboard-page[data-dashboard-theme='day'] :is([class~='text-yellow-300'], [class~='text-yellow-400'], [class~='text-amber-200'], [class~='text-amber-300']) { color: #805500; }
+html.dashboard-page[data-dashboard-theme='day'] :is([class~='text-red-200'], [class~='text-red-300'], [class~='text-red-400'], [class~='text-red-500/30'], [class~='text-red-500/40'], [class~='text-red-500/70'], [class~='hover:text-red-400']:hover) { color: #ae3037; }
+html.dashboard-page[data-dashboard-theme='day'] :is([class~='text-purple-400'], [class~='text-violet-300']) { color: #6a3daf; }
+html.dashboard-page[data-dashboard-theme='day'] :is([class~='bg-slate-500/10'], [class~='bg-slate-500/20']) { background-color: #e6edf1; }
+
+.dashboard-theme-control {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-panel);
+  border-radius: 7px;
+}
+html.dashboard-page .dashboard-theme-control button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--admin-muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+html.dashboard-page .dashboard-theme-control button[aria-pressed='true'] {
+  color: var(--admin-accent);
+  background: var(--admin-accent-soft);
+  border-color: var(--admin-accent-border);
+}
+.dashboard-theme-control button svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

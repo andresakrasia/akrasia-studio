@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "../src/env.d.ts", "../src/lib/public-projects.ts", "../src/lib/project-input.ts",
+    "../src/pages/api/projects.ts", "../src/pages/api/dashboard/projects.ts",
+    "../src/pages/api/feed.ts", "../src/pages/api/logs.ts", "../src/pages/api/stats.ts",
+    "../src/pages/sitemap.xml.ts", "../src/components/dashboard/DashboardApp.tsx",
+    "../src/components/VideoModalListener.tsx", "../src/middleware.ts"
+  ],
+  "exclude": ["../node_modules", "../dist", "../.vercel"]
+}
